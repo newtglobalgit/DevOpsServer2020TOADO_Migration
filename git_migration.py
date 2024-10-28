@@ -13,7 +13,7 @@ def run_command(command):
     print(result.stdout)
 
 # Read the Excel file
-input_file = 'C:/Users/lexcon/Desktop/PreSales/Devopsproject/migration_input_form.xlsx'
+input_file = r'migration_input_form.xlsx'
 
 # Read source and target inputs
 source_df = pd.read_excel(input_file, sheet_name='source_migrate_input')
