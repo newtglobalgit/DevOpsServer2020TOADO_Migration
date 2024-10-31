@@ -7,6 +7,7 @@ import html
 import logging
 from datetime import datetime
 import getpass
+from utils.common import get_project_names, add_project_if_not_exists
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -109,34 +110,19 @@ def extract_work_item_info(collection_name, project_name, work_item, comments):
     }
 
 
-def process_row(row, api_version='6.0'):
-    base_url = row['Server URL'].strip()
-    project = row['Project Name'].strip()
-    pat = row['PAT'].strip()
+def process_row(devops_server_url, project, token, api_version='6.0'):
+    base_url = devops_server_url
+    project = project
+    pat = token
 
     base_url_parts = base_url.split('/')
     collection_name = base_url_parts[3]  # Assuming collection name is the 4th part of the URL
     project_name = project
 
-    """repository_name = row.get('Repository Name')
-    branch_name = row.get('Branch Name')
-
-    if isinstance(repository_name, str):
-        repository_name = repository_name.strip()
-    else:
-        repository_name = None
-
-    if isinstance(branch_name, str):
-        branch_name = branch_name.strip()
-    else:
-        branch_name = None"""
-
     logging.info(f'Read values from Excel:')
     logging.info(f'Server URL: {base_url}')
     logging.info(f'Project Name: {project}')
     logging.info(f'Collection Name: {collection_name}')
-    """logging.info(f'Repository Name: {repository_name}')
-    logging.info(f'Branch Name: {branch_name}')"""
 
     work_item_details_list = []
     work_item_type_counts = {}
@@ -174,7 +160,7 @@ def process_row(row, api_version='6.0'):
         return None, None
 
 
-def generate_summary(writer, project_name, current_row, df, start_time):
+def generate_summary(writer, project_name, start_time):
     workbook = writer.book
     worksheet_summary = workbook.add_worksheet('Summary')
     header_format = workbook.add_format({
@@ -197,8 +183,7 @@ def generate_summary(writer, project_name, current_row, df, start_time):
         'Purpose of the report': f"This report provides a detailed view of the work items in project {project_name}.",
         'Run Date': datetime.now().strftime('%d-%b-%Y %I:%M %p'),
         'Run Duration': formatted_run_duration,
-        'Run By': getpass.getuser(),
-        'Input': ', '.join([f"{col}: {current_row[col]}" for col in df.columns if col != 'PAT' and not pd.isna(current_row[col]) and current_row[col] != ''])
+        'Run By': getpass.getuser()
     }
 
     row = 0
@@ -222,18 +207,14 @@ def set_column_widths(worksheet, df):
         worksheet.set_column(idx, idx, max_len)
 
 
-def generate_report(project, work_item_details_list, work_item_type_counts, current_row, df, start_time):
+def generate_report(output_dir, project, work_item_details_list, work_item_type_counts, start_time):
     report_df = pd.DataFrame(work_item_details_list)
     count_df = pd.DataFrame(list(work_item_type_counts.items()), columns=['Work Item Type', 'Count'])
 
-    # Ensure the "Work Items" directory exists
-    report_dir = os.path.join(os.getcwd(), "Work Items")
-    os.makedirs(report_dir, exist_ok=True)
-
-    report_filename = os.path.join(report_dir, f'{project}_workItems_report.xlsx')
+    report_filename = os.path.join(output_dir, f'{project}_workItems_report.xlsx')
     with pd.ExcelWriter(report_filename, engine='xlsxwriter') as writer:
         # Generate Summary Sheet
-        generate_summary(writer, project, current_row, df, start_time)
+        generate_summary(writer, project, start_time)
         
         workbook = writer.book
         header_format = workbook.add_format({
@@ -273,26 +254,57 @@ def generate_report(project, work_item_details_list, work_item_type_counts, curr
 
 
 def main():
-    excel_file_path = 'workitem_discovery_input_form.xlsx'
-    df = pd.read_excel(excel_file_path)
+    input_file = 'workitem_discovery_input_form.xlsx'
+    run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+    output_directory = os.path.join("Work Items", run_id)
 
-    start_time = datetime.now()
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
 
+    df = pd.read_excel(input_file)
+    # Read the values from the Excel file and strip any leading/trailing spaces
+    df['Server URL'] = df['Server URL'].str.strip().fillna('')
+    df['Project Name'] = df['Project Name'].str.strip().fillna('')
+    df['PAT'] = df['PAT'].str.strip().fillna('')
+
+    # Form the input data in below format
+    # Sample: { "server_url": { "pat": "123test_token", "projects": ['dev_server', 'qa_server'] }
+    input_data = {}
     for index, row in df.iterrows():
-        if pd.isna(row['Server URL']) or pd.isna(row['Project Name']) or pd.isna(row['PAT']):
-            logging.warning(f"Skipping row {index + 1} due to missing data.")
+        if pd.isna(row['Server URL']) or pd.isna(row['PAT']):
+            logging.warning(f"Skipping row {index + 1} due to missing data. ServerURL and PAT values are mandatory.")
             continue
-        
-        logging.info(f"Processing project {row['Project Name']}")
-        work_item_details_list, work_item_type_counts = process_row(row)
-        if work_item_details_list and work_item_type_counts:
-            generate_report(row['Project Name'].strip(), work_item_details_list, work_item_type_counts, row, df, start_time)
+        server_url = row['Server URL']
+        proj_name = row['Project Name']
+        ptoken = row['PAT']
+        proj_names = []
+        if not proj_name:
+            proj_names = get_project_names(devops_server_url=server_url, pat=ptoken)
+        if server_url not in input_data:
+            input_data[server_url] = {}
+            input_data[server_url]["pat"] = ptoken
+            input_data[server_url]["projects"] = [proj_name] if proj_name else proj_names
         else:
-            logging.error(f"No work items found for project {row['Project Name']}")
+            projects = input_data[server_url]["projects"]
+            add_project_if_not_exists(projects, [proj_name] if proj_name else proj_names)
+            input_data[server_url]["projects"] = projects
 
-        # Clear the metadata
-        del work_item_details_list
-        del work_item_type_counts
+    for server_url in input_data:
+        pat = input_data[server_url]["pat"]
+        projects = input_data[server_url]["projects"]
+        for project in projects:
+            start_time = datetime.now()
+            logging.info(f"Processing project {project}")
+            work_item_details_list, work_item_type_counts = process_row(server_url, project, pat)
+            if work_item_details_list and work_item_type_counts:
+                generate_report(output_directory, project.strip(), work_item_details_list, work_item_type_counts, start_time)
+            else:
+                logging.error(f"No work items found for project {project}")
+
+            # Clear the metadata
+            del work_item_details_list
+            del work_item_type_counts
 
 
 if __name__ == '__main__':
