@@ -7,7 +7,7 @@ import html
 import logging
 from datetime import datetime
 import getpass
-from utils.common import get_project_names, add_project_if_not_exists
+from utils.common import get_project_names, add_if_not_exists
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -287,7 +287,7 @@ def main():
             input_data[server_url]["projects"] = [proj_name] if proj_name else proj_names
         else:
             projects = input_data[server_url]["projects"]
-            add_project_if_not_exists(projects, [proj_name] if proj_name else proj_names)
+            add_if_not_exists(projects, [proj_name] if proj_name else proj_names)
             input_data[server_url]["projects"] = projects
 
     for server_url in input_data:
