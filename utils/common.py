@@ -44,7 +44,7 @@ def get_repo_names_by_project(devops_server_url, pat, project_name):
     return repo_names
 
 
-def add_project_if_not_exists(lst, values):
+def add_if_not_exists(lst, values):
     for value in values:
         if value.lower() not in map(str.lower, lst):
             lst.append(value)

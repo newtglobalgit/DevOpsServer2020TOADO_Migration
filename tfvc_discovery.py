@@ -4,7 +4,7 @@ from requests.auth import HTTPBasicAuth
 import pandas as pd
 from datetime import datetime
 import getpass
-from utils.common import get_project_names, add_project_if_not_exists
+from utils.common import get_project_names, add_if_not_exists
 
 
 # Function to sanitize Excel sheet names
@@ -422,7 +422,7 @@ def main():
             input_data[surl]["projects"] = [proj_name] if proj_name else proj_names
         else:
             projects = input_data[surl]["projects"]
-            add_project_if_not_exists(projects, [proj_name] if proj_name else proj_names)
+            add_if_not_exists(projects, [proj_name] if proj_name else proj_names)
             input_data[surl]["projects"] = projects
 
     for server_url in input_data:
