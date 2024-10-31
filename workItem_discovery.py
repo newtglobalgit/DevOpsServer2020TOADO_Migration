@@ -10,11 +10,13 @@ import getpass
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+
 def sanitize_sheet_name(name):
     invalid_chars = ['\\', '/', '*', '?', ':', '[', ']']
     for char in invalid_chars:
         name = name.replace(char, '')
     return name[:31]
+
 
 def authenticate_and_get_projects(base_url, pat, api_version):
     auth = HTTPBasicAuth('', pat)
@@ -25,6 +27,7 @@ def authenticate_and_get_projects(base_url, pat, api_version):
     except requests.exceptions.RequestException as e:
         logging.error(f'Failed to authenticate: {e}')
         return None
+
 
 def get_work_items_query(base_url, project, pat, api_version):
     auth = HTTPBasicAuth('', pat)
@@ -38,6 +41,7 @@ def get_work_items_query(base_url, project, pat, api_version):
         logging.error(f'Failed to retrieve work items: {e}')
         return None
 
+
 def get_work_item_details(base_url, project, work_item_ids, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     work_item_url = f'{base_url}/{project}/_apis/wit/workitems?ids={",".join(map(str, work_item_ids))}&$expand=relations&api-version={api_version}'
@@ -49,6 +53,7 @@ def get_work_item_details(base_url, project, work_item_ids, pat, api_version):
     except requests.exceptions.RequestException as e:
         logging.error(f'Failed to retrieve work item details: {e}')
         return None
+
 
 def get_work_item_comments(base_url, project, work_item_id, pat, api_version):
     auth = HTTPBasicAuth('', pat)
@@ -62,11 +67,13 @@ def get_work_item_comments(base_url, project, work_item_id, pat, api_version):
         logging.error(f'Failed to retrieve comments for work item ID {work_item_id}: {e}')
         return None
 
+
 def clean_html(raw_html):
     raw_html = html.unescape(raw_html)
     clean_text = re.sub(r'<a [^>]*>(.*?)</a>', r'\1', raw_html)
     clean_text = re.sub('<[^<]+?>', '', clean_text)
     return clean_text
+
 
 def extract_work_item_info(collection_name, project_name, work_item, comments):
     fields = work_item['fields']
@@ -101,6 +108,7 @@ def extract_work_item_info(collection_name, project_name, work_item, comments):
         'Tags': tags
     }
 
+
 def process_row(row, api_version='6.0'):
     base_url = row['Server URL'].strip()
     project = row['Project Name'].strip()
@@ -110,7 +118,7 @@ def process_row(row, api_version='6.0'):
     collection_name = base_url_parts[3]  # Assuming collection name is the 4th part of the URL
     project_name = project
 
-    repository_name = row.get('Repository Name')
+    """repository_name = row.get('Repository Name')
     branch_name = row.get('Branch Name')
 
     if isinstance(repository_name, str):
@@ -121,14 +129,14 @@ def process_row(row, api_version='6.0'):
     if isinstance(branch_name, str):
         branch_name = branch_name.strip()
     else:
-        branch_name = None
+        branch_name = None"""
 
     logging.info(f'Read values from Excel:')
     logging.info(f'Server URL: {base_url}')
     logging.info(f'Project Name: {project}')
     logging.info(f'Collection Name: {collection_name}')
-    logging.info(f'Repository Name: {repository_name}')
-    logging.info(f'Branch Name: {branch_name}')
+    """logging.info(f'Repository Name: {repository_name}')
+    logging.info(f'Branch Name: {branch_name}')"""
 
     work_item_details_list = []
     work_item_type_counts = {}
@@ -164,6 +172,7 @@ def process_row(row, api_version='6.0'):
     else:
         logging.error("Failed to retrieve work items query")
         return None, None
+
 
 def generate_summary(writer, project_name, current_row, df, start_time):
     workbook = writer.book
@@ -205,11 +214,13 @@ def generate_summary(writer, project_name, current_row, df, start_time):
 
     worksheet_summary.hide_gridlines(2)  # Hide gridlines
 
+
 def set_column_widths(worksheet, df):
     for idx, col in enumerate(df.columns):
         series = df[col]
         max_len = min(max(series.astype(str).map(len).max(), len(str(series.name))) + 2, 30)
         worksheet.set_column(idx, idx, max_len)
+
 
 def generate_report(project, work_item_details_list, work_item_type_counts, current_row, df, start_time):
     report_df = pd.DataFrame(work_item_details_list)
@@ -260,8 +271,9 @@ def generate_report(project, work_item_details_list, work_item_type_counts, curr
         
     logging.info(f'Report generated for {project}: {report_filename}')
 
+
 def main():
-    excel_file_path = 'discovery_input_form.xlsx'
+    excel_file_path = 'workitem_discovery_input_form.xlsx'
     df = pd.read_excel(excel_file_path)
 
     start_time = datetime.now()
@@ -281,6 +293,7 @@ def main():
         # Clear the metadata
         del work_item_details_list
         del work_item_type_counts
+
 
 if __name__ == '__main__':
     main()
