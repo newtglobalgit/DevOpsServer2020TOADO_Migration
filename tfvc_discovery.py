@@ -4,8 +4,24 @@ from requests.auth import HTTPBasicAuth
 import pandas as pd
 from datetime import datetime
 import getpass
+import time
+from requests.exceptions import ConnectTimeout
 from utils.common import get_project_names, add_if_not_exists
 
+
+def make_request_with_retries(url, auth, max_retries=3, timeout=30):
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, auth=auth, timeout=timeout)
+            if response.status_code == 200:
+                return response
+            else:
+                print(f"Attempt {attempt + 1} failed with status code: {response.status_code}")
+        except ConnectTimeout:
+            print(f"Attempt {attempt + 1} timed out. Retrying...")
+            time.sleep(2 ** attempt)  # Exponential backoff
+    print(f"Failed to connect after {max_retries} attempts.")
+    return None  # All attempts failed
 
 # Function to sanitize Excel sheet names
 def sanitize_sheet_name(name):
@@ -28,8 +44,8 @@ def extract_organization_name(server_url):
 # Function to get shelvesets details
 def get_shelvesets_details(server_url, pat):
     url = f"{server_url}/_apis/tfvc/shelvesets?api-version=6.0"
-    response = requests.get(url, auth=HTTPBasicAuth('', pat))
-    if response.status_code == 200:
+    response = make_request_with_retries(url, auth=HTTPBasicAuth('', pat))
+    if response and response.status_code == 200:
         return response.json().get('value', [])
     else:
         print(f"Failed to retrieve shelvesets: {response.status_code} - {response.text}")
@@ -39,8 +55,8 @@ def get_shelvesets_details(server_url, pat):
 # Function to get changeset details
 def get_changeset_details(server_url, project_name, changeset_id, pat):
     url = f"{server_url}/{project_name}/_apis/tfvc/changesets/{changeset_id}?api-version=6.0"
-    response = requests.get(url, auth=HTTPBasicAuth('', pat))
-    if response.status_code == 200:
+    response = make_request_with_retries(url, auth=HTTPBasicAuth('', pat))
+    if response and response.status_code == 200:
         return response.json()
     else:
         print(f"Failed to retrieve changeset {changeset_id} details: {response.status_code} - {response.text}")
@@ -50,8 +66,8 @@ def get_changeset_details(server_url, project_name, changeset_id, pat):
 # Function to get changeset changes
 def get_changeset_changes(server_url, changeset_id, pat):
     url = f"{server_url}/_apis/tfvc/changesets/{changeset_id}/changes?api-version=6.0"
-    response = requests.get(url, auth=HTTPBasicAuth('', pat))
-    if response.status_code == 200:
+    response = make_request_with_retries(url, auth=HTTPBasicAuth('', pat))
+    if response and response.status_code == 200:
         return response.json()
     else:
         print(f"Failed to retrieve changes for changeset {changeset_id}: {response.status_code} - {response.text}")
@@ -70,8 +86,8 @@ def determine_file_type(item):
 # Function to get file count for a TFVC branch
 def get_tfvc_branch_file_count(devops_server_url, project_name, branch_path, pat, exclude_paths=[]):
     items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={branch_path}&recursionLevel=full&api-version=6.0'
-    items_response = requests.get(items_api_url, auth=HTTPBasicAuth('', pat))
-    if items_response.status_code == 200:
+    items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
+    if items_response and items_response.status_code == 200:
         items = items_response.json()['value']
         if exclude_paths:
             items = [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in exclude_paths)]
@@ -83,8 +99,8 @@ def get_tfvc_branch_file_count(devops_server_url, project_name, branch_path, pat
 
 def get_branch_file_details(devops_server_url, project_name, branch_path, pat, excluded_paths=[]):
     items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={branch_path}&recursionLevel=full&api-version=6.0'
-    items_response = requests.get(items_api_url, auth=HTTPBasicAuth('', pat))
-    if items_response.status_code == 200:
+    items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
+    if items_response and items_response.status_code == 200:
         items = items_response.json()['value']
         return [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in excluded_paths)]
     else:
@@ -94,8 +110,8 @@ def get_branch_file_details(devops_server_url, project_name, branch_path, pat, e
 
 def get_latest_changeset_for_item(server_url, project_name, item_path, pat):
     changesets_url = f"{server_url}/{project_name}/_apis/tfvc/changesets?itemPath={item_path}&api-version=6.0"
-    response = requests.get(changesets_url, auth=HTTPBasicAuth('', pat))
-    if response.status_code == 200:
+    response = make_request_with_retries(changesets_url, auth=HTTPBasicAuth('', pat))
+    if response and response.status_code == 200:
         changesets = response.json().get('value', [])
         if changesets:
             latest_changeset = changesets[0]
@@ -137,7 +153,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
     }
 
     tfvc_check_api_url = f'{server_url}/{project_name}/_apis/tfvc/branches?api-version=6.0'
-    tfvc_response = requests.get(tfvc_check_api_url, auth=HTTPBasicAuth('', pat))
+    tfvc_response = make_request_with_retries(tfvc_check_api_url, auth=HTTPBasicAuth('', pat))
     if tfvc_response.status_code == 200:
         try:
             tfvc_branches = tfvc_response.json()['value']
@@ -177,8 +193,8 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
         print(f"  Failed to retrieve TFVC branches for project '{project_name}'. Status code: {tfvc_response.status_code}")
 
     # Fetch all changesets
-    changeset_response = requests.get(tfvc_changesets_url, params=params, auth=HTTPBasicAuth('', pat))
-    if changeset_response.status_code == 200:
+    changeset_response = make_request_with_retries(tfvc_changesets_url, auth=HTTPBasicAuth('', pat))
+    if changeset_response and changeset_response.status_code == 200:
         changesets = changeset_response.json()['value']
         for changeset in changesets:
             all_changesets_data.append({

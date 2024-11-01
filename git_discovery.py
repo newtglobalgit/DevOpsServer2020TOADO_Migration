@@ -17,19 +17,32 @@ def read_config_from_excel(file_path):
         print(df)
     except ValueError as e:
         print(f"Error: {e}")
-        return None, None, None, None, None, None
+        return []
+        
+    configurations = []  # List to hold all configurations
 
-    server_url = df.at[0, 'Server URL'].strip()
-    project = df.at[0, 'Project Name'].strip()
-    pat = df.at[0, 'PAT'].strip()
-    repository_name = df.at[0, 'Repository Name'].strip()
-    branch_name = df.at[0, 'Branch Name'].strip() if not pd.isna(df.at[0, 'Branch Name']) else None
+    # Loop through each row in the DataFrame
+    for index, row in df.iterrows():
+        server_url = row['Server URL'].strip() if 'Server URL' in df.columns else None
+        pat = row['PAT'].strip() if 'PAT' in df.columns else None
 
-    if not server_url or not project or not pat or not repository_name:
-        print("Please ensure the Excel file contains the required data.")
-        return None, None, None, None, None, None
+        # Optional fields
+        project = df.at[0, 'Project Name'].strip() if 'Project Name' in df.columns and pd.notna(df.at[0, 'Project Name']) else None
+        repository_name = df.at[0, 'Repository Name'].strip() if 'Repository Name' in df.columns and pd.notna(df.at[0, 'Repository Name']) else None
+        branch_name = df.at[0, 'Branch Name'].strip() if 'Branch Name' in df.columns and pd.notna(df.at[0, 'Branch Name']) else None
+        
+        
+        # Append configuration dictionary to the list
+        configurations.append({
+            'server_url': server_url,
+            'project_name': project,
+            'pat': pat,
+            'repository_name': repository_name,
+            'branch_name': branch_name
+        })
 
-    return server_url, project, pat, repository_name, branch_name, df
+    # Return the list of configurations
+    return configurations
 
 def authenticate_and_get_projects(server_url, pat, api_version):
     auth = HTTPBasicAuth('', pat)
@@ -306,138 +319,155 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
     workbook.save(output_path)
 
 # Path to the Excel file
-file_path = r'discovery_input_form.xlsx'
+file_path = r'git_discovery_input_form.xlsx'
 output_dir = 'Git'
+
 
 # Read configuration from Excel
 server_url, project, pat, repository_name, branch_name, config_df = read_config_from_excel(file_path)
-if not server_url or not project or not pat or not repository_name:
+if not server_url or not pat: 
     print("Please ensure the Excel file is correctly formatted and contains the required data.")
 else:
     api_version = '6.0'  # Change this if your server uses a different version
     server_url = server_url.rstrip('/')
-    project = project.strip()
-
-    # Print the server URL and project for debugging
-    print(f"Server URL: {server_url}")
-    print(f"Project: {project}")
-
-    # Create the output file name with the desired format
-    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    output_filename = f"{repository_name}_{project}_{timestamp}_git_discovery_report.xlsx"
-    output_path = os.path.join(output_dir, output_filename)
 
     # Create output directory if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Authenticate and get projects (optional step to confirm login)
+    
+    # Retrieve all projects if Project Name is not specified
     projects = authenticate_and_get_projects(server_url, pat, api_version)
-    if projects:
-        # Retrieve repository info
-        repositories = get_repositories(server_url, project, pat, api_version)
+    if not projects:
+        print("No projects found or authentication failed.")
+        exit()
+
+    # If `project` is specified, only process that project; otherwise, process all projects
+    project_list = [project] if project else [proj['name'] for proj in projects['value']]
+    
+    for proj_name in project_list:
+        print(f"\nProcessing Project: {proj_name}")
+
+        # Create a folder for each project inside the 'Git' folder
+        collection_name = server_url.split('/')[-1]
+        project_folder = os.path.join(output_dir, f"{collection_name}_{proj_name}")
+        os.makedirs(project_folder, exist_ok=True)
+
+        # Retrieve repositories in the current project
+        repositories = get_repositories(server_url, proj_name, pat, api_version)
         if repositories:
             for repo in repositories['value']:
-                if repo['name'] == repository_name:
-                    repo_id = repo['id']
-                    
-                    # Get branches
-                    branches = get_branches(server_url, project, repo_id, pat, api_version)
-                    if branches:
-                        branch_names = [branch['name'].replace('refs/heads/', '') for branch in branches] if branch_name is None else [branch_name]
-                        
-                        data_source_code = []
-                        data_commits = []
-                        data_all_commits = []
-                        data_tags = []
+                # If Repository Name is specified, only process that repository
+                if repository_name and repo['name'] != repository_name:
+                    continue
+                repo_id = repo['id']
+                repo_name = repo['name']
 
-                        for branch in branch_names:
-                            commit_id, comment, author, last_modified = get_latest_commit_info(server_url, project, repo_id, branch, pat, api_version)
-                            if commit_id:
-                                # Get all commits for the branch
-                                commits = get_all_commits(server_url, project, repo_id, branch, pat, api_version)
-                                for commit in commits:
-                                    commit_info = {
-                                        'Collection Name': server_url.split('/')[-1],
-                                        'Project Name': project,
-                                        'Repository Name': repository_name,
-                                        'Branch Name': branch,
-                                        'Commit ID': commit['commitId'],
-                                        'Commit Message': commit['comment'],
-                                        'Author': commit['author']['name'],
-                                        'Commit Date': commit['author']['date']
-                                    }
-                                    data_commits.append(commit_info)
-                                
-                                files = get_files_in_branch(server_url, project, repo_id, branch, pat, api_version)
-                                if files:
-                                    for file in files:
-                                        print(f"Processing file: {file}")  # Debugging statement
-                                        is_folder = file.get('isFolder', file['gitObjectType'] == 'tree')
-                                        if not is_folder:
-                                            sha1 = file['objectId']
-                                            size = get_file_size(server_url, project, repo_id, sha1, pat, api_version)
-                                            try:
-                                                commit_count = get_commit_count(server_url, project, repo_id, file['path'], pat, api_version)
-                                            except Exception as e:
-                                                print(f'Failed to retrieve commit count for {file["path"]}: {e}')
-                                                commit_count = 0
-                                        else:
-                                            size = 0
-                                            commit_count = 0
-                                        file_info = {
-                                            'Collection Name': server_url.split('/')[-1],
-                                            'Project Name': project,
-                                            'Repository Name': repository_name,
-                                            'Branch Name': branch,
-                                            'File Name': file['path'].split('/')[-1],
-                                            'File Type': 'Folder' if is_folder else 'File',
-                                            'Folder Level': file['path'].count('/') - 1,
-                                            'Path': file['path'],  # Relative path from the repository root
-                                            'Size (Bytes)': int(size),
-                                            'Last Modified Time': last_modified,
-                                            'Author': author,
-                                            'Comments': comment,
-                                            'Commit ID': commit_id,
-                                            'Commit Count': commit_count
-                                        }
-                                        data_source_code.append(file_info)
-                    
-                    # Get all commits in the repository
-                    all_commits = get_all_repo_commits(server_url, project, repo_id, pat, api_version)
-                    tags = get_tags(server_url, project, repo_id, pat, api_version)
-                    
-                    for tag in tags:
-                        tag_id = tag['objectId']
-                        tag_details = get_tag_details(server_url, project, repo_id, tag_id, pat, api_version)
-                        if tag_details:
-                            commit_details = get_commit_details(server_url, project, repo_id, tag_details['taggedObject']['objectId'], pat, api_version)
-                            if commit_details:
-                                tag_date, tag_time = tag_details['taggedBy']['date'].split('T')
-                                tag_time = tag_time.split('Z')[0]
-                                tag_info = {
-                                    'Tag Name': tag['name'].replace('refs/tags/', ''),
-                                    'Tag ID': tag['objectId'],
-                                    'Tag Message': tag_details['message'],
-                                    'Commit ID': tag_details['taggedObject']['objectId'],
-                                    'Commit Message': commit_details['comment'],
-                                    'Author': tag_details['taggedBy']['name'],
-                                    'Date & Time': f"{tag_date} {tag_time}"
+                # Define output file path for the current repository report
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                output_filename = f"{repo_name}_{proj_name}_{timestamp}_git_discovery_report.xlsx"
+                output_path = os.path.join(project_folder, output_filename)
+
+                # Initialize data containers
+                data_source_code = []
+                data_commits = []
+                data_all_commits = []
+                data_tags = []
+
+                # Get branches for the current repository
+                branches = get_branches(server_url, proj_name, repo_id, pat, api_version)
+                branch_names = [branch['name'].replace('refs/heads/', '') for branch in branches] if branch_name is None else [branch_name]
+                
+                for branch in branch_names:
+                    commit_id, comment, author, last_modified = get_latest_commit_info(server_url, proj_name, repo_id, branch, pat, api_version)
+                    if commit_id:
+                        # Get all commits for the branch
+                        commits = get_all_commits(server_url, proj_name, repo_id, branch, pat, api_version)
+                        for commit in commits:
+                            commit_info = {
+                                'Collection Name': collection_name,
+                                'Project Name': proj_name,
+                                'Repository Name': repo_name,
+                                'Branch Name': branch,
+                                'Commit ID': commit['commitId'],
+                                'Commit Message': commit['comment'],
+                                'Author': commit['author']['name'],
+                                'Commit Date': commit['author']['date']
+                            }
+                            data_commits.append(commit_info)
+
+                        # Get files in the branch
+                        files = get_files_in_branch(server_url, proj_name, repo_id, branch, pat, api_version)
+                        if files:
+                            for file in files:
+                                print(f"Processing file: {file}")  # Debugging statement
+                                is_folder = file.get('isFolder', file['gitObjectType'] == 'tree')
+                                if not is_folder:
+                                    sha1 = file['objectId']
+                                    size = get_file_size(server_url, proj_name, repo_id, sha1, pat, api_version)
+                                    try:
+                                        commit_count = get_commit_count(server_url, proj_name, repo_id, file['path'], pat, api_version)
+                                    except Exception as e:
+                                        print(f'Failed to retrieve commit count for {file["path"]}: {e}')
+                                        commit_count = 0
+                                else:
+                                    size = 0
+                                    commit_count = 0
+                                file_info = {
+                                    'Collection Name': collection_name,
+                                    'Project Name': proj_name,
+                                    'Repository Name': repo_name,
+                                    'Branch Name': branch,
+                                    'File Name': file['path'].split('/')[-1],
+                                    'File Type': 'Folder' if is_folder else 'File',
+                                    'Folder Level': file['path'].count('/') - 1,
+                                    'Path': file['path'],
+                                    'Size (Bytes)': int(size),
+                                    'Last Modified Time': last_modified,
+                                    'Author': author,
+                                    'Comments': comment,
+                                    'Commit ID': commit_id,
+                                    'Commit Count': commit_count
                                 }
-                                data_tags.append(tag_info)
-                    
-                    commit_tag_map = map_commit_tags(tags)
-                    
-                    for commit in all_commits:
-                        tag_name = commit_tag_map.get(commit['commitId'], 'not tagged')
-                        all_commit_info = {
-                            'Author': commit['author']['name'],
-                            'Commit Message': commit['comment'],
-                            'Commit ID': commit['commitId'],
-                            'Commit Date': commit['author']['date'],
-                            'Tag Name': tag_name  # Include the Tag Name column
-                        }
-                        data_all_commits.append(all_commit_info)
+                                data_source_code.append(file_info)
+                
+                # Get all commits and tags in the repository
+                all_commits = get_all_repo_commits(server_url, proj_name, repo_id, pat, api_version)
+                tags = get_tags(server_url, proj_name, repo_id, pat, api_version)
 
-            generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project, config_df)
-            print(f'Report generated: {output_path}')
+                for tag in tags:
+                    tag_id = tag['objectId']
+                    tag_details = get_tag_details(server_url, proj_name, repo_id, tag_id, pat, api_version)
+                    if tag_details:
+                        commit_details = get_commit_details(server_url, proj_name, repo_id, tag_details['taggedObject']['objectId'], pat, api_version)
+                        if commit_details:
+                            tag_date, tag_time = tag_details['taggedBy']['date'].split('T')
+                            tag_time = tag_time.split('Z')[0]
+                            tag_info = {
+                                'Tag Name': tag['name'].replace('refs/tags/', ''),
+                                'Tag ID': tag['objectId'],
+                                'Tag Message': tag_details['message'],
+                                'Commit ID': tag_details['taggedObject']['objectId'],
+                                'Commit Message': commit_details['comment'],
+                                'Author': tag_details['taggedBy']['name'],
+                                'Date & Time': f"{tag_date} {tag_time}"
+                            }
+                            data_tags.append(tag_info)
+
+                commit_tag_map = map_commit_tags(tags)
+                for commit in all_commits:
+                    tag_name = commit_tag_map.get(commit['commitId'], 'not tagged')
+                    all_commit_info = {
+                        'Author': commit['author']['name'],
+                        'Commit Message': commit['comment'],
+                        'Commit ID': commit['commitId'],
+                        'Commit Date': commit['author']['date'],
+                        'Tag Name': tag_name
+                    }
+                    data_all_commits.append(all_commit_info)
+
+                # Generate report for this repository
+                generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, proj_name, config_df)
+                print(f'Report generated: {output_path}')
+
+
