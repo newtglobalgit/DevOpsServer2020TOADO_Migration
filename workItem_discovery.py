@@ -7,6 +7,8 @@ import html
 import logging
 from datetime import datetime
 import getpass
+from urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 from utils.common import get_project_names, add_if_not_exists
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -19,54 +21,49 @@ def sanitize_sheet_name(name):
     return name[:31]
 
 
-def authenticate_and_get_projects(base_url, pat, api_version):
+def make_api_request(url, pat, method='GET', data=None):
+    """Reusable API request function with retry logic."""
     auth = HTTPBasicAuth('', pat)
+    session = requests.Session()
+    retries = Retry(total=3, backoff_factor=0.3, status_forcelist=[429, 500, 502, 503, 504])
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+
     try:
-        response = requests.get(f'{base_url}/_apis/projects?api-version={api_version}', auth=auth)
+        if method == 'GET':
+            response = session.get(url, auth=auth)
+        elif method == 'POST':
+            response = session.post(url, json=data, auth=auth)
+        else:
+            raise ValueError(f"Unsupported method: {method}")
+        
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
-        logging.error(f'Failed to authenticate: {e}')
+        logging.error(f'Failed API request to {url}: {e}')
         return None
+
+
+def authenticate_and_get_projects(base_url, pat, api_version):
+    projects_url = f'{base_url}/_apis/projects?api-version={api_version}'
+    return make_api_request(projects_url, pat)
 
 
 def get_work_items_query(base_url, project, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
     query_url = f'{base_url}/{project}/_apis/wit/wiql?api-version={api_version}'
     query = {"query": "Select [System.Id] From WorkItems Where [System.TeamProject] = @project"}
-    try:
-        response = requests.post(query_url, json=query, auth=auth)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        logging.error(f'Failed to retrieve work items: {e}')
-        return None
+    return make_api_request(query_url, pat, method='POST', data=query)
 
 
 def get_work_item_details(base_url, project, work_item_ids, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
     work_item_url = f'{base_url}/{project}/_apis/wit/workitems?ids={",".join(map(str, work_item_ids))}&$expand=relations&api-version={api_version}'
     logging.info(f"Fetching work item details from URL: {work_item_url}")
-    try:
-        response = requests.get(work_item_url, auth=auth)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        logging.error(f'Failed to retrieve work item details: {e}')
-        return None
+    return make_api_request(work_item_url, pat)
 
 
 def get_work_item_comments(base_url, project, work_item_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
     comments_url = f'{base_url}/{project}/_apis/wit/workitems/{work_item_id}/comments?api-version=6.0-preview.3'
     logging.info(f"Fetching comments from URL: {comments_url}")
-    try:
-        response = requests.get(comments_url, auth=auth)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        logging.error(f'Failed to retrieve comments for work item ID {work_item_id}: {e}')
-        return None
+    return make_api_request(comments_url, pat)
 
 
 def clean_html(raw_html):
@@ -105,7 +102,7 @@ def extract_work_item_info(collection_name, project_name, work_item, comments):
         'Comment': comments_text,
         'Created Date': fields.get('System.CreatedDate', ''),
         'State': state,
-        'Links': links_count,  # Correctly count the links
+        'Links': links_count,
         'Tags': tags
     }
 
@@ -150,7 +147,7 @@ def process_row(devops_server_url, project, token, api_version='6.0'):
                 logging.info(f'Comment: {info["Comment"]}')
                 logging.info(f'Created Date: {info["Created Date"]}')
                 logging.info(f'State: {info["State"]}')
-                logging.info(f'Links: {info["Links"]}')  # Updated log to show correct count of links
+                logging.info(f'Links: {info["Links"]}')
                 logging.info(f'Tags: {info["Tags"]}')
                 logging.info('---')
 
@@ -192,12 +189,12 @@ def generate_summary(writer, project_name, start_time):
         worksheet_summary.write(row, 1, value, regular_format)
         row += 1
 
-    worksheet_summary.set_column(0, 0, 26.71)  # Adjust column A width
-    worksheet_summary.set_column(1, 1, 81.87)  # Adjust column B width
+    worksheet_summary.set_column(0, 0, 26.71)
+    worksheet_summary.set_column(1, 1, 81.87)
     for i in range(len(summary_data)):
-        worksheet_summary.set_row(i, 30)  # Adjust row height
+        worksheet_summary.set_row(i, 30)
 
-    worksheet_summary.hide_gridlines(2)  # Hide gridlines
+    worksheet_summary.hide_gridlines(2)
 
 
 def set_column_widths(worksheet, df):
@@ -205,7 +202,6 @@ def set_column_widths(worksheet, df):
         series = df[col]
         max_len = min(max(series.astype(str).map(len).max(), len(str(series.name))) + 2, 30)
         worksheet.set_column(idx, idx, max_len)
-
 
 def generate_report(output_dir, project, work_item_details_list, work_item_type_counts, start_time):
     report_df = pd.DataFrame(work_item_details_list)
@@ -243,7 +239,7 @@ def generate_report(output_dir, project, work_item_details_list, work_item_type_
         for row in range(1, len(report_df) + 1):
             for col in range(len(report_df.columns)):
                 cell_value = report_df.iloc[row - 1, col]
-                if col in [report_df.columns.get_loc("Created Date")]:  # Right-align date columns
+                if col == report_df.columns.get_loc("Created Date"):  # Right-align date columns
                     worksheet.write(row, col, cell_value, right_align_format)
                 else:
                     worksheet.write(row, col, cell_value, workbook.add_format({'border': 1}))
@@ -309,3 +305,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
