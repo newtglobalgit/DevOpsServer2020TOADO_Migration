@@ -594,7 +594,7 @@ def main():
                     master_data_tags = master_data_tags + data_tags
                 # Create the output file name with the desired format
                 file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
-                output_filename = f"{proj_name}_{repo_name}git_discovery_report_{file_id}.xlsx"
+                output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
                 output_path = os.path.join(output_directory, output_filename)
                 generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
                                 output_path, proj_name, repo_name, server_url)
