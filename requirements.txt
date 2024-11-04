@@ -10,7 +10,6 @@ et-xmlfile
 greenlet
 h11
 idna
-install
 isodate
 msrest
 numpy
