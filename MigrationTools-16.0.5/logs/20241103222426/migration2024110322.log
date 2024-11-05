@@ -1,0 +1,1892 @@
+[22:24:27 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[22:24:27 INF] [16.0.5] 16.0.5 
+[22:24:27 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[22:24:27 INF] [16.0.5] =============================================================================== 
+[22:24:27 INF] [16.0.5] -------------------------------------- 
+[22:24:27 INF] [16.0.5] Telemetry Note: 
+[22:24:27 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[22:24:27 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[22:24:27 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[22:24:27 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[22:24:27 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[22:24:27 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[22:24:27 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[22:24:27 INF] [16.0.5] -------------------------------------- 
+[22:24:27 INF] [16.0.5] Start Time: "2024-11-03T22:24:27.6708146+05:30" 
+[22:24:27 INF] [16.0.5] Running with settings: {"ConfigFile":"workitem_configuration-upgraded.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[22:24:27 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[22:24:27 INF] [16.0.5] Version (Assembly): 16.0.5 
+[22:24:27 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241103222426 
+[22:24:27 DBG] [16.0.5] DetectOnlineService::IsOnline 
+[22:24:27 DBG] [16.0.5]      IsPackageManagerInstalled: false 
+[22:24:27 DBG] [16.0.5]      IsPackageInstalled: false 
+[22:24:27 DBG] [16.0.5]      IsUpdateAvailable: false 
+[22:24:27 DBG] [16.0.5]      IsNewLocalVersionAvailable: false 
+[22:24:27 DBG] [16.0.5]      IsRunningInDebug: false 
+[22:24:27 INF] [16.0.5] Verion Info: 
+[22:24:27 INF] [16.0.5]      Running: 16.0.5.0 
+[22:24:27 INF] [16.0.5]      Installed: 0.0.0 
+[22:24:27 INF] [16.0.5]      Available: 0.0.0 
+[22:24:27 WRN] [16.0.5] Windows Client: The Windows Package Manager is not installed, we use it to determine if you have the latest version, and to make sure that this application is up to date. You can download and install it from https://aka.ms/getwinget. After which you can call `winget install nkdAgility.AzureDevOpsMigrationTools` from the Windows Terminal to get a manged version of this program. 
+[22:24:27 WRN] [16.0.5] Windows Server: If you are running on Windows Server you can use the experimental version of Winget, or you can still use Chocolatey to manage the install. Install chocolatey from https://chocolatey.org/install and then use `choco install vsts-sync-migrator` to install, and `choco upgrade vsts-sync-migrator` to upgrade to newer versions. 
+[22:24:27 DBG] [16.0.5] =================================== 
+[22:24:27 DBG] [16.0.5] Configuring 'MigrationTools:Processors:0:Enrichers' 
+[22:24:27 DBG] [16.0.5] =================================== 
+[22:24:27 INF] [16.0.5] Creating Migration Engine b4a908fb-56a4-49df-a368-a6eb8e62f6a0 
+[22:24:27 INF] [16.0.5] ProcessorContainer: Of 1 configured Processors only 1 are enabled 
+[22:24:27 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[22:24:27 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[22:24:27 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[22:24:27 DBG] [16.0.5] =================================== 
+[22:24:27 DBG] [16.0.5] Configuring 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[22:24:27 DBG] [16.0.5] Configuring '0' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[22:24:27 DBG] [16.0.5] Configuring '1' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[22:24:27 DBG] [16.0.5] =================================== 
+[22:24:27 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for SomeWorkItemType 
+[22:24:27 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for SomeWorkItemType 
+[22:24:27 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[22:24:27 INF] [16.0.5]                               Max Logfile: Verbose.  
+[22:24:27 INF] [16.0.5]                               Max Console: Debug.  
+[22:24:27 INF] [16.0.5]                  Max Application Insights: Error.  
+[22:24:27 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[22:24:27 INF] [16.0.5] Beginning run of 1 processors 
+[22:24:27 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[22:24:27 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[22:24:27 DBG] [16.0.5] WorkItemMigrationContext::InternalExecute  
+[22:24:28 INF] [16.0.5] Migrating all Nodes before the Processor run. 
+[22:24:28 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[22:24:28 INF] [16.0.5] Connecting with AccessToken  
+[22:24:28 DBG] [16.0.5] MigrationClient: Connecting to "https://devopspoc/TestCollection"  
+[22:24:29 INF] [16.0.5] Access granted to "https://devopspoc/TestCollection" for lexcon (devopsPOC\lexcon) 
+[22:24:30 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[22:24:30 INF] [16.0.5] Connecting with AccessToken  
+[22:24:30 DBG] [16.0.5] MigrationClient: Connecting to "https://dev.azure.com/AdoMigrateorg"  
+[22:24:30 INF] [16.0.5] Access granted to "https://dev.azure.com/AdoMigrateorg" for romyngorg (romyngorg@outlook.com) 
+[22:24:30 DBG] [16.0.5] NodeStructureEnricher.MigrateAllNodeStructures(@MigrationTools.Tools.NodeOptions, @MigrationTools.Tools.NodeOptions) 
+[22:24:30 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Area, Area) 
+[22:24:30 DBG] [16.0.5] Source Node Path StartsWith [\devserver\area] 
+[22:24:31 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\nyby-Team, Area) 
+[22:24:31 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:31 DBG] [16.0.5] TfsNodeStructureTool:GetOrCreateNode(\change\Area\nyby-Team, null, null) 
+[22:24:31 INF] [16.0.5]  Processing Node: \change\Area\nyby-Team, start date: null, finish date: null 
+[22:24:31 DBG] [16.0.5]   Node vstfs:///Classification/Node/d4190ec5-8961-4311-b7cc-60a321a64f5e has been created 
+[22:24:31 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Iteration, Iteration) 
+[22:24:31 DBG] [16.0.5] Source Node Path StartsWith [\devserver\iteration] 
+[22:24:32 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:24:32 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:32 DBG] [16.0.5] TfsNodeStructureTool:GetOrCreateNode(\change\Iteration\Sprint 1, null, null) 
+[22:24:32 INF] [16.0.5]  Processing Node: \change\Iteration\Sprint 1, start date: null, finish date: null 
+[22:24:32 DBG] [16.0.5]   Node \change\Iteration\Sprint 1 already exists 
+[22:24:32 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://dev.azure.com/AdoMigrateorg", "BypassRules") 
+[22:24:32 INF] [16.0.5] Work Item Store connected to "https://dev.azure.com/AdoMigrateorg" with BypassRules set to true 
+[22:24:33 INF] [16.0.5] ---------------------------------------------- 
+[22:24:33 INF] [16.0.5] Migrating all Teams before the Processor run. 
+[22:24:33 INF] [16.0.5] TfsTeamSettingsProcessor::InternalExecute: Found 3 teams in Source? 
+[22:24:33 DBG] [16.0.5] Found 3 teams in Target? 
+[22:24:33 DBG] [16.0.5] Processing team 'devserver qa team': 
+[22:24:34 DBG] [16.0.5] -> Team 'devserver qa team' created 
+[22:24:34 DBG] [16.0.5] -> Processing team 'devserver qa team' settings: 
+[22:24:35 INF] [16.0.5] -> Settings found for team 'devserver qa team'.. 
+[22:24:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:35 DBG] [16.0.5] targetConfig.TeamSettings.BacklogIterationPath=change 
+[22:24:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:24:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:35 DBG] [16.0.5] targetConfig.TeamSettings.IterationPaths=change\Sprint 1 
+[22:24:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:35 DBG] [16.0.5] targetConfig.TeamSettings.TeamFieldValues={"IncludeChildren":false,"Value":"change","$type":"TeamFieldValue"} 
+[22:24:35 DBG] [16.0.5] -> Team 'devserver qa team' settings... applied 
+[22:24:35 INF] [16.0.5] Migrating team capacities.. 
+[22:24:35 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://devopspoc/TestCollection", "BypassRules") 
+[22:24:36 INF] [16.0.5] Work Item Store connected to "https://devopspoc/TestCollection" with BypassRules set to true 
+[22:24:38 WRN] [16.0.5] [SKIP] Team Member lexcon was not found on target when replacing capacities on iteration change\Sprint 1. 
+[22:24:38 DBG] [16.0.5] Team devserver qa team capacities for iteration change\Sprint 1 migrated. 
+[22:24:38 INF] [16.0.5] Team capacities migration done.. 
+[22:24:38 DBG] [16.0.5] Processing team 'kigdevteam': 
+[22:24:39 DBG] [16.0.5] -> Team 'kigdevteam' created 
+[22:24:39 DBG] [16.0.5] -> Processing team 'kigdevteam' settings: 
+[22:24:39 WRN] [16.0.5] -> Settings for team 'kigdevteam'.. not configured 
+[22:24:39 DBG] [16.0.5] Processing team 'nyby-Team': 
+[22:24:40 DBG] [16.0.5] -> Team 'nyby-Team' created 
+[22:24:40 DBG] [16.0.5] -> Processing team 'nyby-Team' settings: 
+[22:24:40 INF] [16.0.5] -> Settings found for team 'nyby-Team'.. 
+[22:24:40 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:40 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:40 DBG] [16.0.5] targetConfig.TeamSettings.BacklogIterationPath=change 
+[22:24:40 DBG] [16.0.5] targetConfig.TeamSettings.IterationPaths={@IterationPaths} 
+[22:24:40 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\nyby-Team, Area) 
+[22:24:40 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:40 DBG] [16.0.5] targetConfig.TeamSettings.TeamFieldValues={"IncludeChildren":false,"Value":"change\\nyby-Team","$type":"TeamFieldValue"} 
+[22:24:40 DBG] [16.0.5] -> Team 'nyby-Team' settings... applied 
+[22:24:40 INF] [16.0.5] Migrating team capacities.. 
+[22:24:40 INF] [16.0.5] Team capacities migration done.. 
+[22:24:40 DBG] [16.0.5] DONE in 00:00:07.4421542  
+[22:24:40 INF] [16.0.5] Querying items to be migrated: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @TeamProject AND [System.WorkItemType] NOT IN ('Test Suite', 'Test Plan','Shared Steps','Shared Parameter','Feedback Request') ORDER BY [System.ChangedDate] desc ... 
+[22:24:40 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:24:40 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://devopspoc/TestCollection 
+[22:24:40 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = 'devserver' AND [System.WorkItemType] NOT IN ('Test Suite', 'Test Plan','Shared Steps','Shared Parameter','Feedback Request') ORDER BY [System.ChangedDate] desc 
+[22:24:40 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"devserver","ReflectedWorkItemIdField":"Custom.ReflectedWorkItemId"} 
+[22:24:40 DBG] [16.0.5] WorkItemQuery: TeamProject: devserver 
+[22:24:40 DBG] [16.0.5] WorkItemQuery: ReflectedWorkItemIdField: Custom.ReflectedWorkItemId 
+[22:24:40 DBG] [16.0.5] Query sent 
+[22:24:41 INF] [16.0.5] 10 Work items received, verifying 
+[22:24:41 INF] [16.0.5] Loading 10 Work Items 
+[22:24:55 DBG] [16.0.5] 10 Work Items loaded 
+[22:24:55 INF] [16.0.5] Replay all revisions of 10 work items? 
+[22:24:55 INF] [16.0.5] Validating::Check all Target Work Items have the RefectedWorkItemId field 
+[22:24:55 DBG] [16.0.5] ValidatingRequiredField: Issue contains Custom.ReflectedWorkItemId 
+[22:24:55 DBG] [16.0.5] ValidatingRequiredField: Epic contains Custom.ReflectedWorkItemId 
+[22:24:55 DBG] [16.0.5] ValidatingRequiredField: Test Case contains Custom.ReflectedWorkItemId 
+[22:24:55 DBG] [16.0.5] ValidatingRequiredField: Task contains Custom.ReflectedWorkItemId 
+[22:24:55 INF] [16.0.5] Validating::Check that all work item types needed in the Target exist or are mapped 
+[22:24:55 DBG] [16.0.5] Validating::WorkItemTypes::sourceWorkItemTypes: 4 WorkItemTypes in the full source history Issue,Epic,Test Case,Task 
+[22:24:55 DBG] [16.0.5] Validating::WorkItemTypes::targetWorkItemTypes::12 WorkItemTypes in Target process: Issue,Epic,Task,Test Case,Test Plan,Test Suite,Shared Steps,Shared Parameter,Code Review Request,Code Review Response,Feedback Request,Feedback Response 
+[22:24:55 INF] [16.0.5] Validating::Check that all Area & Iteration paths from Source have a valid mapping on Target 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths::AreaNodes::1 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[22:24:55 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:55 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\change\Area 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths::IterationNodes::2 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[22:24:55 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:55 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:PopulateIterationDatesFronSource:\devserver\Iteration 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\change\Iteration 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[22:24:55 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:24:55 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:PopulateIterationDatesFronSource:\devserver\Iteration\Sprint 1 
+[22:24:55 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\change\Iteration\Sprint 1 
+[22:24:55 INF] [16.0.5] Validating::Check that all users in the source exist in the target or are mapped! 
+[22:24:55 DBG] [16.0.5] TfsUserMappingTool::GetUsersInSourceMappedToTargetForWorkItems [workItemUsers|1] 
+[22:24:55 DBG] [16.0.5] TfsUserMappingTool::GetUsersInSourceMappedToTarget 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::GetUsersInSourceMappedToTarget [SourceUsersCount|0] 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::GetUsersListFromServer::[user:upn:Windows Live ID\romys@newtglobalcorp.com] Atempting to load user 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::GetUsersListFromServer::[user:221e7052-4196-456d-a2fa-a567271e2d0b\sureshd@newtglobal2.onmicrosoft.com] Atempting to load user 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::GetUsersListFromServer::[user:upn:Windows Live ID\romynewt87@gmail.com] Atempting to load user 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::GetUsersListFromServer::[user:73b187fe-92dd-47b4-8faa-a2fb268828a6\romys@newtglobalcorp.com] Atempting to load user 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::GetUsersInSourceMappedToTarget [targetUsersCount|4] 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::GetUsersInSourceMappedToTargetForWorkItems [mappedUsers|0] 
+[22:24:56 INF] [16.0.5] Found target project as change 
+[22:24:56 DBG] [16.0.5] ###################################################################################### 
+[22:24:56 DBG] [16.0.5] ProcessWorkItem: 1 
+[22:24:56 DBG] [16.0.5] ###################################################################################### 
+[22:24:56 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:24:56 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:24:56 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/1' 
+[22:24:56 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/1"} 
+[22:24:56 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:24:56 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/1 
+[22:24:56 DBG] [16.0.5] Query sent 
+[22:24:56 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null | Work Item has 6 revisions and revision migration is set to true 
+[22:24:56 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:24:56 INF] [16.0.5] Source: Found 6 revisions to migrate on  Work item:Source 
+[22:24:56 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:25:32.5100000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-16T15:31:22.0600000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T23:32:44.8400000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-05-23T23:33:04.8900000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:4 - Number:5 - ChangedDate:"2024-10-22T20:37:13.5730000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:5 - Number:6 - ChangedDate:"2024-10-22T20:38:07.9600000+05:30" 
+[22:24:56 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:24:56 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:24:56 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 6 revisions 
+[22:24:56 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:24:56 INF] [16.0.5] Source: Found 6 revisions to migrate on  Work item:Source 
+[22:24:56 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:25:32.5100000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-16T15:31:22.0600000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T23:32:44.8400000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-05-23T23:33:04.8900000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:4 - Number:5 - ChangedDate:"2024-10-22T20:37:13.5730000+05:30" 
+[22:24:56 DBG] [16.0.5] RevisionsToMigrate: Index:5 - Number:6 - ChangedDate:"2024-10-22T20:38:07.9600000+05:30" 
+[22:24:56 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:24:56 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:24:56 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-16T15:25:32.5100000+05:30" 
+[22:24:56 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Processing Revision [1] 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:24:56 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:24:56 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:24:56 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:25:32.5100000+05:30" Target:"2024-05-16T15:25:32.5100000+05:30" 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:24:56 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:56 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:24:56 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:56 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:25:32.5100000+05:30" Target:null 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:24:56 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:24:56 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:56 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:56 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:56 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:56 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:24:56 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:24:56 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:24:57 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Saved TargetWorkItem 133. Replayed revision 1 of 6 
+[22:24:57 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Processing Revision [2] 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:25:32.5100000+05:30" Target:"2024-11-03T22:24:57.0570000+05:30" 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:bug check Target:bug check 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:31:22.0600000+05:30" Target:"2024-11-03T22:24:57.0570000+05:30" 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:57 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:24:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:24:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:24:57 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Saved TargetWorkItem 133. Replayed revision 2 of 6 
+[22:24:57 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Processing Revision [3] 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>bug checks and fixes. testing phase 1.0</div> Target: 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:25:32.5100000+05:30" Target:"2024-05-16T15:25:32.5100000+05:30" 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Started Target:Started 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:24:57 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:bug check Target:bug check 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T23:32:44.8400000+05:30" Target:"2024-11-03T22:24:57.4230000+05:30" 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:24:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:57 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:24:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:24:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:24:57 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Saved TargetWorkItem 133. Replayed revision 3 of 6 
+[22:24:58 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Processing Revision [4] 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedDate | Source:"2024-05-23T23:32:44.8400000+05:30" Target:"2024-11-03T22:24:57.7800000+05:30" 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>bug checks and fixes. testing phase 1.0</div> Target:<div>bug checks and fixes. testing phase 1.0</div> 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:25:32.5100000+05:30" Target:"2024-05-16T15:25:32.5100000+05:30" 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Started Target:Started 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Doing Target:Doing 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:bug check Target:bug check 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T23:33:04.8900000+05:30" Target:"2024-11-03T22:24:57.7800000+05:30" 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:58 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:24:58 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Saved TargetWorkItem 133. Replayed revision 4 of 6 
+[22:24:58 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Processing Revision [5] 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedDate | Source:"2024-05-23T23:32:44.8400000+05:30" Target:"2024-05-23T23:32:44.8400000+05:30" 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>bug checks and fixes. testing phase 1.0</div> Target:<div>bug checks and fixes. testing phase 1.0</div> 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:25:32.5100000+05:30" Target:"2024-05-16T15:25:32.5100000+05:30" 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Started Target:Started 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Doing Target:Doing 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:bug check Target:bug check 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-10-22T20:37:13.5730000+05:30" Target:"2024-11-03T22:24:58.1400000+05:30" 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:58 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:24:58 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Saved TargetWorkItem 133. Replayed revision 5 of 6 
+[22:24:58 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Processing Revision [6] 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedDate | Source:"2024-05-23T23:32:44.8400000+05:30" Target:"2024-05-23T23:32:44.8400000+05:30" 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>bug checks and fixes. testing phase 1.0</div> Target:<div>bug checks and fixes. testing phase 1.0</div> 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:25:32.5100000+05:30" Target:"2024-05-16T15:25:32.5100000+05:30" 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Started Target:Started 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:24:58 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Doing Target:Doing 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:bug check Target:bug check 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:24:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-10-22T20:38:07.9600000+05:30" Target:"2024-11-03T22:24:58.4870000+05:30" 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:24:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:24:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:24:58 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:24:58 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null |  Saved TargetWorkItem 133. Replayed revision 6 of 6 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:24:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:24:59 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null | ...Saved as 133 
+[22:24:59 INF] [16.0.5] [               Issue][Complete:     1/10][sid:     1|Rev:  6][tid:  null | Average time of 10.000 per work item and 0 hours 1 minutes 40.000 seconds estimated to completion 
+[22:24:59 DBG] [16.0.5] ###################################################################################### 
+[22:24:59 DBG] [16.0.5] ProcessWorkItem: 8 
+[22:24:59 DBG] [16.0.5] ###################################################################################### 
+[22:24:59 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:24:59 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:24:59 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/8' 
+[22:24:59 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/8"} 
+[22:24:59 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:24:59 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/8 
+[22:24:59 DBG] [16.0.5] Query sent 
+[22:24:59 INF] [16.0.5] 1 Work items received, verifying 
+[22:24:59 INF] [16.0.5] Loading 1 Work Items 
+[22:25:01 DBG] [16.0.5] 1 Work Items loaded 
+[22:25:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[22:25:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[22:25:01 INF] [16.0.5] [                Epic][Complete:     2/10][sid:     8|Rev:  9][tid:  null | Work Item has 9 revisions and revision migration is set to true 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:01 INF] [16.0.5] Source: Found 9 revisions to migrate on  Work item:Source 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:30:36.9600000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T22:37:40.5030000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T22:37:51.4330000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-05-23T22:39:11.8600000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:4 - Number:5 - ChangedDate:"2024-05-24T00:30:51.7630000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:5 - Number:6 - ChangedDate:"2024-05-24T00:31:13.3300000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:6 - Number:7 - ChangedDate:"2024-05-24T00:31:58.5970000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:7 - Number:8 - ChangedDate:"2024-10-22T20:37:20.8500000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:8 - Number:9 - ChangedDate:"2024-10-22T20:38:04.0700000+05:30" 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 INF] [16.0.5] Target: Found 12 revisions to migrate on  Work item:Target 
+[22:25:01 DBG] [16.0.5] Target: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:30:36.9600000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T22:37:40.5030000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T22:37:51.4330000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-05-23T22:39:11.8600000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:4 - Number:5 - ChangedDate:"2024-05-24T00:30:51.7630000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:5 - Number:6 - ChangedDate:"2024-05-24T00:31:13.3300000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:6 - Number:7 - ChangedDate:"2024-05-24T00:31:58.5970000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:7 - Number:8 - ChangedDate:"2024-10-22T20:37:20.8500000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:8 - Number:9 - ChangedDate:"2024-10-22T20:38:04.0700000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:9 - Number:10 - ChangedDate:"2024-11-03T21:33:11.9200000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:10 - Number:11 - ChangedDate:"2024-11-03T21:38:04.9400000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:11 - Number:12 - ChangedDate:"2024-11-03T21:41:03.3030000+05:30" 
+[22:25:01 DBG] [16.0.5] Target: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 9 revisions 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Raw Target Has 12 revisions 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget After removing Date Matches there are 0 left 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget After removing revisions before target latest date "2024-11-03T21:41:03.3030000+05:30" there are 0 left 
+[22:25:01 INF] [16.0.5] Source: Found 0 revisions to migrate on  Work item:Source 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 INF] [16.0.5] [                Epic][Complete:     2/10][sid:     8|Rev:  9][tid:  null | Skipping as work item exists and no revisions to sync detected 
+[22:25:01 INF] [16.0.5] [                Epic][Complete:     2/10][sid:     8|Rev:  9][tid:  null | Average time of 5.000 per work item and 0 hours 0 minutes 45.000 seconds estimated to completion 
+[22:25:01 DBG] [16.0.5] ###################################################################################### 
+[22:25:01 DBG] [16.0.5] ProcessWorkItem: 16 
+[22:25:01 DBG] [16.0.5] ###################################################################################### 
+[22:25:01 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:01 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:01 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/16' 
+[22:25:01 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/16"} 
+[22:25:01 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:01 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/16 
+[22:25:01 DBG] [16.0.5] Query sent 
+[22:25:01 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null | Work Item has 4 revisions and revision migration is set to true 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:01 INF] [16.0.5] Source: Found 4 revisions to migrate on  Work item:Source 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-29T10:16:56.9730000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-06-03T05:27:27.0470000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-10-22T20:37:26.5370000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-10-22T20:37:59.8800000+05:30" 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 4 revisions 
+[22:25:01 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:01 INF] [16.0.5] Source: Found 4 revisions to migrate on  Work item:Source 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-29T10:16:56.9730000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-06-03T05:27:27.0470000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-10-22T20:37:26.5370000+05:30" 
+[22:25:01 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-10-22T20:37:59.8800000+05:30" 
+[22:25:01 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:01 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:01 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-29T10:16:56.9730000+05:30" 
+[22:25:01 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Processing Revision [1] 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:01 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:01 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:01 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:01 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div><div><div style="margin-top:10px;margin-right:10px;margin-bottom:10px;padding:0;"><div style="margin-left:24px;margin-bottom:5px;margin-top:3px;"><ins><b>Observations</b></ins></div><p style="white-space:pre;margin-left:24px;color:#0079CC;">test plan start phase 1</p><div class=scroll-to-bottom></div></div>&nbsp;</div></div> Target: 
+[22:25:01 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:01 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-29T10:16:56.9730000+05:30" Target:"2024-05-29T10:16:56.9730000+05:30" 
+[22:25:01 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:01 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:01 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:01 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:01 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-29T10:16:56.9730000+05:30" Target:null 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:01 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver\Sprint 1 Target:change 
+[22:25:01 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:01 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:01 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:25:01 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:01 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:01 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:01 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:01 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Saved TargetWorkItem 134. Replayed revision 1 of 4 
+[22:25:02 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Processing Revision [2] 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div><div><div style="margin-top:10px;margin-right:10px;margin-bottom:10px;padding:0;"><div style="margin-left:24px;margin-bottom:5px;margin-top:3px;"><ins><b>Observations</b></ins></div><p style="white-space:pre;margin-left:24px;color:#0079CC;">test plan start phase 1</p><div class=scroll-to-bottom></div></div>&nbsp;</div></div> Target:<div><div><div style="margin-top:10px;margin-right:10px;margin-bottom:10px;padding:0;"><div style="margin-left:24px;margin-bottom:5px;margin-top:3px;"><ins><b>Observations</b></ins></div><p style="white-space:pre;margin-left:24px;color:#0079CC;">test plan start phase 1</p><div class=scroll-to-bottom></div></div>&nbsp;</div></div> 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-29T10:16:56.9730000+05:30" Target:"2024-11-03T22:25:01.7430000+05:30" 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:degug the fget method Target:degug the fget method 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-06-03T05:27:27.0470000+05:30" Target:"2024-11-03T22:25:01.7430000+05:30" 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver\Sprint 1 Target:change\Sprint 1 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:02 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:02 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:02 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:02 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Saved TargetWorkItem 134. Replayed revision 2 of 4 
+[22:25:02 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Processing Revision [3] 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div><div><div style="margin-top:10px;margin-right:10px;margin-bottom:10px;padding:0;"><div style="margin-left:24px;margin-bottom:5px;margin-top:3px;"><ins><b>Observations</b></ins></div><p style="white-space:pre;margin-left:24px;color:#0079CC;">test plan start phase 1</p><div class=scroll-to-bottom></div></div>&nbsp;</div></div> Target:<div><div><div style="margin-top:10px;margin-right:10px;margin-bottom:10px;padding:0;"><div style="margin-left:24px;margin-bottom:5px;margin-top:3px;"><ins><b>Observations</b></ins></div><p style="white-space:pre;margin-left:24px;color:#0079CC;">test plan start phase 1</p><div class=scroll-to-bottom></div></div>&nbsp;</div></div> 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-29T10:16:56.9730000+05:30" Target:"2024-05-29T10:16:56.9730000+05:30" 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:degug the fget method Target:degug the fget method 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-10-22T20:37:26.5370000+05:30" Target:"2024-11-03T22:25:02.2030000+05:30" 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver\Sprint 1 Target:change\Sprint 1 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:02 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:02 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:02 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:02 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Saved TargetWorkItem 134. Replayed revision 3 of 4 
+[22:25:02 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Processing Revision [4] 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div><div><div style="margin-top:10px;margin-right:10px;margin-bottom:10px;padding:0;"><div style="margin-left:24px;margin-bottom:5px;margin-top:3px;"><ins><b>Observations</b></ins></div><p style="white-space:pre;margin-left:24px;color:#0079CC;">test plan start phase 1</p><div class=scroll-to-bottom></div></div>&nbsp;</div></div> Target:<div><div><div style="margin-top:10px;margin-right:10px;margin-bottom:10px;padding:0;"><div style="margin-left:24px;margin-bottom:5px;margin-top:3px;"><ins><b>Observations</b></ins></div><p style="white-space:pre;margin-left:24px;color:#0079CC;">test plan start phase 1</p><div class=scroll-to-bottom></div></div>&nbsp;</div></div> 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-29T10:16:56.9730000+05:30" Target:"2024-05-29T10:16:56.9730000+05:30" 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:02 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:degug the fget method Target:degug the fget method 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:02 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-10-22T20:37:59.8800000+05:30" Target:"2024-11-03T22:25:02.5500000+05:30" 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:02 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver\Sprint 1 Target:change\Sprint 1 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:25:02 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:02 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:02 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:02 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:03 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null |  Saved TargetWorkItem 134. Replayed revision 4 of 4 
+[22:25:03 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null | Links 2 | LinkMigrator:true 
+[22:25:03 INF] [16.0.5] Migrating link for 16 of type ExternalLink 
+[22:25:03 INF] [16.0.5] Creating new ExternalLink on 134 
+[22:25:03 INF] [16.0.5] Migrating link for 16 of type ExternalLink 
+[22:25:03 INF] [16.0.5] Creating new ExternalLink on 134 
+[22:25:03 INF] [16.0.5] GitRepositoryEnricher: Enriching 134 To fix Git Repo Links 
+[22:25:03 DBG] [16.0.5] GitRepositoryEnricher: Saving 134 
+[22:25:03 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:03 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:03 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:03 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:03 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null | ...Saved as 134 
+[22:25:03 INF] [16.0.5] [               Issue][Complete:     3/10][sid:    16|Rev:  4][tid:  null | Average time of 3.333 per work item and 0 hours 0 minutes 26.666 seconds estimated to completion 
+[22:25:03 DBG] [16.0.5] ###################################################################################### 
+[22:25:03 DBG] [16.0.5] ProcessWorkItem: 17 
+[22:25:03 DBG] [16.0.5] ###################################################################################### 
+[22:25:03 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:03 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:03 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/17' 
+[22:25:03 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/17"} 
+[22:25:03 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:03 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/17 
+[22:25:03 DBG] [16.0.5] Query sent 
+[22:25:03 INF] [16.0.5] [           Test Case][Complete:     4/10][sid:    17|Rev:  1][tid:  null | Work Item has 1 revisions and revision migration is set to true 
+[22:25:03 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:03 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[22:25:03 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:03 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-29T10:17:29.1600000+05:30" 
+[22:25:03 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:03 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:03 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 1 revisions 
+[22:25:03 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:03 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[22:25:03 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:03 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-29T10:17:29.1600000+05:30" 
+[22:25:03 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:03 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:03 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-29T10:17:29.1600000+05:30" 
+[22:25:04 INF] [16.0.5] [           Test Case][Complete:     4/10][sid:    17|Rev:  1][tid:  null |  Processing Revision [1] 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.AutomationStatus | Source:Not Automated Target:Not Automated 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.Steps | Source:<steps id="0" last="0"></steps> Target: 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-29T10:17:29.1600000+05:30" Target:"2024-05-29T10:17:29.1600000+05:30" 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:romyngorg 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:New Target:New 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Design Target:Design 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-29T10:17:29.1600000+05:30" Target:null 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver\Sprint 1 Target:change 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:04 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:04 INF] [16.0.5] [           Test Case][Complete:     4/10][sid:    17|Rev:  1][tid:  null |  Saved TargetWorkItem 135. Replayed revision 1 of 1 
+[22:25:04 INF] [16.0.5] [           Test Case][Complete:     4/10][sid:    17|Rev:  1][tid:  null | Links 1 | LinkMigrator:true 
+[22:25:04 INF] [16.0.5] Migrating link for 17 of type ExternalLink 
+[22:25:04 INF] [16.0.5] Creating new ExternalLink on 135 
+[22:25:04 INF] [16.0.5] GitRepositoryEnricher: Enriching 135 To fix Git Repo Links 
+[22:25:04 DBG] [16.0.5] GitRepositoryEnricher: Saving 135 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:04 INF] [16.0.5] [           Test Case][Complete:     4/10][sid:    17|Rev:  1][tid:  null | ...Saved as 135 
+[22:25:04 INF] [16.0.5] [           Test Case][Complete:     4/10][sid:    17|Rev:  1][tid:  null | Average time of 2.550 per work item and 0 hours 0 minutes 17.550 seconds estimated to completion 
+[22:25:04 DBG] [16.0.5] ###################################################################################### 
+[22:25:04 DBG] [16.0.5] ProcessWorkItem: 2 
+[22:25:04 DBG] [16.0.5] ###################################################################################### 
+[22:25:04 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:04 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:04 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/2' 
+[22:25:04 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/2"} 
+[22:25:04 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:04 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/2 
+[22:25:04 DBG] [16.0.5] Query sent 
+[22:25:04 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null | Work Item has 3 revisions and revision migration is set to true 
+[22:25:04 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:04 INF] [16.0.5] Source: Found 3 revisions to migrate on  Work item:Source 
+[22:25:04 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:04 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:26:19.2800000+05:30" 
+[22:25:04 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-16T15:31:22.0600000+05:30" 
+[22:25:04 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T23:30:19.1230000+05:30" 
+[22:25:04 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:04 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:04 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 3 revisions 
+[22:25:04 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:04 INF] [16.0.5] Source: Found 3 revisions to migrate on  Work item:Source 
+[22:25:04 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:04 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:26:19.2800000+05:30" 
+[22:25:04 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-16T15:31:22.0600000+05:30" 
+[22:25:04 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T23:30:19.1230000+05:30" 
+[22:25:04 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:04 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:04 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-16T15:26:19.2800000+05:30" 
+[22:25:04 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null |  Processing Revision [1] 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:26:19.2800000+05:30" Target:"2024-05-16T15:26:19.2800000+05:30" 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:26:19.2800000+05:30" Target:null 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:04 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:04 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null |  Saved TargetWorkItem 136. Replayed revision 1 of 3 
+[22:25:04 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null |  Processing Revision [2] 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:26:19.2800000+05:30" Target:"2024-11-03T22:25:04.5270000+05:30" 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:04 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:methods change Target:methods change 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:04 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:31:22.0600000+05:30" Target:"2024-11-03T22:25:04.5270000+05:30" 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:04 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:04 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:04 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:04 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:04 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null |  Saved TargetWorkItem 136. Replayed revision 2 of 3 
+[22:25:05 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null |  Processing Revision [3] 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Scheduling.Effort | Source:4 Target:null 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:05 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:05 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:05 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:05 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>modifying some method's functionalities.</div> Target: 
+[22:25:05 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:05 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:26:19.2800000+05:30" Target:"2024-05-16T15:26:19.2800000+05:30" 
+[22:25:05 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:05 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Started Target:Started 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:05 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:05 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:methods change Target:methods change 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:05 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T23:30:19.1230000+05:30" Target:"2024-11-03T22:25:04.8700000+05:30" 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:05 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:05 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:05 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:05 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:05 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:05 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:05 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:05 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:05 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null |  Saved TargetWorkItem 136. Replayed revision 3 of 3 
+[22:25:05 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null | Links 1 | LinkMigrator:true 
+[22:25:05 INF] [16.0.5] Migrating link for 2 of type RelatedLink 
+[22:25:05 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='System.LinkTypes.Hierarchy-Forward' on WorkItemId s:2 t:136 
+[22:25:05 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(7) 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/7' 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/7"} 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/7 
+[22:25:06 DBG] [16.0.5] Query sent 
+[22:25:06 WRN] [16.0.5]   [SKIP] Unable to migrate link where Link of type System.LinkTypes.Hierarchy-Forward where wiSourceL=2, wiSourceR=7, wiTargetL=136, wiTargetR=7 as target WI has not been migrated 
+[22:25:06 INF] [16.0.5] GitRepositoryEnricher: Enriching 136 To fix Git Repo Links 
+[22:25:06 DBG] [16.0.5] GitRepositoryEnricher: Saving 136 
+[22:25:06 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:06 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:06 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:06 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:06 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null | ...Saved as 136 
+[22:25:06 INF] [16.0.5] [               Issue][Complete:     5/10][sid:     2|Rev:  3][tid:  null | Average time of 2.000 per work item and 0 hours 0 minutes 12.000 seconds estimated to completion 
+[22:25:06 DBG] [16.0.5] ###################################################################################### 
+[22:25:06 DBG] [16.0.5] ProcessWorkItem: 3 
+[22:25:06 DBG] [16.0.5] ###################################################################################### 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/3' 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/3"} 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:06 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/3 
+[22:25:06 DBG] [16.0.5] Query sent 
+[22:25:06 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null | Work Item has 3 revisions and revision migration is set to true 
+[22:25:06 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:06 INF] [16.0.5] Source: Found 3 revisions to migrate on  Work item:Source 
+[22:25:06 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:06 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:27:18.2500000+05:30" 
+[22:25:06 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T23:27:09.3600000+05:30" 
+[22:25:06 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T23:27:27.9030000+05:30" 
+[22:25:06 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:06 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:06 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 3 revisions 
+[22:25:06 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:06 INF] [16.0.5] Source: Found 3 revisions to migrate on  Work item:Source 
+[22:25:06 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:06 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:27:18.2500000+05:30" 
+[22:25:06 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T23:27:09.3600000+05:30" 
+[22:25:06 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T23:27:27.9030000+05:30" 
+[22:25:06 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:06 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:06 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-16T15:27:18.2500000+05:30" 
+[22:25:06 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null |  Processing Revision [1] 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:06 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:06 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:06 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:06 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:06 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:06 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:27:18.2500000+05:30" Target:"2024-05-16T15:27:18.2500000+05:30" 
+[22:25:06 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:06 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:06 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:06 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:06 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:27:18.2500000+05:30" Target:null 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:06 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:06 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:06 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:06 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:06 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null |  Saved TargetWorkItem 137. Replayed revision 1 of 3 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null |  Processing Revision [2] 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Tags | Source:#678 Target: 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>adding comments for constructors</div> Target: 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:27:18.2500000+05:30" Target:"2024-11-03T22:25:06.6300000+05:30" 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:add comments Target:add comments 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T23:27:09.3600000+05:30" Target:"2024-11-03T22:25:06.6300000+05:30" 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:07 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null |  Saved TargetWorkItem 137. Replayed revision 2 of 3 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null |  Processing Revision [3] 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Tags | Source:#678 Target:#678 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>adding comments for constructors</div> Target:<div>adding comments for constructors</div> 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:27:18.2500000+05:30" Target:"2024-05-16T15:27:18.2500000+05:30" 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:lexcon 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Started Target:Started 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:add comments Target:add comments 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T23:27:27.9030000+05:30" Target:"2024-11-03T22:25:07.0500000+05:30" 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:07 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null |  Saved TargetWorkItem 137. Replayed revision 3 of 3 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null | ...Saved as 137 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     6/10][sid:     3|Rev:  3][tid:  null | Average time of 1.666 per work item and 0 hours 0 minutes 8.333 seconds estimated to completion 
+[22:25:07 DBG] [16.0.5] ###################################################################################### 
+[22:25:07 DBG] [16.0.5] ProcessWorkItem: 4 
+[22:25:07 DBG] [16.0.5] ###################################################################################### 
+[22:25:07 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:07 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:07 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/4' 
+[22:25:07 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/4"} 
+[22:25:07 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:07 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/4 
+[22:25:07 DBG] [16.0.5] Query sent 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     7/10][sid:     4|Rev:  2][tid:  null | Work Item has 2 revisions and revision migration is set to true 
+[22:25:07 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:07 INF] [16.0.5] Source: Found 2 revisions to migrate on  Work item:Source 
+[22:25:07 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:07 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:27:57.2500000+05:30" 
+[22:25:07 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T23:26:06.9170000+05:30" 
+[22:25:07 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:07 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:07 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 2 revisions 
+[22:25:07 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:07 INF] [16.0.5] Source: Found 2 revisions to migrate on  Work item:Source 
+[22:25:07 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:07 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:27:57.2500000+05:30" 
+[22:25:07 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T23:26:06.9170000+05:30" 
+[22:25:07 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:07 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:07 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-16T15:27:57.2500000+05:30" 
+[22:25:07 INF] [16.0.5] [                Task][Complete:     7/10][sid:     4|Rev:  2][tid:  null |  Processing Revision [1] 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:27:57.2500000+05:30" Target:"2024-05-16T15:27:57.2500000+05:30" 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:07 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:07 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:27:57.2500000+05:30" Target:null 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:07 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:07 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:07 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     7/10][sid:     4|Rev:  2][tid:  null |  Saved TargetWorkItem 138. Replayed revision 1 of 2 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     7/10][sid:     4|Rev:  2][tid:  null |  Processing Revision [2] 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>test case for jarvis application</div> Target: 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:27:57.2500000+05:30" Target:"2024-11-03T22:25:07.8970000+05:30" 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:run test cases for jarvis Target:run test cases for jarvis 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T23:26:06.9170000+05:30" Target:"2024-11-03T22:25:07.8970000+05:30" 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:08 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:08 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:08 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     7/10][sid:     4|Rev:  2][tid:  null |  Saved TargetWorkItem 138. Replayed revision 2 of 2 
+[22:25:08 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:08 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     7/10][sid:     4|Rev:  2][tid:  null | ...Saved as 138 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     7/10][sid:     4|Rev:  2][tid:  null | Average time of 1.442 per work item and 0 hours 0 minutes 5.771 seconds estimated to completion 
+[22:25:08 DBG] [16.0.5] ###################################################################################### 
+[22:25:08 DBG] [16.0.5] ProcessWorkItem: 5 
+[22:25:08 DBG] [16.0.5] ###################################################################################### 
+[22:25:08 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:08 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:08 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/5' 
+[22:25:08 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/5"} 
+[22:25:08 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:08 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/5 
+[22:25:08 DBG] [16.0.5] Query sent 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     8/10][sid:     5|Rev:  2][tid:  null | Work Item has 2 revisions and revision migration is set to true 
+[22:25:08 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:08 INF] [16.0.5] Source: Found 2 revisions to migrate on  Work item:Source 
+[22:25:08 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:08 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:28:27.0830000+05:30" 
+[22:25:08 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T23:24:42.0530000+05:30" 
+[22:25:08 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:08 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:08 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 2 revisions 
+[22:25:08 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:08 INF] [16.0.5] Source: Found 2 revisions to migrate on  Work item:Source 
+[22:25:08 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:08 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:28:27.0830000+05:30" 
+[22:25:08 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T23:24:42.0530000+05:30" 
+[22:25:08 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:08 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:08 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-16T15:28:27.0830000+05:30" 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     8/10][sid:     5|Rev:  2][tid:  null |  Processing Revision [1] 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:28:27.0830000+05:30" Target:"2024-05-16T15:28:27.0830000+05:30" 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:08 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:08 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:28:27.0830000+05:30" Target:null 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:08 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:08 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:08 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:08 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:08 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:08 INF] [16.0.5] [                Task][Complete:     8/10][sid:     5|Rev:  2][tid:  null |  Saved TargetWorkItem 139. Replayed revision 1 of 2 
+[22:25:09 INF] [16.0.5] [                Task][Complete:     8/10][sid:     5|Rev:  2][tid:  null |  Processing Revision [2] 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Scheduling.RemainingWork | Source:5 Target:null 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>testing for NYbus application</div> Target: 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:28:27.0830000+05:30" Target:"2024-11-03T22:25:08.7600000+05:30" 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:run test cases for NYbus Target:run test cases for NYbus 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T23:24:42.0530000+05:30" Target:"2024-11-03T22:25:08.7600000+05:30" 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:09 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:09 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:09 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:09 INF] [16.0.5] [                Task][Complete:     8/10][sid:     5|Rev:  2][tid:  null |  Saved TargetWorkItem 139. Replayed revision 2 of 2 
+[22:25:09 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:09 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:09 INF] [16.0.5] [                Task][Complete:     8/10][sid:     5|Rev:  2][tid:  null | ...Saved as 139 
+[22:25:09 INF] [16.0.5] [                Task][Complete:     8/10][sid:     5|Rev:  2][tid:  null | Average time of 1.225 per work item and 0 hours 0 minutes 3.775 seconds estimated to completion 
+[22:25:09 DBG] [16.0.5] ###################################################################################### 
+[22:25:09 DBG] [16.0.5] ProcessWorkItem: 6 
+[22:25:09 DBG] [16.0.5] ###################################################################################### 
+[22:25:09 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:09 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:09 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/6' 
+[22:25:09 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/6"} 
+[22:25:09 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:09 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/6 
+[22:25:09 DBG] [16.0.5] Query sent 
+[22:25:09 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null | Work Item has 3 revisions and revision migration is set to true 
+[22:25:09 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:09 INF] [16.0.5] Source: Found 3 revisions to migrate on  Work item:Source 
+[22:25:09 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:09 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:28:55.7300000+05:30" 
+[22:25:09 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T22:46:26.7830000+05:30" 
+[22:25:09 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T22:46:46.2530000+05:30" 
+[22:25:09 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:09 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:09 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 3 revisions 
+[22:25:09 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:09 INF] [16.0.5] Source: Found 3 revisions to migrate on  Work item:Source 
+[22:25:09 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:09 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:28:55.7300000+05:30" 
+[22:25:09 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-23T22:46:26.7830000+05:30" 
+[22:25:09 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T22:46:46.2530000+05:30" 
+[22:25:09 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:09 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:09 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-16T15:28:55.7300000+05:30" 
+[22:25:09 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null |  Processing Revision [1] 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:28:55.7300000+05:30" Target:"2024-05-16T15:28:55.7300000+05:30" 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:28:55.7300000+05:30" Target:null 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:09 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:09 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:09 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:09 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:09 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null |  Saved TargetWorkItem 140. Replayed revision 1 of 3 
+[22:25:09 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null |  Processing Revision [2] 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>discovery a project's repo and generating a excel report</div> Target: 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:28:55.7300000+05:30" Target:"2024-11-03T22:25:09.6100000+05:30" 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:09 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:09 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:09 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:10 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:discover the project Target:discover the project 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T22:46:26.7830000+05:30" Target:"2024-11-03T22:25:09.6100000+05:30" 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:10 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:10 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:10 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:10 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null |  Saved TargetWorkItem 140. Replayed revision 2 of 3 
+[22:25:10 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null |  Processing Revision [3] 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Scheduling.StartDate | Source:"2024-05-22T05:30:00.0000000+05:30" Target:null 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Scheduling.TargetDate | Source:"2024-05-29T05:30:00.0000000+05:30" Target:null 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:10 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:10 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:10 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:10 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>discovery a project's repo and generating a excel report</div> Target:<div>discovery a project's repo and generating a excel report</div> 
+[22:25:10 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:10 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:28:55.7300000+05:30" Target:"2024-05-16T15:28:55.7300000+05:30" 
+[22:25:10 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:10 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:lexcon 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:10 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:discover the project Target:discover the project 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:10 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T22:46:46.2530000+05:30" Target:"2024-11-03T22:25:09.9770000+05:30" 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:10 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:10 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:10 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:10 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:10 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:10 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null |  Saved TargetWorkItem 140. Replayed revision 3 of 3 
+[22:25:10 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:10 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:10 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null | ...Saved as 140 
+[22:25:10 INF] [16.0.5] [                Epic][Complete:     9/10][sid:     6|Rev:  3][tid:  null | Average time of 1.111 per work item and 0 hours 0 minutes 2.222 seconds estimated to completion 
+[22:25:10 DBG] [16.0.5] ###################################################################################### 
+[22:25:10 DBG] [16.0.5] ProcessWorkItem: 7 
+[22:25:10 DBG] [16.0.5] ###################################################################################### 
+[22:25:10 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:10 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:10 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/7' 
+[22:25:10 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/7"} 
+[22:25:10 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:10 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/7 
+[22:25:10 DBG] [16.0.5] Query sent 
+[22:25:10 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null | Work Item has 4 revisions and revision migration is set to true 
+[22:25:10 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[22:25:10 INF] [16.0.5] Source: Found 4 revisions to migrate on  Work item:Source 
+[22:25:10 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:29:53.2470000+05:30" 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-16T15:31:22.0600000+05:30" 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T22:39:49.1130000+05:30" 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-05-23T22:40:20.2700000+05:30" 
+[22:25:10 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:10 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[22:25:10 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 4 revisions 
+[22:25:10 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[22:25:10 INF] [16.0.5] Source: Found 4 revisions to migrate on  Work item:Source 
+[22:25:10 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-05-16T15:29:53.2470000+05:30" 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:1 - Number:2 - ChangedDate:"2024-05-16T15:31:22.0600000+05:30" 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:2 - Number:3 - ChangedDate:"2024-05-23T22:39:49.1130000+05:30" 
+[22:25:10 DBG] [16.0.5] RevisionsToMigrate: Index:3 - Number:4 - ChangedDate:"2024-05-23T22:40:20.2700000+05:30" 
+[22:25:10 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[22:25:10 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[22:25:10 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-05-16T15:29:53.2470000+05:30" 
+[22:25:11 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Processing Revision [1] 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:29:53.2470000+05:30" Target:"2024-05-16T15:29:53.2470000+05:30" 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:29:53.2470000+05:30" Target:null 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:11 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:11 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:11 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:11 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Saved TargetWorkItem 141. Replayed revision 1 of 4 
+[22:25:11 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Processing Revision [2] 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:29:53.2470000+05:30" Target:"2024-11-03T22:25:11.0370000+05:30" 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:library depricated find alternative and replace #5678 Target:library depricated find alternative and replace #5678 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-16T15:31:22.0600000+05:30" Target:"2024-11-03T22:25:11.0370000+05:30" 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:11 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:11 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:11 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:11 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Saved TargetWorkItem 141. Replayed revision 2 of 4 
+[22:25:11 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Processing Revision [3] 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:29:53.2470000+05:30" Target:"2024-05-16T15:29:53.2470000+05:30" 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target: 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:11 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:library depricated find alternative and replace #5678 Target:library depricated find alternative and replace #5678 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:11 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T22:39:49.1130000+05:30" Target:"2024-11-03T22:25:11.3830000+05:30" 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:11 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:11 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:11 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:11 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:11 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:11 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Saved TargetWorkItem 141. Replayed revision 3 of 4 
+[22:25:12 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Processing Revision [4] 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[22:25:12 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ClosedBy] 
+[22:25:12 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:12 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|Microsoft.VSTS.Common.ActivatedBy] 
+[22:25:12 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Description | Source:<div>finding and replacing the depricated libraries</div> Target: 
+[22:25:12 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.CreatedBy] 
+[22:25:12 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-05-16T15:29:53.2470000+05:30" Target:"2024-05-16T15:29:53.2470000+05:30" 
+[22:25:12 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.AssignedTo] 
+[22:25:12 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:lexcon 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:12 DBG] [16.0.5] TfsUserMappingTool::MapUserIdentityField [ReferenceName|System.ChangedBy] 
+[22:25:12 ERR] [16.0.5] TfsUserMappingTool::GetMappingFileData:: The UserMappingFile '' cant be found! Provide a valid file or disable TfsUserMappingTool! 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:lexcon 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Title | Source:library depricated find alternative and replace #5678 Target:library depricated find alternative and replace #5678 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[22:25:12 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-05-23T22:40:20.2700000+05:30" Target:"2024-11-03T22:25:11.7470000+05:30" 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:devserver Target:change 
+[22:25:12 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:devserver Target:change 
+[22:25:12 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Area) 
+[22:25:12 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:12 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver, Iteration) 
+[22:25:12 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[22:25:12 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[22:25:12 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:12 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[22:25:12 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null |  Saved TargetWorkItem 141. Replayed revision 4 of 4 
+[22:25:12 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null | Links 1 | LinkMigrator:true 
+[22:25:12 INF] [16.0.5] Migrating link for 7 of type RelatedLink 
+[22:25:12 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='System.LinkTypes.Hierarchy-Reverse' on WorkItemId s:7 t:141 
+[22:25:12 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(2) 
+[22:25:12 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[22:25:12 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[22:25:12 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='change' AND [Custom.ReflectedWorkItemId] = 'https://devopspoc/TestCollection/devserver/_workitems/edit/2' 
+[22:25:12 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"change","idToFind":"https://devopspoc/TestCollection/devserver/_workitems/edit/2"} 
+[22:25:12 DBG] [16.0.5] WorkItemQuery: TeamProject: change 
+[22:25:12 DBG] [16.0.5] WorkItemQuery: idToFind: https://devopspoc/TestCollection/devserver/_workitems/edit/2 
+[22:25:12 DBG] [16.0.5] Query sent 
+[22:25:12 INF] [16.0.5] 1 Work items received, verifying 
+[22:25:12 INF] [16.0.5] Loading 1 Work Items 
+[22:25:14 DBG] [16.0.5] 1 Work Items loaded 
+[22:25:14 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[22:25:14 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[22:25:14 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[22:25:14 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[22:25:14 INF] [16.0.5]   [CREATE-START] Adding Link of type System.LinkTypes.Hierarchy-Reverse where wiSourceL=7, wiSourceR=2, wiTargetL=141, wiTargetR=136  
+[22:25:14 INF] [16.0.5]   [CREATE-SUCCESS] Adding Link of type System.LinkTypes.Hierarchy-Reverse where wiSourceL=7, wiSourceR=2, wiTargetL=141, wiTargetR=136  
+[22:25:14 INF] [16.0.5] GitRepositoryEnricher: Enriching 141 To fix Git Repo Links 
+[22:25:14 DBG] [16.0.5] GitRepositoryEnricher: Saving 141 
+[22:25:14 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:14 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:14 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[22:25:14 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[22:25:14 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null | ...Saved as 141 
+[22:25:14 INF] [16.0.5] [               Issue][Complete:    10/10][sid:     7|Rev:  4][tid:  null | Average time of 1.000 per work item and 0 hours 0 minutes 1.000 seconds estimated to completion 
+[22:25:14 INF] [16.0.5]  Migration Processor Complete TfsWorkItemMigrationProcessor  
+[22:25:14 INF] [16.0.5] TfsWorkItemMigrationProcessor completed in 00:00:00  
+[22:25:14 INF] [16.0.5] Command ExecuteMigrationCommand completed in "00:00:46.7456166" 
+[22:25:14 INF] [16.0.5] Check the logs for errors: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241103222426 

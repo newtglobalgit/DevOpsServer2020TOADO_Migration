@@ -1,0 +1,92 @@
+[22:04:22 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[22:04:22 INF] [16.0.5] 16.0.5 
+[22:04:22 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[22:04:22 INF] [16.0.5] =============================================================================== 
+[22:04:22 INF] [16.0.5] -------------------------------------- 
+[22:04:22 INF] [16.0.5] Telemetry Note: 
+[22:04:22 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[22:04:22 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[22:04:22 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[22:04:22 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[22:04:22 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[22:04:22 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[22:04:22 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[22:04:22 INF] [16.0.5] -------------------------------------- 
+[22:04:22 INF] [16.0.5] Start Time: "2024-10-29T22:04:22.2515931+05:30" 
+[22:04:22 INF] [16.0.5] Running with settings: {"ConfigFile":"workitem_configuration-upgraded.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[22:04:22 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[22:04:22 INF] [16.0.5] Version (Assembly): 16.0.5 
+[22:04:22 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241029220421 
+[22:04:22 INF] [16.0.5] Verion Info: 
+[22:04:22 INF] [16.0.5]      Running: 16.0.5.0 
+[22:04:22 INF] [16.0.5]      Installed: 0.0.0 
+[22:04:22 INF] [16.0.5]      Available: 0.0.0 
+[22:04:22 WRN] [16.0.5] Windows Client: The Windows Package Manager is not installed, we use it to determine if you have the latest version, and to make sure that this application is up to date. You can download and install it from https://aka.ms/getwinget. After which you can call `winget install nkdAgility.AzureDevOpsMigrationTools` from the Windows Terminal to get a manged version of this program. 
+[22:04:22 WRN] [16.0.5] Windows Server: If you are running on Windows Server you can use the experimental version of Winget, or you can still use Chocolatey to manage the install. Install chocolatey from https://chocolatey.org/install and then use `choco install vsts-sync-migrator` to install, and `choco upgrade vsts-sync-migrator` to upgrade to newer versions. 
+[22:04:22 INF] [16.0.5] No validator found for processor type TfsSharedQueryProcessorOptions 
+[22:04:22 INF] [16.0.5] Creating Migration Engine 89fa1ae9-59dc-44ae-8a4d-5c2eb38c8730 
+[22:04:22 INF] [16.0.5] ProcessorContainer: Of 2 configured Processors only 2 are enabled 
+[22:04:22 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap MultiValueConditionalMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldSkipMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldValueMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldValueMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMultiMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap RegexFieldMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldValueToTagMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] FieldMappingTool: Adding FieldMap TreeToTagFieldMap for *ApplyTo is missing* 
+[22:04:22 INF] [16.0.5] ProcessorContainer: Adding Processor TfsSharedQueryProcessor 
+[22:04:22 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[22:04:22 INF] [16.0.5]                               Max Logfile: Verbose.  
+[22:04:22 INF] [16.0.5]                               Max Console: Debug.  
+[22:04:22 INF] [16.0.5]                  Max Application Insights: Error.  
+[22:04:22 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[22:04:22 INF] [16.0.5] Beginning run of 2 processors 
+[22:04:22 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[22:04:22 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[22:04:22 INF] [16.0.5] Migrating all Nodes before the Processor run. 
+[22:04:22 INF] [16.0.5] Connecting with AccessToken  
+[22:04:25 INF] [16.0.5] Access granted to "https://devopspoc/TestCollection" for lexcon (devopsPOC\lexcon) 
+[22:04:26 INF] [16.0.5] Connecting with AccessToken  
+[22:04:26 INF] [16.0.5] Access granted to "https://dev.azure.com/AdoMigrateorg" for romyngorg (romyngorg@outlook.com) 
+[22:04:27 INF] [16.0.5]  Processing Node: \test\Area\nyby-Team, start date: null, finish date: null 
+[22:04:28 INF] [16.0.5]  Processing Node: \test\Iteration\Sprint 1, start date: null, finish date: null 
+[22:04:29 INF] [16.0.5] Work Item Store connected to "https://dev.azure.com/AdoMigrateorg" with BypassRules set to true 
+[22:04:29 INF] [16.0.5] ---------------------------------------------- 
+[22:04:29 INF] [16.0.5] Migrating all Teams before the Processor run. 
+[22:04:30 INF] [16.0.5] TfsTeamSettingsProcessor::InternalExecute: Found 3 teams in Source? 
+[22:04:31 INF] [16.0.5] -> Settings found for team 'devserver qa team'.. 
+[22:04:31 INF] [16.0.5] Migrating team capacities.. 
+[22:04:32 INF] [16.0.5] Work Item Store connected to "https://devopspoc/TestCollection" with BypassRules set to true 
+[22:04:34 WRN] [16.0.5] [SKIP] Team Member lexcon was not found on target when replacing capacities on iteration test\Sprint 1. 
+[22:04:34 INF] [16.0.5] Team capacities migration done.. 
+[22:04:35 WRN] [16.0.5] -> Settings for team 'kigdevteam'.. not configured 
+[22:04:35 INF] [16.0.5] -> Settings found for team 'nyby-Team'.. 
+[22:04:35 INF] [16.0.5] Migrating team capacities.. 
+[22:04:35 INF] [16.0.5] Team capacities migration done.. 
+[22:04:35 INF] [16.0.5] Querying items to be migrated: SELECT [System.Id] FROM WorkItems WHERE [System.State] = 'Active' AND [System.TeamProject] = @TeamProject ... 
+[22:04:36 INF] [16.0.5] Replay all revisions of 0 work items? 
+[22:04:36 INF] [16.0.5] Validating::Check all Target Work Items have the RefectedWorkItemId field 
+[22:04:36 INF] [16.0.5] Validating::Check that all work item types needed in the Target exist or are mapped 
+[22:04:36 INF] [16.0.5] Validating::Check that all Area & Iteration paths from Source have a valid mapping on Target 
+[22:04:36 INF] [16.0.5] Validating::Check that all users in the source exist in the target or are mapped! 
+[22:04:36 WRN] [16.0.5] TfsUserMappingTool is disabled in settings. You may have users in the source that are not mapped to the target.  
+[22:04:36 INF] [16.0.5] Found target project as test 
+[22:04:36 INF] [16.0.5] [FilterWorkItemsThatAlreadyExistInTarget] is enabled. Searching for 0 work items that may have already been migrated to the target... 
+[22:04:36 INF] [16.0.5] [FilterWorkItemsThatAlreadyExistInTarget] is enabled. Source project devserver is replaced with target project test on the WIQLQuery which resulted into this target WIQLQuery 
+ "SELECT [System.Id] FROM WorkItems WHERE [System.State] = 'Active' AND [System.TeamProject] = @TeamProject" . 
+[22:04:36 INF] [16.0.5] !! After removing all found work items there are 0 remaining to be migrated. 
+[22:04:36 INF] [16.0.5]  Migration Processor Complete TfsWorkItemMigrationProcessor  
+[22:04:36 INF] [16.0.5] TfsWorkItemMigrationProcessor completed in 00:00:00  
+[22:04:36 INF] [16.0.5] Processor: TfsSharedQueryProcessor 
+[22:04:36 INF] [16.0.5] Migration Context Start: TfsSharedQueryProcessor  
+[22:04:36 FTL] [16.0.5] Error while running TfsSharedQueryProcessor 
+System.InvalidCastException: Unable to cast object of type 'MigrationTools.Clients.TfsTeamProjectEndpoint' to type 'MigrationTools.Endpoints.TfsEndpoint'.
+   at MigrationTools.Processors.TfsSharedQueryProcessor.get_Source() in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools.Clients.TfsObjectModel\Processors\TfsSharedQueryProcessor.cs:line 35
+   at MigrationTools.Processors.TfsSharedQueryProcessor.InternalExecute() in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools.Clients.TfsObjectModel\Processors\TfsSharedQueryProcessor.cs:line 46
+   at MigrationTools.Processors.Infrastructure.Processor.Execute() in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools\Processors\Infrastructure\Processor.cs:line 99
+[22:04:38 INF] [16.0.5] TfsSharedQueryProcessor completed in 00:00:00  
+[22:04:38 ERR] [16.0.5] TfsSharedQueryProcessor The Processor MigrationEngine entered the failed state...stopping run 
+[22:04:38 INF] [16.0.5] Command ExecuteMigrationCommand completed in "00:00:15.9784870" 
+[22:04:38 INF] [16.0.5] Check the logs for errors: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241029220421 

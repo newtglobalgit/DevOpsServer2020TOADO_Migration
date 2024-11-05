@@ -1,0 +1,53 @@
+[12:53:30 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[12:53:30 INF] [16.0.5] 16.0.5 
+[12:53:30 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[12:53:30 INF] [16.0.5] =============================================================================== 
+[12:53:30 INF] [16.0.5] -------------------------------------- 
+[12:53:30 INF] [16.0.5] Telemetry Note: 
+[12:53:30 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[12:53:30 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[12:53:30 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[12:53:30 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[12:53:30 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[12:53:30 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[12:53:30 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[12:53:30 INF] [16.0.5] -------------------------------------- 
+[12:53:30 INF] [16.0.5] Start Time: "2024-11-03T12:53:30.5297643+05:30" 
+[12:53:30 INF] [16.0.5] Running with settings: {"ConfigFile":"configuration-classic2-pipeline.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[12:53:30 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[12:53:30 INF] [16.0.5] Version (Assembly): 16.0.5 
+[12:53:30 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241103125329 
+[12:53:30 INF] [16.0.5] Verion Info: 
+[12:53:30 INF] [16.0.5]      Running: 16.0.5.0 
+[12:53:30 INF] [16.0.5]      Installed: 0.0.0 
+[12:53:30 INF] [16.0.5]      Available: 0.0.0 
+[12:53:30 WRN] [16.0.5] Windows Client: The Windows Package Manager is not installed, we use it to determine if you have the latest version, and to make sure that this application is up to date. You can download and install it from https://aka.ms/getwinget. After which you can call `winget install nkdAgility.AzureDevOpsMigrationTools` from the Windows Terminal to get a manged version of this program. 
+[12:53:30 WRN] [16.0.5] Windows Server: If you are running on Windows Server you can use the experimental version of Winget, or you can still use Chocolatey to manage the install. Install chocolatey from https://chocolatey.org/install and then use `choco install vsts-sync-migrator` to install, and `choco upgrade vsts-sync-migrator` to upgrade to newer versions. 
+[12:53:30 FTL] [16.0.5] Your processor at `MigrationTools:Processors:0` in the config does not have a property called ProcessorType that is required to sucessfully detect the type and load it. 
+[12:53:32 ERR] [16.0.5] Unhandled exception! 
+MigrationTools.Processors.Infrastructure.InvalidProcessorException: `ProcessorType` missing
+   at MigrationTools.Processors.Infrastructure.ProcessorContainerOptions.ConfigureOptions.BindProcessorOptions(ProcessorContainerOptions options, String sectionName, String objectTypePropertyName) in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools\Processors\Infrastructure\ProcessorContainerOptions.cs:line 50
+   at MigrationTools.Processors.Infrastructure.ProcessorContainerOptions.ConfigureOptions.Configure(ProcessorContainerOptions options) in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools\Processors\Infrastructure\ProcessorContainerOptions.cs:line 33
+   at Microsoft.Extensions.Options.OptionsFactory`1.Create(String name)
+   at Microsoft.Extensions.Options.UnnamedOptionsManager`1.get_Value()
+   at MigrationTools.Processors.Infrastructure.ProcessorContainer..ctor(IOptions`1 options, IServiceProvider services, ILogger`1 logger, ITelemetryLogger telemetry) in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools\Processors\Infrastructure\ProcessorContainer.cs:line 41
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at MigrationTools.Host.Commands.ExecuteMigrationCommand.<ExecuteInternalAsync>d__5.MoveNext() in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools.Host\Commands\ExecuteMigrationCommand.cs:line 60
+[12:53:32 INF] [16.0.5] Command ExecuteMigrationCommand completed in "00:00:01.6876105" 
+[12:53:32 INF] [16.0.5] Check the logs for errors: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241103125329 
