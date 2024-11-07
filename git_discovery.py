@@ -6,9 +6,23 @@ from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from datetime import datetime
 import getpass
+import logging
+import random
+from tenacity import retry, stop_after_attempt, wait_exponential
 from collections import defaultdict
 from utils.common import get_project_names, get_repo_names_by_project
 
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Define the retry decorator with exponential backoff
+def retry_request(func):
+    return retry(
+        stop=stop_after_attempt(10),              # Retry 3 times
+        wait=wait_exponential(multiplier=1, min=4, max=10)  # Exponential backoff
+    )(func)
 
 # Function to read configuration from Excel file
 def read_config_from_excel(file_path):
@@ -33,38 +47,40 @@ def read_config_from_excel(file_path):
 
     return server_url, project, pat, repository_name, branch_name, df
 
-
+@retry_request
 def authenticate_and_get_projects(server_url, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     try:
-        response = requests.get(f'{server_url}/_apis/projects?api-version={api_version}', auth=auth)
+        response = requests.get(
+            f'{server_url}/_apis/projects?api-version={api_version}',
+            auth=auth,
+            timeout=300  # Timeout of 10 seconds
+        )
         response.raise_for_status()
         print('Login successful.')
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f'Failed to authenticate: {e}')
         return None
-
-
+    
+@retry_request
 def get_repositories(server_url, project, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     repos_url = f'{server_url}/{project}/_apis/git/repositories?api-version={api_version}'
-    print(f"Requesting repositories with URL: {repos_url}")
     try:
-        response = requests.get(repos_url, auth=auth)
+        response = requests.get(repos_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f'Failed to retrieve repositories: {e}')
         return None
 
-
+@retry_request
 def get_branches(server_url, project, repository_id, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     branches_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/refs?filter=heads&api-version={api_version}'
-    print(f"Requesting branches with URL: {branches_url}")
     try:
-        response = requests.get(branches_url, auth=auth)
+        response = requests.get(branches_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.json()['value']
     except requests.exceptions.RequestException as e:
@@ -72,12 +88,12 @@ def get_branches(server_url, project, repository_id, pat, api_version):
         return None
 
 
+@retry_request
 def get_latest_commit_info(server_url, project, repository_id, branch_name, pat, api_version):
     auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.itemVersion.' \
-                  f'version={branch_name}&$top=1&api-version={api_version}'
+    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.itemVersion.version={branch_name}&$top=1&api-version={api_version}'
     try:
-        response = requests.get(commits_url, auth=auth)
+        response = requests.get(commits_url, auth=auth, timeout=300)
         response.raise_for_status()
         commit = response.json()['value'][0]
         commit_id = commit['commitId']
@@ -89,41 +105,38 @@ def get_latest_commit_info(server_url, project, repository_id, branch_name, pat,
         print(f'Failed to retrieve last commit: {e}')
         return None, None, None, None
 
-
+@retry_request
 def get_files_in_branch(server_url, project, repository_id, branch_name, pat, api_version):
     auth = HTTPBasicAuth('', pat)
-    items_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/items?scopePath=/&recursionLevel=' \
-                f'Full&versionDescriptor[version]={branch_name}&api-version={api_version}'
-    print(f"Requesting items with URL: {items_url}")
+    items_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/items?scopePath=/&recursionLevel=Full&versionDescriptor[version]={branch_name}&api-version={api_version}'
     try:
-        response = requests.get(items_url, auth=auth)
+        response = requests.get(items_url, auth=auth, timeout=100)
         response.raise_for_status()
         return response.json()['value']
     except requests.exceptions.RequestException as e:
         print(f'Failed to retrieve items in branch: {e}')
         return None
 
-
+@retry_request
 def get_file_size(server_url, project, repository_id, sha1, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     blob_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/blobs/{sha1}?api-version={api_version}'
-    print(f"Requesting blob size with URL: {blob_url}")
     try:
-        response = requests.get(blob_url, auth=auth)
+        response = requests.get(blob_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.headers.get('Content-Length', 0)
     except requests.exceptions.RequestException as e:
         print(f'Failed to retrieve blob size: {e}')
         return 0
 
-
+@retry_request
 def get_commit_count(server_url, project, repository_id, file_path, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.' \
                   f'itemPath={file_path}&api-version={api_version}'
     print(f"Requesting commit count with URL: {commits_url}")
     try:
-        response = requests.get(commits_url, auth=auth)
+        response = requests.get(commits_url, auth=auth, timeout=300)
         response.raise_for_status()
         commit_count = response.json()['count']
         return max(commit_count, 1)  # Ensure at least one commit
@@ -131,52 +144,52 @@ def get_commit_count(server_url, project, repository_id, file_path, pat, api_ver
         print(f'Failed to retrieve commit count for {file_path}: {e}')
         return 1  # Assume at least one commit
 
-
+@retry_request
 def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.' \
                   f'itemVersion.version={branch_name}&api-version={api_version}'
     print(f"Requesting all commits with URL: {commits_url}")
     try:
-        response = requests.get(commits_url, auth=auth)
+        response = requests.get(commits_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.json()['value']
     except requests.exceptions.RequestException as e:
         print(f'Failed to retrieve commits: {e}')
         return []
 
-
+@retry_request
 def get_all_repo_commits(server_url, project, repository_id, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?api-version={api_version}'
     print(f"Requesting all repository commits with URL: {commits_url}")
     try:
-        response = requests.get(commits_url, auth=auth)
+        response = requests.get(commits_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.json()['value']
     except requests.exceptions.RequestException as e:
         print(f'Failed to retrieve all repository commits: {e}')
         return []
 
-
+@retry_request
 def get_tags(server_url, project, repository_id, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     tags_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/refs?filter=tags&api-version={api_version}'
     print(f"Requesting tags with URL: {tags_url}")
     try:
-        response = requests.get(tags_url, auth=auth)
+        response = requests.get(tags_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.json()['value']
     except requests.exceptions.RequestException as e:
         print(f'Failed to retrieve tags: {e}')
         return []
 
-
+@retry_request
 def get_tag_details(server_url, project, repository_id, tag_id, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     tag_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/annotatedtags/{tag_id}?api-version=6.0-preview.1'
     try:
-        response = requests.get(tag_url, auth=auth)
+        response = requests.get(tag_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -184,11 +197,12 @@ def get_tag_details(server_url, project, repository_id, tag_id, pat, api_version
         return None
 
 
+@retry_request
 def get_commit_details(server_url, project, repository_id, commit_id, pat, api_version):
     auth = HTTPBasicAuth('', pat)
     commit_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits/{commit_id}?api-version={api_version}'
     try:
-        response = requests.get(commit_url, auth=auth)
+        response = requests.get(commit_url, auth=auth, timeout=300)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -259,8 +273,7 @@ def sanitize_sheet_name(name):
     return name[:31]  # Excel sheet names can have a maximum of 31 characters
 
 
-def generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project_name, repo_name,
-                    server_url):
+def generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project_name, config_df, input_row):
     start_time = datetime.now()
     
     with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
@@ -303,24 +316,25 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
     hours, remainder = divmod(run_duration.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
     formatted_run_duration = f"{int(hours)} hours, {int(minutes)} minutes, {seconds:.1f} seconds"
-
+    
     # Determine organization or collection based on the server URL
-    if "dev.azure.com" in server_url:
+    org_url = input_row['Server URL']
+    if "dev.azure.com" in org_url:
         org_or_collection = "organization"
-        org_or_collection_name = server_url.split("/")[-1]  # Extract organization name from URL
+        org_or_collection_name = org_url.split("/")[-1]  # Extract organization name from URL
     else:
         org_or_collection = "collection"
-        org_or_collection_name = server_url.split('/')[-1]  # Extract collection name from URL
+        org_or_collection_name = org_url.split('/')[-1]  # Extract collection name from URL
+
 
     # Write summary data
     summary_data = {
-        'Report Title': f"Project {project_name} Git Report.",
-        'Purpose of the report': f"This provides a detailed view of the repo {repo_name} in project"
-                                 f" {project_name} of {org_or_collection} {org_or_collection_name}.",
+        'Report Title': f"Project {input_row['Project Name']} Git Report.",
+        'Purpose of the report': f"This provides a detailed view of the repo {input_row['Repository Name']} in project {input_row['Project Name']} of {org_or_collection} {org_or_collection_name}.",
         'Run Date': datetime.now().strftime('%d-%b-%Y %I:%M %p'),
         'Run Duration': formatted_run_duration,
         'Run By': getpass.getuser(),
-        'Input': f"Server URL: {server_url}, Project Name: {project_name}, Repository Name: {repo_name}"
+        'Input': f"Server URL: {input_row['Server URL']}, Project Name: {input_row['Project Name']}, Repository Name: {input_row['Repository Name']}"
     }
 
     row = 1
@@ -541,6 +555,7 @@ def main():
     # Create output directory if it doesn't exist
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+        print(f"Output directory created: {output_directory}")
 
     df = pd.read_excel(input_file)
     # Read the values from the Excel file and strip any leading/trailing spaces
@@ -578,11 +593,12 @@ def main():
         for project in server_data["projects"]:
             proj_name = project["name"]
             print(f"Processing project {proj_name}")
+            master_data_source_code = []
+            master_data_commits = []
+            master_data_all_commits = []
+            master_data_tags = []
+            input_row = df[(df['Server URL'] == server_url) & (df['Project Name'] == proj_name)].iloc[0]
             for repo in project["repos"]:
-                master_data_source_code = []
-                master_data_commits = []
-                master_data_all_commits = []
-                master_data_tags = []
                 repo_name = repo["name"]
                 branches = repo.get("branches", [])
                 # If branches exist, iterate through them; otherwise, use an empty string for branch_name
@@ -592,13 +608,12 @@ def main():
                     master_data_commits = master_data_commits + data_commits
                     master_data_all_commits = master_data_all_commits + data_all_commits
                     master_data_tags = master_data_tags + data_tags
-                # Create the output file name with the desired format
-                file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
-                output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
-                output_path = os.path.join(output_directory, output_filename)
-                generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
-                                output_path, proj_name, repo_name, server_url)
-                print(f'Report generated: {output_path}')
+            # Create the output file name with the desired format
+            random_number = random.randint(100000, 999999)
+            output_filename = f"{proj_name}_{repo_name}_git_discovery_report_{random_number}.xlsx"
+            output_path = os.path.join(output_directory, output_filename)
+            generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,output_path, proj_name, df, input_row)
+            print(f'Report generated: {output_path}')
 
 
 if __name__ == "__main__":
