@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 from requests.auth import HTTPBasicAuth
 import pandas as pd
@@ -7,9 +8,34 @@ import getpass
 import time
 from requests.exceptions import ConnectTimeout
 from utils.common import get_project_names, add_if_not_exists
+from urllib.parse import urlparse, parse_qs
 
 
-def make_request_with_retries(url, auth, max_retries=3, timeout=30):
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
+def modify_item_path(url):
+    # Define regex pattern to capture itemPath value
+    pattern = r"itemPath=([^&]+)"
+    
+    # Search for the pattern in the URL
+    match = re.search(pattern, url)
+    
+    # If a match is found, decode and modify the itemPath
+    if match:
+        item_path = match.group(1)
+        
+        # If itemPath contains +, replace it with %2B for the modified URL
+        item_path_modified = item_path.replace('+', '%2B').replace('%24', '$')
+
+        
+        modified_url = url.replace(item_path, item_path_modified)
+        return modified_url
+
+    return url
+
+def make_request_with_retries(url, auth, max_retries=10, timeout=300):
+    url = modify_item_path(url)
+    print(url)
     for attempt in range(max_retries):
         try:
             response = requests.get(url, auth=auth, timeout=timeout)
@@ -329,6 +355,8 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
             # Add borders and right-align numerical and date/time cells in the branch sheet
             for row_num in range(1, len(branch_df) + 1):
                 for col_num, value in enumerate(branch_df.iloc[row_num - 1]):
+                    if not value:
+                        value = 'NULL'
                     if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
                         branch_worksheet.write(row_num, col_num, value, right_align_format)
                     else:
