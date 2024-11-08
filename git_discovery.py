@@ -593,7 +593,6 @@ def main():
         for project in server_data["projects"]:
             proj_name = project["name"]
             print(f"Processing project {proj_name}")
-            input_row = df[(df['Server URL'] == server_url) & (df['Project Name'] == proj_name)].iloc[0]
             for repo in project["repos"]:
                 master_data_source_code = []
                 master_data_commits = []
