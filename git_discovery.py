@@ -8,21 +8,61 @@ from datetime import datetime
 import getpass
 import logging
 import random
-from tenacity import retry, stop_after_attempt, wait_exponential
+import time
+from urllib.parse import quote
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from collections import defaultdict
 from utils.common import get_project_names, get_repo_names_by_project
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Define the retry decorator with exponential backoff
-def retry_request(func):
-    return retry(
-        stop=stop_after_attempt(10),              # Retry 3 times
-        wait=wait_exponential(multiplier=1, min=4, max=10)  # Exponential backoff
-    )(func)
+def encode_url_component(component):
+    return quote(component, safe='')
+
+def make_request_with_retries(url, pat, method='GET', data=None, timeout=300, max_retries=10, backoff_factor=0.5):
+    auth = HTTPBasicAuth('', pat)
+    session = requests.Session()
+    retries = Retry(
+        total=max_retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=[408, 429, 500, 502, 503, 504],
+        allowed_methods=["HEAD", "GET", "OPTIONS", "POST"]
+    )
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    
+    for attempt in range(max_retries):
+        try:
+            if method == 'GET':
+                response = session.get(url, auth=auth, timeout=timeout)
+            elif method == 'POST':
+                response = session.post(url, auth=auth, json=data, timeout=timeout)
+            else:
+                logger.error(f"HTTP method '{method}' is not supported.")
+                return None
+
+            if response.status_code == 200:
+                logger.info(f"Request succeeded for URL {url}")
+                return response
+            elif response.status_code == 409:
+                logger.warning("Received 409 Conflict. Retrying after delay...")
+            elif response.status_code == 404:
+                logger.info(f"Resource not found (404) for URL {url}.")
+                return None
+            elif response.status_code == 403:
+                logger.error("Access forbidden (403). Check permissions or credentials.")
+                return None
+            else:
+                logger.warning(f"Unexpected status code {response.status_code} for URL {url}.")
+                return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error occurred while making request to {url}: {e}")
+            return None
+
+    logger.error(f"Exceeded max retries for URL {url}")
+    return None
 
 # Function to read configuration from Excel file
 def read_config_from_excel(file_path):
@@ -47,168 +87,260 @@ def read_config_from_excel(file_path):
 
     return server_url, project, pat, repository_name, branch_name, df
 
-@retry_request
+    
 def authenticate_and_get_projects(server_url, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    try:
-        response = requests.get(
-            f'{server_url}/_apis/projects?api-version={api_version}',
-            auth=auth,
-            timeout=300  # Timeout of 10 seconds
-        )
-        response.raise_for_status()
-        print('Login successful.')
+    url = f'{server_url}/_apis/projects?api-version={api_version}'
+    response = make_request_with_retries(url, pat)
+    if response:
+        logging.info('Login successful.')
         return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to authenticate: {e}')
+    else:
+        logging.error('Failed to authenticate.')
         return None
     
-@retry_request
-def get_repositories(server_url, project, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    repos_url = f'{server_url}/{project}/_apis/git/repositories?api-version={api_version}'
-    try:
-        response = requests.get(repos_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve repositories: {e}')
-        return None
+def get_repositories(server_url, project, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories?$top={batch_size}&api-version={api_version}'
+    
+    all_repositories = []
+    continuation_token = None
 
-@retry_request
-def get_branches(server_url, project, repository_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    branches_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/refs?filter=heads&api-version={api_version}'
-    try:
-        response = requests.get(branches_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve branches: {e}')
-        return None
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_repositories.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logging.error('Failed to retrieve repositories with pagination.')
+            break
+
+    return {"value": all_repositories}
 
 
-@retry_request
+def get_branches(server_url, project, repository_id, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=heads&$top={batch_size}&api-version={api_version}'
+    all_branches = []
+    continuation_token = None
+
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+
+        if response:
+            data = response.json().get('value', [])
+            all_branches.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logging.error('Failed to retrieve branches with pagination.')
+            break
+
+    return all_branches
+
+
 def get_latest_commit_info(server_url, project, repository_id, branch_name, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.itemVersion.version={branch_name}&$top=1&api-version={api_version}'
-    try:
-        response = requests.get(commits_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        commit = response.json()['value'][0]
-        commit_id = commit['commitId']
-        comment = commit['comment']
-        author = commit['author']['name']
-        last_modified = commit['author']['date']
-        return commit_id, comment, author, last_modified
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve last commit: {e}')
-        return None, None, None, None
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_branch_name = encode_url_component(branch_name)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top=1&api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
 
-@retry_request
-def get_files_in_branch(server_url, project, repository_id, branch_name, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    items_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/items?scopePath=/&recursionLevel=Full&versionDescriptor[version]={branch_name}&api-version={api_version}'
-    try:
-        response = requests.get(items_url, auth=auth, timeout=100)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve items in branch: {e}')
-        return None
+    if response:
+        commit = response.json().get('value', [None])[0]
+        if commit:
+            return commit['commitId'], commit['comment'], commit['author']['name'], commit['author']['date']
+    logging.error('Failed to retrieve latest commit info.')
+    return None, None, None, None
 
-@retry_request
+
+def get_files_in_branch(server_url, project, repository_id, branch_name, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_branch_name = encode_url_component(branch_name)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/items?scopePath=/&recursionLevel=Full&versionDescriptor[version]={encoded_branch_name}&$top={batch_size}&api-version={api_version}'
+    all_files = []
+    continuation_token = None
+    last_token = None  # To detect repetitive tokens
+    repeat_count = 0   # Count for repeated tokens to avoid infinite loops
+    
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+
+        if response:
+            data = response.json().get('value', [])
+            all_files.extend(data)
+            
+            # Update continuation token
+            last_token = continuation_token
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            
+            # Logging for continuation token
+            logging.info(f"Continuation token for next batch: {continuation_token}")
+            
+            # Check if the continuation token is the same as the last one
+            if continuation_token == last_token:
+                repeat_count += 1
+                if repeat_count > 3:  # Break after 3 repeated tokens
+                    logging.warning(f"Breaking due to repeated continuation tokens for branch {branch_name}.")
+                    break
+            else:
+                repeat_count = 0  # Reset repeat count if the token changes
+            
+            # Exit loop if there is no continuation token
+            if not continuation_token:
+                logging.info(f"Finished retrieving all items for branch {branch_name}.")
+                break
+        else:
+            logging.error('Failed to retrieve items in branch with pagination.')
+            break
+
+    return all_files
+
 def get_file_size(server_url, project, repository_id, sha1, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    blob_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/blobs/{sha1}?api-version={api_version}'
-    try:
-        response = requests.get(blob_url, auth=auth, timeout=300)
-        response.raise_for_status()
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_sha1 = encode_url_component(sha1)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/blobs/{encoded_sha1}?api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
+
+    if response:
         return response.headers.get('Content-Length', 0)
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve blob size: {e}')
-        return 0
+    logging.error('Failed to retrieve blob size.')
+    return 0
 
-@retry_request
+
 def get_commit_count(server_url, project, repository_id, file_path, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.' \
-                  f'itemPath={file_path}&api-version={api_version}'
-    print(f"Requesting commit count with URL: {commits_url}")
-    try:
-        response = requests.get(commits_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        commit_count = response.json()['count']
-        return max(commit_count, 1)  # Ensure at least one commit
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve commit count for {file_path}: {e}')
-        return 1  # Assume at least one commit
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_file_path = encode_url_component(file_path)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemPath={encoded_file_path}&api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
 
-@retry_request
-def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.' \
-                  f'itemVersion.version={branch_name}&api-version={api_version}'
-    print(f"Requesting all commits with URL: {commits_url}")
-    try:
-        response = requests.get(commits_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve commits: {e}')
-        return []
+    if response:
+        return max(response.json().get('count', 1), 1)
+    logging.error(f'Failed to retrieve commit count for {file_path}.')
+    return 1
 
-@retry_request
-def get_all_repo_commits(server_url, project, repository_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?api-version={api_version}'
-    print(f"Requesting all repository commits with URL: {commits_url}")
-    try:
-        response = requests.get(commits_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve all repository commits: {e}')
-        return []
+    
+def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_branch_name = encode_url_component(branch_name)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top={batch_size}&api-version={api_version}'
+    all_commits = []
+    continuation_token = None
 
-@retry_request
-def get_tags(server_url, project, repository_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    tags_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/refs?filter=tags&api-version={api_version}'
-    print(f"Requesting tags with URL: {tags_url}")
-    try:
-        response = requests.get(tags_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve tags: {e}')
-        return []
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_commits.extend(data)
 
-@retry_request
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logging.error('Failed to retrieve all commits with pagination.')
+            break
+
+    return all_commits
+
+    
+def get_all_repo_commits(server_url, project, repository_id, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?$top={batch_size}&api-version={api_version}'
+    all_commits = []
+    continuation_token = None
+
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_commits.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logging.error('Failed to retrieve all repository commits with pagination.')
+            break
+
+    return all_commits
+    
+def get_tags(server_url, project, repository_id, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=tags&$top={batch_size}&api-version={api_version}'
+    all_tags = []
+    continuation_token = None
+
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_tags.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logging.error('Failed to retrieve tags with pagination.')
+            break
+
+    return all_tags
+
+
 def get_tag_details(server_url, project, repository_id, tag_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    tag_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/annotatedtags/{tag_id}?api-version=6.0-preview.1'
-    try:
-        response = requests.get(tag_url, auth=auth, timeout=300)
-        response.raise_for_status()
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_tag_id = encode_url_component(tag_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/annotatedtags/{encoded_tag_id}?api-version=6.0-preview.1'
+    response = make_request_with_retries(url, pat, method='GET')
+
+    if response:
         return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve tag details for {tag_id}: {e}')
-        return None
+    logging.error(f'Failed to retrieve tag details for {tag_id}.')
+    return None
 
-
-@retry_request
 def get_commit_details(server_url, project, repository_id, commit_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commit_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits/{commit_id}?api-version={api_version}'
-    try:
-        response = requests.get(commit_url, auth=auth, timeout=300)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve commit details for {commit_id}: {e}')
-        return None
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_commit_id = encode_url_component(commit_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits/{encoded_commit_id}?api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
 
+    if response:
+        return response.json()
+    logging.error(f'Failed to retrieve commit details for {commit_id}.')
+    return None
 
 def map_commit_tags(tags):
     commit_tag_map = {}
@@ -312,7 +444,6 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
         adjust_column_width(sheet)
         align_cells(sheet)
 
-    # Calculate run duration
     run_duration = datetime.now() - start_time
     hours, remainder = divmod(run_duration.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
@@ -613,7 +744,6 @@ def main():
                 generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
                                 output_path, proj_name, repo_name, server_url)
                 print(f'Report generated: {output_path}')
-
-
+                    
 if __name__ == "__main__":
     main()
