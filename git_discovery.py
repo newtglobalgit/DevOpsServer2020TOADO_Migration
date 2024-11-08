@@ -273,7 +273,8 @@ def sanitize_sheet_name(name):
     return name[:31]  # Excel sheet names can have a maximum of 31 characters
 
 
-def generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project_name, config_df, input_row):
+def generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project_name, repo_name,
+                    server_url):
     start_time = datetime.now()
     
     with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
@@ -316,25 +317,24 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
     hours, remainder = divmod(run_duration.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
     formatted_run_duration = f"{int(hours)} hours, {int(minutes)} minutes, {seconds:.1f} seconds"
-    
+
     # Determine organization or collection based on the server URL
-    org_url = input_row['Server URL']
-    if "dev.azure.com" in org_url:
+    if "dev.azure.com" in server_url:
         org_or_collection = "organization"
-        org_or_collection_name = org_url.split("/")[-1]  # Extract organization name from URL
+        org_or_collection_name = server_url.split("/")[-1]  # Extract organization name from URL
     else:
         org_or_collection = "collection"
-        org_or_collection_name = org_url.split('/')[-1]  # Extract collection name from URL
-
+        org_or_collection_name = server_url.split('/')[-1]  # Extract collection name from URL
 
     # Write summary data
     summary_data = {
-        'Report Title': f"Project {input_row['Project Name']} Git Report.",
-        'Purpose of the report': f"This provides a detailed view of the repo {input_row['Repository Name']} in project {input_row['Project Name']} of {org_or_collection} {org_or_collection_name}.",
+        'Report Title': f"Project {project_name} Git Report.",
+        'Purpose of the report': f"This provides a detailed view of the repo {repo_name} in project"
+                                 f" {project_name} of {org_or_collection} {org_or_collection_name}.",
         'Run Date': datetime.now().strftime('%d-%b-%Y %I:%M %p'),
         'Run Duration': formatted_run_duration,
         'Run By': getpass.getuser(),
-        'Input': f"Server URL: {input_row['Server URL']}, Project Name: {input_row['Project Name']}, Repository Name: {input_row['Repository Name']}"
+        'Input': f"Server URL: {server_url}, Project Name: {project_name}, Repository Name: {repo_name}"
     }
 
     row = 1
@@ -593,12 +593,12 @@ def main():
         for project in server_data["projects"]:
             proj_name = project["name"]
             print(f"Processing project {proj_name}")
-            master_data_source_code = []
-            master_data_commits = []
-            master_data_all_commits = []
-            master_data_tags = []
             input_row = df[(df['Server URL'] == server_url) & (df['Project Name'] == proj_name)].iloc[0]
             for repo in project["repos"]:
+                master_data_source_code = []
+                master_data_commits = []
+                master_data_all_commits = []
+                master_data_tags = []
                 repo_name = repo["name"]
                 branches = repo.get("branches", [])
                 # If branches exist, iterate through them; otherwise, use an empty string for branch_name
@@ -608,12 +608,12 @@ def main():
                     master_data_commits = master_data_commits + data_commits
                     master_data_all_commits = master_data_all_commits + data_all_commits
                     master_data_tags = master_data_tags + data_tags
-            # Create the output file name with the desired format
-            random_number = random.randint(100000, 999999)
-            output_filename = f"{proj_name}_{repo_name}_git_discovery_report_{random_number}.xlsx"
-            output_path = os.path.join(output_directory, output_filename)
-            generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,output_path, proj_name, df, input_row)
-            print(f'Report generated: {output_path}')
+                file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+                output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
+                output_path = os.path.join(output_directory, output_filename)
+                generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
+                                output_path, proj_name, repo_name, server_url)
+                print(f'Report generated: {output_path}')
 
 
 if __name__ == "__main__":
