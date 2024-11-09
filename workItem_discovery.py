@@ -11,7 +11,26 @@ from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 from utils.common import get_project_names, add_if_not_exists
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+log_dir = "logs"
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+# Create a logger
+logger = logging.getLogger()
+# Set the log level
+logger.setLevel(logging.INFO)
+# File handler
+file_handler = logging.FileHandler(os.path.join(log_dir, f'workitem_discovery_{datetime.now().strftime("%Y%m%d%H%M%S")}.log'))
+file_handler.setLevel(logging.INFO)
+# Console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+# Log format
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+# Add handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
 
 
 def sanitize_sheet_name(name):
@@ -19,6 +38,7 @@ def sanitize_sheet_name(name):
     for char in invalid_chars:
         name = name.replace(char, '')
     return name[:31]
+
 
 def make_api_request(url, pat, method='GET', data=None, timeout=50):
     """Reusable API request function with retry logic and timeout handling."""
@@ -39,12 +59,13 @@ def make_api_request(url, pat, method='GET', data=None, timeout=50):
         return response.json()
     
     except requests.exceptions.Timeout:
-        logging.error(f"Request timed out after {timeout} seconds for URL: {url}. Retrying if possible.")
+        logger.error(f"Request timed out after {timeout} seconds for URL: {url}. Retrying if possible.")
         return None
 
     except requests.exceptions.RequestException as e:
-        logging.error(f'Failed API request to {url}: {e}')
+        logger.error(f'Failed API request to {url}: {e}')
         return None
+
 
 def authenticate_and_get_projects(base_url, pat, api_version):
     projects_url = f'{base_url}/_apis/projects?api-version={api_version}'
@@ -71,8 +92,9 @@ def get_work_items_query(base_url, project, pat, api_version, batch_size=50):
         else:
             break
 
-    logging.info(f"Total work item IDs retrieved: {len(all_work_item_ids)}")
+    logger.info(f"Total work item IDs retrieved: {len(all_work_item_ids)}")
     return all_work_item_ids
+
 
 def get_work_item_details(base_url, project, work_item_ids, pat, api_version):
     """Fetch work item details in chunks of 200 IDs."""
@@ -82,20 +104,20 @@ def get_work_item_details(base_url, project, work_item_ids, pat, api_version):
     for i in range(0, len(work_item_ids), batch_size):
         batch_ids = work_item_ids[i:i + batch_size]
         work_item_url = f'{base_url}/{project}/_apis/wit/workitems?ids={",".join(map(str, batch_ids))}&$expand=relations&api-version={api_version}'
-        logging.info(f"Fetching work item details for batch from URL: {work_item_url}")
+        logger.info(f"Fetching work item details for batch from URL: {work_item_url}")
         response = make_api_request(work_item_url, pat)
         
         if response and 'value' in response:
             all_work_item_details.extend(response['value'])
         else:
-            logging.warning(f"No data returned for work item batch starting at index {i}")
+            logger.warning(f"No data returned for work item batch starting at index {i}")
     
     return all_work_item_details
 
 
 def get_work_item_comments(base_url, project, work_item_id, pat, api_version):
     comments_url = f'{base_url}/{project}/_apis/wit/workitems/{work_item_id}/comments?api-version=6.0-preview.3'
-    logging.info(f"Fetching comments from URL: {comments_url}")
+    logger.info(f"Fetching comments from URL: {comments_url}")
     return make_api_request(comments_url, pat)
 
 
@@ -139,6 +161,7 @@ def extract_work_item_info(collection_name, project_name, work_item, comments):
         'Tags': tags
     }
 
+
 def process_row(devops_server_url, project, token, api_version='6.0'):
     base_url = devops_server_url
     pat = token
@@ -147,10 +170,10 @@ def process_row(devops_server_url, project, token, api_version='6.0'):
     collection_name = base_url_parts[3]  # Assuming collection name is the 4th part of the URL
     project_name = project
 
-    logging.info(f'Read values from Excel:')
-    logging.info(f'Server URL: {base_url}')
-    logging.info(f'Project Name: {project}')
-    logging.info(f'Collection Name: {collection_name}')
+    logger.info(f'Read values from Excel:')
+    logger.info(f'Server URL: {base_url}')
+    logger.info(f'Project Name: {project}')
+    logger.info(f'Collection Name: {collection_name}')
 
     work_item_details_list = []
     work_item_type_counts = {}
@@ -168,23 +191,24 @@ def process_row(devops_server_url, project, token, api_version='6.0'):
                     work_item_type_counts[work_item_type] += 1
                 else:
                     work_item_type_counts[work_item_type] = 1
-                logging.info(f'ID: {info["ID"]}')
-                logging.info(f'Work Item Name: {info["Work Item Name"]}')
-                logging.info(f'Type: {info["Type"]}')
-                logging.info(f'Description: {info["Description"]}')
-                logging.info(f'Assignee: {info["Assignee"]}')
-                logging.info(f'Created By: {info["Created By"]}')
-                logging.info(f'Comment: {info["Comment"]}')
-                logging.info(f'Created Date: {info["Created Date"]}')
-                logging.info(f'State: {info["State"]}')
-                logging.info(f'Links: {info["Links"]}')
-                logging.info(f'Tags: {info["Tags"]}')
-                logging.info('---')
+                logger.info(f'ID: {info["ID"]}')
+                logger.info(f'Work Item Name: {info["Work Item Name"]}')
+                logger.info(f'Type: {info["Type"]}')
+                logger.info(f'Description: {info["Description"]}')
+                logger.info(f'Assignee: {info["Assignee"]}')
+                logger.info(f'Created By: {info["Created By"]}')
+                logger.info(f'Comment: {info["Comment"]}')
+                logger.info(f'Created Date: {info["Created Date"]}')
+                logger.info(f'State: {info["State"]}')
+                logger.info(f'Links: {info["Links"]}')
+                logger.info(f'Tags: {info["Tags"]}')
+                logger.info('---')
 
         return work_item_details_list, work_item_type_counts
     else:
-        logging.error("Failed to retrieve work items query")
+        logger.error("Failed to retrieve work items query")
         return None, None
+
 
 def generate_summary(writer, project_name, start_time, server_url):
     workbook = writer.book
@@ -251,6 +275,7 @@ def set_column_widths(worksheet, df):
         max_len = min(max(series.astype(str).map(len).max(), len(str(series.name))) + 2, 30)
         worksheet.set_column(idx, idx, max_len)
 
+
 def generate_report(output_dir, project, work_item_details_list, work_item_type_counts, start_time,server_url ):
     report_df = pd.DataFrame(work_item_details_list)
     count_df = pd.DataFrame(list(work_item_type_counts.items()), columns=['Work Item Type', 'Count'])
@@ -294,61 +319,67 @@ def generate_report(output_dir, project, work_item_details_list, work_item_type_
         worksheet.hide_gridlines(2)  # Hide gridlines
         set_column_widths(worksheet, report_df)
         
-    logging.info(f'Report generated for {project}: {report_filename}')
+    logger.info(f'Report generated for {project}: {report_filename}')
 
 
 def main():
     input_file = 'workitem_discovery_input_form.xlsx'
-    run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
-    output_directory = os.path.join("Work Items", run_id)
+    try:
+        run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+        output_directory = os.path.join("Work Items", run_id)
 
-    # Create output directory if it doesn't exist
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
+        # Create output directory if it doesn't exist
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
 
-    df = pd.read_excel(input_file)
-    # Read the values from the Excel file and strip any leading/trailing spaces
-    df['Server URL'] = df['Server URL'].str.strip().fillna('')
-    df['Project Name'] = df['Project Name'].str.strip().fillna('')
-    df['PAT'] = df['PAT'].str.strip().fillna('')
+        df = pd.read_excel(input_file)
+        # Read the values from the Excel file and strip any leading/trailing spaces
+        df['Server URL'] = df['Server URL'].str.strip().fillna('')
+        df['Project Name'] = df['Project Name'].str.strip().fillna('')
+        df['PAT'] = df['PAT'].str.strip().fillna('')
 
-    # Form the input data in below format
-    # Sample: { "server_url": { "pat": "123test_token", "projects": ['dev_server', 'qa_server'] }
-    input_data = {}
-    for index, row in df.iterrows():
-        if pd.isna(row['Server URL']) or pd.isna(row['PAT']):
-            logging.warning(f"Skipping row {index + 1} due to missing data. ServerURL and PAT values are mandatory.")
-            continue
-        server_url = row['Server URL']
-        proj_name = row['Project Name']
-        ptoken = row['PAT']
-        proj_names = []
-        if not proj_name:
-            proj_names = get_project_names(devops_server_url=server_url, pat=ptoken)
-        if server_url not in input_data:
-            input_data[server_url] = {}
-            input_data[server_url]["pat"] = ptoken
-            input_data[server_url]["projects"] = [proj_name] if proj_name else proj_names
-        else:
-            projects = input_data[server_url]["projects"]
-            add_if_not_exists(projects, [proj_name] if proj_name else proj_names)
-            input_data[server_url]["projects"] = projects
-
-    for server_url in input_data:
-        pat = input_data[server_url]["pat"]
-        projects = input_data[server_url]["projects"]
-        for project in projects:
-            start_time = datetime.now()
-            logging.info(f"Processing project {project}")
-            work_item_details_list, work_item_type_counts = process_row(server_url, project, pat)
-            if work_item_details_list and work_item_type_counts:
-                generate_report(output_directory, project.strip(), work_item_details_list, work_item_type_counts, start_time,server_url)
+        # Form the input data in below format
+        # Sample: { "server_url": { "pat": "123test_token", "projects": ['dev_server', 'qa_server'] }
+        input_data = {}
+        for index, row in df.iterrows():
+            if pd.isna(row['Server URL']) or pd.isna(row['PAT']):
+                logger.warning(f"Skipping row {int(index) + 1} due to missing data. ServerURL and PAT values are mandatory.")
+                continue
+            server_url = row['Server URL']
+            proj_name = row['Project Name']
+            ptoken = row['PAT']
+            proj_names = []
+            if not proj_name:
+                proj_names = get_project_names(devops_server_url=server_url, pat=ptoken)
+            if server_url not in input_data:
+                input_data[server_url] = {}
+                input_data[server_url]["pat"] = ptoken
+                input_data[server_url]["projects"] = [proj_name] if proj_name else proj_names
             else:
-                logging.error(f"No work items found for project {project}")
+                projects = input_data[server_url]["projects"]
+                add_if_not_exists(projects, [proj_name] if proj_name else proj_names)
+                input_data[server_url]["projects"] = projects
 
-            # Clear the metadata
-            del work_item_details_list
-            del work_item_type_counts
+        for server_url in input_data:
+            pat = input_data[server_url]["pat"]
+            projects = input_data[server_url]["projects"]
+            for project in projects:
+                start_time = datetime.now()
+                logger.info(f"Processing project {project}")
+                try:
+                    work_item_details_list, work_item_type_counts = process_row(server_url, project, pat)
+                    if work_item_details_list and work_item_type_counts:
+                        generate_report(output_directory, project.strip(), work_item_details_list, work_item_type_counts, start_time,server_url)
+                    else:
+                        logger.error(f"No work items found for project {project}")
+                    # Clear the metadata
+                    del work_item_details_list
+                    del work_item_type_counts
+                except Exception as e:
+                    logger.error(f"Error occurred while processing project '{project}': {e}")
+    except Exception as e:
+        logger.error(f"Error occurred while processing input file '{input_file}': {e}")
+        return
 
 
 if __name__ == '__main__':

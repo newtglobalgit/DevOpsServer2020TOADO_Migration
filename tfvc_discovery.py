@@ -6,20 +6,30 @@ import pandas as pd
 from datetime import datetime
 import getpass
 import time
-from requests.exceptions import ConnectTimeout
 from utils.common import get_project_names, add_if_not_exists
-from urllib.parse import urlparse, parse_qs
 import logging
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
 
 log_dir = "logs"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
-logging.basicConfig(
-    filename=os.path.join(log_dir, f'tfvc_report_{datetime.now().strftime("%Y%m%d%H%M%S")}.log'),
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-)
+# Create a logger
+logger = logging.getLogger()
+# Set the log level
+logger.setLevel(logging.INFO)
+# File handler
+file_handler = logging.FileHandler(os.path.join(log_dir, f'tfvc_discovery_{datetime.now().strftime("%Y%m%d%H%M%S")}.log'))
+file_handler.setLevel(logging.INFO)
+# Console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+# Log format
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+# Add handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
 
 
 def modify_item_path(url):
@@ -52,42 +62,44 @@ def modify_item_path(url):
             '`': '%60'
         }
 
-        pattern = r"itemPath=([^&]+)"
+        pattern = r"itemPath=(.+?)&api-version"
         match = re.search(pattern, url)
         
         if match:
             item_path = match.group(1)
-            logging.info(f"Original item path: {item_path}")
+            logger.info(f"Original item path: {item_path}")
             for char, replacement in replacements.items():
                 item_path = item_path.replace(char, replacement)
             
             modified_url = url.replace(match.group(1), item_path)
-            logging.info(f"Modified item path: {item_path}")
+            logger.info(f"Modified item path: {item_path}")
             return modified_url
         
         return url
     except Exception as e:
-        logging.error(f"Failed to modify item path: {e}")
+        logger.error(f"Failed to modify item path: {e}")
         return url
+
 
 def make_request_with_retries(url, auth, max_retries=10, timeout=300):
     url = modify_item_path(url)
     print(url)
-    logging.info(f"Making request to URL: {url}")
+    logger.info(f"Making request to URL: {url}")
     for attempt in range(max_retries):
         try:
             response = requests.get(url, auth=auth, timeout=timeout)
             if response.status_code == 200:
-                logging.info(f"Request successful with status code: {response.status_code}")
+                logger.info(f"Request successful with status code: {response.status_code}")
                 return response
             else:
-                logging.warning(f"Attempt {attempt + 1}: Request timed out. Retrying...")
+                logger.warning(f"Attempt {attempt + 1}: Request timed out. Retrying...")
                 time.sleep(2 ** attempt)
         except Exception as e:
-            logging.error(f"Error during request: {e}")
+            logger.error(f"Error during request: {e}")
             break
-    logging.error(f"Failed to connect after {max_retries} attempts.")
+    logger.error(f"Failed to connect after {max_retries} attempts.")
     return None
+
 
 # Function to sanitize Excel sheet names
 def sanitize_sheet_name(name):
@@ -102,8 +114,9 @@ def get_pat_for_server(server_url, df):
     try:
         return df.loc[df['Server URL'] == server_url, 'PAT'].values[0]
     except IndexError:
-        logging.error(f"PAT not found for server URL: {server_url}")
+        logger.error(f"PAT not found for server URL: {server_url}")
         return None
+
 
 # Function to get the organization name from the server URL
 def extract_organization_name(server_url):
@@ -117,7 +130,7 @@ def get_shelvesets_details(server_url, pat):
         response = make_request_with_retries(url, auth=HTTPBasicAuth('', pat))
         return response.json().get('value', []) if response else []
     except Exception as e:
-        logging.error(f"Failed to retrieve shelvesets: {e}")
+        logger.error(f"Failed to retrieve shelvesets: {e}")
         return []
 
 
@@ -128,7 +141,7 @@ def get_changeset_details(server_url, project_name, changeset_id, pat):
         response = make_request_with_retries(url, auth=HTTPBasicAuth('', pat))
         return response.json() if response else None
     except Exception as e:
-        logging.error(f"Failed to retrieve changeset {changeset_id} details: {e}")
+        logger.error(f"Failed to retrieve changeset {changeset_id} details: {e}")
         return None
 
 
@@ -159,18 +172,17 @@ def get_tfvc_branch_file_count(devops_server_url, project_name, branch_path, pat
         items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={branch_path}&recursionLevel=full&api-version=6.0'
         items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
         if items_response.status_code == 200:
-            logging.info(f"Request successful with branch file status code: {items_response.status_code}")
+            logger.info(f"Request successful with branch file status code: {items_response.status_code}")
             items = items_response.json()['value']
             if exclude_paths:
                 items = [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in exclude_paths)]
             return len([item for item in items if determine_file_type(item) in ['File', 'Folder']])
         else:
-            logging.error(f"Failed to retrieve items for branch file'{branch_path}'. Status code: {items_response.status_code}")
+            logger.error(f"Failed to retrieve items for branch file'{branch_path}'. Status code: {items_response.status_code}")
             return 0
     except Exception as e:
-        logging.error(f"Failed to retrieve items for branch file: {e}")
+        logger.error(f"Failed to retrieve items for branch file: {e}")
         return 0
-
 
 
 def get_branch_file_details(devops_server_url, project_name, branch_path, pat, excluded_paths=[]):
@@ -178,14 +190,14 @@ def get_branch_file_details(devops_server_url, project_name, branch_path, pat, e
         items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={branch_path}&recursionLevel=full&api-version=6.0'
         items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
         if items_response.status_code == 200:
-            logging.info(f"Request successful with branch status code: {items_response.status_code}")
+            logger.info(f"Request successful with branch status code: {items_response.status_code}")
             items = items_response.json()['value']
             return [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in excluded_paths)]
         else:
-            logging.error(f"Failed to retrieve items for branch '{branch_path}'. Status code: {items_response.status_code}")
+            logger.error(f"Failed to retrieve items for branch '{branch_path}'. Status code: {items_response.status_code}")
             return []
     except Exception as e:
-        logging.error(f"Failed to retrieve items for branch: {e}")
+        logger.error(f"Failed to retrieve items for branch: {e}")
         return []
 
 
@@ -194,7 +206,7 @@ def get_latest_changeset_for_item(server_url, project_name, item_path, pat):
         changesets_url = f"{server_url}/{project_name}/_apis/tfvc/changesets?itemPath={item_path}&api-version=6.0"
         response = make_request_with_retries(changesets_url, auth=HTTPBasicAuth('', pat))
         if response.status_code == 200:
-            logging.info(f"Request successful with changeset status code: {response.status_code}")
+            logger.info(f"Request successful with changeset status code: {response.status_code}")
             changesets = response.json().get('value', [])
             if changesets:
                 latest_changeset = changesets[0]
@@ -202,10 +214,9 @@ def get_latest_changeset_for_item(server_url, project_name, item_path, pat):
                     latest_changeset['createdDate'], latest_changeset['author']['displayName']
         return None, 'No comment', 'N/A', 'N/A'
     except Exception as e:
-        logging.error(f"Failed to retrieve changeset for branch: {e}")
+        logger.error(f"Failed to retrieve changeset for branch: {e}")
         return []
     
-
 
 # Function to set column widths to fit the data
 def set_column_widths(worksheet, dataframe):
@@ -276,14 +287,14 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                         all_branch_file_details[sanitize_sheet_name(branch_name)] = branch_file_details
                         all_files_data.extend(branch_file_details)
             except (ValueError, KeyError) as e:
-                logging.error(f"  Error parsing JSON response for TFVC in project '{project_name}':", e)
+                logger.error(f"  Error parsing JSON response for TFVC in project '{project_name}':", e)
         else:
-            logging.error(f"  Failed to retrieve TFVC branches for project '{project_name}'. Status code: {tfvc_response.status_code}")
+            logger.error(f"  Failed to retrieve TFVC branches for project '{project_name}'. Status code: {tfvc_response.status_code}")
 
         # Fetch all changesets
         changeset_response = make_request_with_retries(tfvc_changesets_url, auth=HTTPBasicAuth('', pat))
         if changeset_response.status_code == 200:
-            logging.info(f"Changeset status code -{changeset_response.status_code}")
+            logger.info(f"Changeset status code -{changeset_response.status_code}")
             changesets = changeset_response.json()['value']
             for changeset in changesets:
                 all_changesets_data.append({
@@ -295,7 +306,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                     'Comment': changeset.get('comment', 'No comment')
                 })
         else:
-            logging.error(f"  Failed to retrieve changesets for project '{project_name}'. Status code: {changeset_response.status_code}")
+            logger.error(f"  Failed to retrieve changesets for project '{project_name}'. Status code: {changeset_response.status_code}")
 
         # Fetch all shelvesets
         shelvesets = get_shelvesets_details(server_url, pat)
@@ -491,15 +502,14 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                     else:
                         all_shelvesets_worksheet.write(row_num, col_num, value, regular_format)
 
-        logging.info(f"Report saved to {excel_output_path}")
+        logger.info(f"Report saved to {excel_output_path}")
     except Exception as e:
-        logging.error(f"Failed to generate Excel report for project '{project}': {e}")
+        logger.error(f"Failed to generate Excel report for project '{project}': {e}")
     
 
-
 def main():
+    input_file = 'tfvc_discovery_input_form.xlsx'
     try:
-        input_file = 'tfvc_discovery_input_form.xlsx'
         run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
         output_directory = os.path.join("TFVC", run_id)
 
@@ -519,7 +529,7 @@ def main():
         input_data = {}
         for index, row in df.iterrows():
             if pd.isna(row['Server URL']) or pd.isna(row['PAT']):
-                print(f"Skipping row {index + 1} due to missing data. ServerURL and PAT values are mandatory.")
+                print(f"Skipping row {int(index) + 1} due to missing data. ServerURL and PAT values are mandatory.")
                 continue
             surl = row['Server URL']
             proj_name = row['Project Name']
@@ -542,11 +552,13 @@ def main():
             for project in projects:
                 start_time = datetime.now()
                 print(f"Processing project {project}")
-                # Generate the Excel report
-                generate_excel_report(output_directory, server_url, pat, project, start_time)
-
+                try:
+                    # Generate the Excel report
+                    generate_excel_report(output_directory, server_url, pat, project, start_time)
+                except Exception as e:
+                    logger.error(f"Error occurred while processing project '{project}': {e}")
     except Exception as e:
-        logging.error(f"Error reading input file '{input_file}': {e}")
+        logger.error(f"Error occurred while processing input file '{input_file}': {e}")
         return
 
 

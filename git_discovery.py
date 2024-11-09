@@ -7,20 +7,37 @@ from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from datetime import datetime
 import getpass
 import logging
-import random
-import time
 from urllib.parse import quote
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from collections import defaultdict
 from utils.common import get_project_names, get_repo_names_by_project
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+log_dir = "logs"
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+# Create a logger
+logger = logging.getLogger()
+# Set the log level
+logger.setLevel(logging.INFO)
+# File handler
+file_handler = logging.FileHandler(os.path.join(log_dir, f'git_discovery_{datetime.now().strftime("%Y%m%d%H%M%S")}.log'))
+file_handler.setLevel(logging.INFO)
+# Console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+# Log format
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+# Add handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
 
 def encode_url_component(component):
     return quote(component, safe='')
+
 
 def make_request_with_retries(url, pat, method='GET', data=None, timeout=300, max_retries=10, backoff_factor=0.5):
     auth = HTTPBasicAuth('', pat)
@@ -32,7 +49,6 @@ def make_request_with_retries(url, pat, method='GET', data=None, timeout=300, ma
         allowed_methods=["HEAD", "GET", "OPTIONS", "POST"]
     )
     session.mount('https://', HTTPAdapter(max_retries=retries))
-    
     for attempt in range(max_retries):
         try:
             if method == 'GET':
@@ -42,7 +58,6 @@ def make_request_with_retries(url, pat, method='GET', data=None, timeout=300, ma
             else:
                 logger.error(f"HTTP method '{method}' is not supported.")
                 return None
-
             if response.status_code == 200:
                 logger.info(f"Request succeeded for URL {url}")
                 return response
@@ -60,9 +75,9 @@ def make_request_with_retries(url, pat, method='GET', data=None, timeout=300, ma
         except requests.exceptions.RequestException as e:
             logger.error(f"Error occurred while making request to {url}: {e}")
             return None
-
     logger.error(f"Exceeded max retries for URL {url}")
     return None
+
 
 # Function to read configuration from Excel file
 def read_config_from_excel(file_path):
@@ -92,12 +107,13 @@ def authenticate_and_get_projects(server_url, pat, api_version):
     url = f'{server_url}/_apis/projects?api-version={api_version}'
     response = make_request_with_retries(url, pat)
     if response:
-        logging.info('Login successful.')
+        logger.info('Login successful.')
         return response.json()
     else:
-        logging.error('Failed to authenticate.')
+        logger.error('Failed to authenticate.')
         return None
-    
+
+
 def get_repositories(server_url, project, pat, api_version, batch_size=150):
     encoded_project = encode_url_component(project)
     url = f'{server_url}/{encoded_project}/_apis/git/repositories?$top={batch_size}&api-version={api_version}'
@@ -117,7 +133,7 @@ def get_repositories(server_url, project, pat, api_version, batch_size=150):
             if not continuation_token:
                 break
         else:
-            logging.error('Failed to retrieve repositories with pagination.')
+            logger.error('Failed to retrieve repositories with pagination.')
             break
 
     return {"value": all_repositories}
@@ -143,7 +159,7 @@ def get_branches(server_url, project, repository_id, pat, api_version, batch_siz
             if not continuation_token:
                 break
         else:
-            logging.error('Failed to retrieve branches with pagination.')
+            logger.error('Failed to retrieve branches with pagination.')
             break
 
     return all_branches
@@ -161,7 +177,7 @@ def get_latest_commit_info(server_url, project, repository_id, branch_name, pat,
         commit = response.json().get('value', [None])[0]
         if commit:
             return commit['commitId'], commit['comment'], commit['author']['name'], commit['author']['date']
-    logging.error('Failed to retrieve latest commit info.')
+    logger.error('Failed to retrieve latest commit info.')
     return None, None, None, None
 
 
@@ -189,26 +205,27 @@ def get_files_in_branch(server_url, project, repository_id, branch_name, pat, ap
             continuation_token = response.headers.get('x-ms-continuationtoken')
             
             # Logging for continuation token
-            logging.info(f"Continuation token for next batch: {continuation_token}")
+            logger.info(f"Continuation token for next batch: {continuation_token}")
             
             # Check if the continuation token is the same as the last one
             if continuation_token == last_token:
                 repeat_count += 1
                 if repeat_count > 3:  # Break after 3 repeated tokens
-                    logging.warning(f"Breaking due to repeated continuation tokens for branch {branch_name}.")
+                    logger.warning(f"Breaking due to repeated continuation tokens for branch {branch_name}.")
                     break
             else:
                 repeat_count = 0  # Reset repeat count if the token changes
             
             # Exit loop if there is no continuation token
             if not continuation_token:
-                logging.info(f"Finished retrieving all items for branch {branch_name}.")
+                logger.info(f"Finished retrieving all items for branch {branch_name}.")
                 break
         else:
-            logging.error('Failed to retrieve items in branch with pagination.')
+            logger.error('Failed to retrieve items in branch with pagination.')
             break
 
     return all_files
+
 
 def get_file_size(server_url, project, repository_id, sha1, pat, api_version):
     encoded_project = encode_url_component(project)
@@ -220,7 +237,7 @@ def get_file_size(server_url, project, repository_id, sha1, pat, api_version):
 
     if response:
         return response.headers.get('Content-Length', 0)
-    logging.error('Failed to retrieve blob size.')
+    logger.error('Failed to retrieve blob size.')
     return 0
 
 
@@ -234,7 +251,7 @@ def get_commit_count(server_url, project, repository_id, file_path, pat, api_ver
 
     if response:
         return max(response.json().get('count', 1), 1)
-    logging.error(f'Failed to retrieve commit count for {file_path}.')
+    logger.error(f'Failed to retrieve commit count for {file_path}.')
     return 1
 
     
@@ -259,7 +276,7 @@ def get_all_commits(server_url, project, repository_id, branch_name, pat, api_ve
             if not continuation_token:
                 break
         else:
-            logging.error('Failed to retrieve all commits with pagination.')
+            logger.error('Failed to retrieve all commits with pagination.')
             break
 
     return all_commits
@@ -285,11 +302,12 @@ def get_all_repo_commits(server_url, project, repository_id, pat, api_version, b
             if not continuation_token:
                 break
         else:
-            logging.error('Failed to retrieve all repository commits with pagination.')
+            logger.error('Failed to retrieve all repository commits with pagination.')
             break
 
     return all_commits
-    
+
+
 def get_tags(server_url, project, repository_id, pat, api_version, batch_size=150):
     encoded_project = encode_url_component(project)
     encoded_repository_id = encode_url_component(repository_id)
@@ -310,7 +328,7 @@ def get_tags(server_url, project, repository_id, pat, api_version, batch_size=15
             if not continuation_token:
                 break
         else:
-            logging.error('Failed to retrieve tags with pagination.')
+            logger.error('Failed to retrieve tags with pagination.')
             break
 
     return all_tags
@@ -326,7 +344,7 @@ def get_tag_details(server_url, project, repository_id, tag_id, pat, api_version
 
     if response:
         return response.json()
-    logging.error(f'Failed to retrieve tag details for {tag_id}.')
+    logger.error(f'Failed to retrieve tag details for {tag_id}.')
     return None
 
 def get_commit_details(server_url, project, repository_id, commit_id, pat, api_version):
@@ -339,8 +357,9 @@ def get_commit_details(server_url, project, repository_id, commit_id, pat, api_v
 
     if response:
         return response.json()
-    logging.error(f'Failed to retrieve commit details for {commit_id}.')
+    logger.error(f'Failed to retrieve commit details for {commit_id}.')
     return None
+
 
 def map_commit_tags(tags):
     commit_tag_map = {}
@@ -680,70 +699,78 @@ def construct_input(df):
 
 def main():
     input_file = r'git_discovery_input_form.xlsx'
-    run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
-    output_directory = os.path.join("Git", run_id)
+    try:
+        run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+        output_directory = os.path.join("Git", run_id)
 
-    # Create output directory if it doesn't exist
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-        print(f"Output directory created: {output_directory}")
+        # Create output directory if it doesn't exist
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+            print(f"Output directory created: {output_directory}")
 
-    df = pd.read_excel(input_file)
-    # Read the values from the Excel file and strip any leading/trailing spaces
-    df['Server URL'] = df['Server URL'].fillna('').str.strip()
-    df['Project Name'] = df['Project Name'].fillna('').str.strip()
-    df['PAT'] = df['PAT'].fillna('').str.strip()
-    df['Repository Name'] = df['Repository Name'].fillna('').str.strip()
-    df['Branch Name'] = df['Branch Name'].fillna('').str.strip()
+        df = pd.read_excel(input_file)
+        # Read the values from the Excel file and strip any leading/trailing spaces
+        df['Server URL'] = df['Server URL'].fillna('').str.strip()
+        df['Project Name'] = df['Project Name'].fillna('').str.strip()
+        df['PAT'] = df['PAT'].fillna('').str.strip()
+        df['Repository Name'] = df['Repository Name'].fillna('').str.strip()
+        df['Branch Name'] = df['Branch Name'].fillna('').str.strip()
 
-    # Form the input data in below format
-    # Sample format below
-    """
-        {
-           "server_url":{
-              "pat":"123test_token",
-              "projects":[
-                 {
-                    "name":"proj_name",
-                    "repos":[
-                       {
-                          "name":"repo_name",
-                          "branches":["branch_name_1", "branch_name_2"]
-                       }
-                    ]
-                 }
-              ]
-           }
-        }
-    """
-    input_data = construct_input(df)
-    print(f"Final input combination: {input_data}")
+        # Form the input data in below format
+        # Sample format below
+        """
+            {
+               "server_url":{
+                  "pat":"123test_token",
+                  "projects":[
+                     {
+                        "name":"proj_name",
+                        "repos":[
+                           {
+                              "name":"repo_name",
+                              "branches":["branch_name_1", "branch_name_2"]
+                           }
+                        ]
+                     }
+                  ]
+               }
+            }
+        """
+        input_data = construct_input(df)
+        print(f"Final input combination: {input_data}")
 
-    for server_url, server_data in input_data.items():
-        pat = server_data["pat"]
-        for project in server_data["projects"]:
-            proj_name = project["name"]
-            print(f"Processing project {proj_name}")
-            for repo in project["repos"]:
-                master_data_source_code = []
-                master_data_commits = []
-                master_data_all_commits = []
-                master_data_tags = []
-                repo_name = repo["name"]
-                branches = repo.get("branches", [])
-                # If branches exist, iterate through them; otherwise, use an empty string for branch_name
-                for branch_name in branches if branches else [None]:
-                    data_source_code, data_commits, data_all_commits, data_tags = process(server_url, pat, proj_name, repo_name, branch_name)
-                    master_data_source_code = master_data_source_code + data_source_code
-                    master_data_commits = master_data_commits + data_commits
-                    master_data_all_commits = master_data_all_commits + data_all_commits
-                    master_data_tags = master_data_tags + data_tags
-                file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
-                output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
-                output_path = os.path.join(output_directory, output_filename)
-                generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
-                                output_path, proj_name, repo_name, server_url)
-                print(f'Report generated: {output_path}')
-                    
+        for server_url, server_data in input_data.items():
+            pat = server_data["pat"]
+            for project in server_data["projects"]:
+                proj_name = project["name"]
+                print(f"Processing project {proj_name}")
+                try:
+                    for repo in project["repos"]:
+                        master_data_source_code = []
+                        master_data_commits = []
+                        master_data_all_commits = []
+                        master_data_tags = []
+                        repo_name = repo["name"]
+                        branches = repo.get("branches", [])
+                        # If branches exist, iterate through them; otherwise, use an empty string for branch_name
+                        for branch_name in branches if branches else [None]:
+                            data_source_code, data_commits, data_all_commits, data_tags = process(server_url, pat, proj_name, repo_name, branch_name)
+                            master_data_source_code = master_data_source_code + data_source_code
+                            master_data_commits = master_data_commits + data_commits
+                            master_data_all_commits = master_data_all_commits + data_all_commits
+                            master_data_tags = master_data_tags + data_tags
+                        file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+                        output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
+                        output_path = os.path.join(output_directory, output_filename)
+                        generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
+                                        output_path, proj_name, repo_name, server_url)
+                        print(f'Report generated: {output_path}')
+                except Exception as e:
+                    logger.error(f"Error occurred while processing project '{proj_name}': {e}")
+    except Exception as e:
+        logger.error(f"Error occurred while processing input file '{input_file}': {e}")
+        return
+
+
 if __name__ == "__main__":
     main()
