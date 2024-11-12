@@ -433,6 +433,8 @@ def main():
                 print(f"Skipping row {int(index) + 1} due to missing data. ServerURL and PAT values are mandatory.")
                 continue
             surl = row['Server URL']
+            if surl.endswith('/'):
+                surl = surl.rstrip('/')
             proj_name = row['Project Name']
             ptoken = row['PAT']
             username = row['Username']
