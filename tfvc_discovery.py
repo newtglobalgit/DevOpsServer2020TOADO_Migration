@@ -92,6 +92,7 @@ def make_request_with_retries(url, auth, max_retries=10, timeout=300):
                 logger.info(f"Request successful with status code: {response.status_code}")
                 return response
             else:
+                logger.warning(f"Issue during request: {response.text}")
                 logger.warning(f"Attempt {attempt + 1}: Request timed out. Retrying...")
                 time.sleep(2 ** attempt)
         except Exception as e:
