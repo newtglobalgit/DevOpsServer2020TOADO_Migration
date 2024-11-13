@@ -1,5 +1,7 @@
+import argparse
 import os
 import re
+import sys
 import requests
 from requests.auth import HTTPBasicAuth
 import pandas as pd
@@ -65,6 +67,7 @@ def make_request_with_retries(url, auth, max_retries=10, timeout=300):
                 logger.info(f"Request successful with status code: {response.status_code}")
                 return response
             else:
+                logger.warning(f"Issue during request: {response.text}")
                 logger.warning(f"Attempt {attempt + 1}: Request timed out. Retrying...")
                 time.sleep(2 ** attempt)
         except Exception as e:
@@ -147,8 +150,13 @@ def file_discovery(root_folder, branches):
 
             # Add file details
             for filename in filenames:
+                if filename == 'DictionaryServerEvent.as':
+                    a=0
                 file_path = os.path.join(dirpath, filename)
-                file_size = os.path.getsize(file_path)
+                if os.path.exists(file_path):
+                    file_size = os.path.getsize(file_path)
+                else:
+                    file_size = 0
                 file_type = os.path.splitext(filename)[1]
 
                 file_details.append([
@@ -412,7 +420,8 @@ def clone_project_from_tfvc(surl, proj_name, username, password, local_clone_pat
         return
 
 
-def main():
+def main(username, password):
+    start_time = datetime.now()
     cwd = os.getcwd()
     input_file = os.path.join(cwd, 'tfvc_discovery_input_form.xlsx')
     local_clone_path = os.path.join(cwd, 'clone')
@@ -427,6 +436,7 @@ def main():
         df['Project Name'] = df['Project Name'].str.strip().fillna('')
         df['PAT'] = df['PAT'].str.strip().fillna('')
 
+
         input_data = {}
         for index, row in df.iterrows():
             if pd.isna(row['Server URL']) or pd.isna(row['PAT']):
@@ -437,29 +447,40 @@ def main():
                 surl = surl.rstrip('/')
             proj_name = row['Project Name']
             ptoken = row['PAT']
-            username = row['Username']
-            password = row['Password']
-            proj_names = []
-            clone_project_from_tfvc(surl, proj_name, username, password, local_clone_path)
-            if not proj_name:
-                proj_names = get_project_names(devops_server_url=surl, pat=ptoken)
-            if surl not in input_data:
-                input_data[surl] = {"pat": ptoken, "projects": [proj_name] if proj_name else proj_names}
-            else:
-                add_if_not_exists(input_data[surl]["projects"], [proj_name] if proj_name else proj_names)
-
-        for server_url in input_data:
-            pat = input_data[server_url]["pat"]
-            for project in input_data[server_url]["projects"]:
-                start_time = datetime.now()
+            if row['Username'] and row['Password']:
+                username = row['Username']
+                password = row['Password']
+            if not username and password:
+                return logger.error(f"Username and Password not provided.")
+            project_names = []
+            tfvc_project_url = f'{surl}/_apis/projects/{proj_name}?api-version=6.0'
+            response = make_request_with_retries(tfvc_project_url, auth=HTTPBasicAuth('', ptoken))
+            if response and response.status_code == 200:
+                clone_project_from_tfvc(surl, proj_name, username, password, local_clone_path)
+                if not proj_name:
+                    project_names = get_project_names(devops_server_url=surl, pat=ptoken)
+                    proj_name = project_names[0]
+                if surl not in input_data:
+                    input_data[surl] = {"pat": ptoken, "projects": proj_name}
+                else:
+                    add_if_not_exists(input_data[surl]["projects"], proj_name)
                 try:
-                    generate_excel_report(output_directory, server_url, pat, project, start_time, local_clone_path)
+                    generate_excel_report(output_directory, surl, ptoken, proj_name, start_time, local_clone_path)
                 except Exception as e:
-                    logger.error(f"Error occurred while processing project '{project}': {e}")
+                    logger.error(f"Error occurred while processing project '{proj_name}': {e}")
+            else:
+                logger.info(f"Tfvc Project doesn't exist.") 
+                break
+
+                
     except Exception as e:
         logger.error(f"Error occurred while processing input file '{input_file}': {e}")
 
 if __name__ == "__main__":
-    main()
+    
+    print("Enter Username and Password")
+    username = input("Please enter your username: ")
+    password = input("Please enter your password: ")
+    main(username, password)
 
 # Before executing this script we need to add username and password in the input excel.
