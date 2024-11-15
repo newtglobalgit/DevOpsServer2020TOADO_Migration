@@ -11,6 +11,7 @@ from urllib.parse import quote
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from collections import defaultdict
+import gc
 from utils.common import get_project_names, get_repo_names_by_project
 
 log_dir = "logs"
@@ -38,31 +39,23 @@ logger.addHandler(console_handler)
 def encode_url_component(component):
     return quote(component, safe='')
 
-
-def make_request_with_retries(url, pat, method='GET', data=None, timeout=300, max_retries=10, backoff_factor=0.5):
+    
+def make_request_with_retries(url, pat, timeout=300, max_retries=10, backoff_factor=0.5):
     auth = HTTPBasicAuth('', pat)
     session = requests.Session()
     retries = Retry(
         total=max_retries,
         backoff_factor=backoff_factor,
         status_forcelist=[408, 429, 500, 502, 503, 504],
-        allowed_methods=["HEAD", "GET", "OPTIONS", "POST"]
+        allowed_methods=["HEAD", "GET", "OPTIONS"]
     )
     session.mount('https://', HTTPAdapter(max_retries=retries))
     for attempt in range(max_retries):
         try:
-            if method == 'GET':
-                response = session.get(url, auth=auth, timeout=timeout)
-            elif method == 'POST':
-                response = session.post(url, auth=auth, json=data, timeout=timeout)
-            else:
-                logger.error(f"HTTP method '{method}' is not supported.")
-                return None
+            response = session.get(url, auth=auth, timeout=timeout)
             if response.status_code == 200:
                 logger.info(f"Request succeeded for URL {url}")
                 return response
-            elif response.status_code == 409:
-                logger.warning("Received 409 Conflict. Retrying after delay...")
             elif response.status_code == 404:
                 logger.info(f"Resource not found (404) for URL {url}.")
                 return None
@@ -113,239 +106,302 @@ def authenticate_and_get_projects(server_url, pat, api_version):
         logger.error('Failed to authenticate.')
         return None
 
-
-def get_repositories(server_url, project, pat, api_version, batch_size=150):
+def get_repositories(server_url, project, pat, api_version, batch_size=50):
+    """Retrieve all repositories with direct token handling, URL updates, and empty response checks."""
     encoded_project = encode_url_component(project)
     url = f'{server_url}/{encoded_project}/_apis/git/repositories?$top={batch_size}&api-version={api_version}'
     
     all_repositories = []
-    continuation_token = None
+    repo_set = set()
 
     while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
+        response = make_request_with_retries(url, pat)
         
         if response:
-            data = response.json().get('value', [])
-            all_repositories.extend(data)
+            response_data = response.json()
+            if 'value' in response_data and isinstance(response_data['value'], list):
+                data = response_data['value']
+                if not data:
+                    logger.info("No repositories found in the current batch; stopping.")
+                    break
+                for repo in data:
+                    if isinstance(repo, dict):  # Ensure repo is a dictionary
+                        repo_id = repo.get('id')
+                        if repo_id and repo_id not in repo_set:
+                            all_repositories.append(repo)
+                            repo_set.add(repo_id)
+                    else:
+                        logger.error(f"Unexpected format for repository item: {repo}")
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
+                continuation_token = response.headers.get('x-ms-continuationtoken')
+                if continuation_token:
+                    url = f'{server_url}/{encoded_project}/_apis/git/repositories?$top={batch_size}&api-version={api_version}&continuationToken={continuation_token}'
+                else:
+                    break
+            else:
+                logger.error(f"Unexpected response format: {response_data}")
                 break
         else:
-            logger.error('Failed to retrieve repositories with pagination.')
+            logger.error('Failed to retrieve repositories with pagination or no valid data found.')
             break
 
-    return {"value": all_repositories}
+    return all_repositories
 
 
-def get_branches(server_url, project, repository_id, pat, api_version, batch_size=150):
+def get_branches(server_url, project, repository_id, pat, api_version, batch_size=50):
     encoded_project = encode_url_component(project)
     encoded_repository_id = encode_url_component(repository_id)
-    
     url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=heads&$top={batch_size}&api-version={api_version}'
+    
     all_branches = []
-    continuation_token = None
+    branch_set = set()
 
     while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
+        response = make_request_with_retries(url, pat)
 
         if response:
-            data = response.json().get('value', [])
-            all_branches.extend(data)
+            response_data = response.json()
+            data = response_data.get('value', [])
+            if not data:
+                break
+            for branch in data:
+                branch_name = branch.get('name')
+                if branch_name and branch_name not in branch_set:
+                    all_branches.append(branch)
+                    branch_set.add(branch_name)
 
             continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
+            if continuation_token:
+                url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=heads&$top={batch_size}&api-version={api_version}&continuationToken={continuation_token}'
+            else:
                 break
         else:
-            logger.error('Failed to retrieve branches with pagination.')
             break
 
     return all_branches
 
 
-def get_latest_commit_info(server_url, project, repository_id, branch_name, pat, api_version):
+
+def get_latest_commit_info(server_url, project, repository_id, branch_names, pat, api_version):
+    """Retrieve latest commit info for each branch in a batch."""
+    latest_commits = {}
+    for branch_name in branch_names:
+        encoded_branch_name = encode_url_component(branch_name)
+        url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top=1&api-version={api_version}'
+        response = make_request_with_retries(url, pat)
+        if response:
+            commit = response.json().get('value', [None])[0]
+            if commit:
+                latest_commits[branch_name] = {
+                    'commitId': commit['commitId'],
+                    'comment': commit['comment'],
+                    'author': commit['author']['name'],
+                    'date': commit['author']['date']
+                }
+    return latest_commits
+
+
+def get_files_in_branch(server_url, project, repository_id, branch_name, pat, api_version, batch_size=50):
     encoded_project = encode_url_component(project)
     encoded_repository_id = encode_url_component(repository_id)
     encoded_branch_name = encode_url_component(branch_name)
-    
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top=1&api-version={api_version}'
-    response = make_request_with_retries(url, pat, method='GET')
-
-    if response:
-        commit = response.json().get('value', [None])[0]
-        if commit:
-            return commit['commitId'], commit['comment'], commit['author']['name'], commit['author']['date']
-    logger.error('Failed to retrieve latest commit info.')
-    return None, None, None, None
-
-
-def get_files_in_branch(server_url, project, repository_id, branch_name, pat, api_version, batch_size=150):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    encoded_branch_name = encode_url_component(branch_name)
-    
     url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/items?scopePath=/&recursionLevel=Full&versionDescriptor[version]={encoded_branch_name}&$top={batch_size}&api-version={api_version}'
-    all_files = []
-    continuation_token = None
-    last_token = None  # To detect repetitive tokens
-    repeat_count = 0   # Count for repeated tokens to avoid infinite loops
     
+    all_files = []
+    file_set = set()
+
     while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
+        response = make_request_with_retries(url, pat)
 
         if response:
-            data = response.json().get('value', [])
-            all_files.extend(data)
-            
-            # Update continuation token
-            last_token = continuation_token
+            response_data = response.json()
+            data = response_data.get('value', [])
+            if not data:
+                break
+            for file_data in data:
+                file_path = file_data.get('path')
+                if file_path and file_path not in file_set:
+                    all_files.append(file_data)
+                    file_set.add(file_path)
+
             continuation_token = response.headers.get('x-ms-continuationtoken')
-            
-            # Logging for continuation token
-            logger.info(f"Continuation token for next batch: {continuation_token}")
-            
-            # Check if the continuation token is the same as the last one
-            if continuation_token == last_token:
-                repeat_count += 1
-                if repeat_count > 3:  # Break after 3 repeated tokens
-                    logger.warning(f"Breaking due to repeated continuation tokens for branch {branch_name}.")
-                    break
+            if continuation_token:
+                url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/items?scopePath=/&recursionLevel=Full&versionDescriptor[version]={encoded_branch_name}&$top={batch_size}&api-version={api_version}&continuationToken={continuation_token}'
             else:
-                repeat_count = 0  # Reset repeat count if the token changes
-            
-            # Exit loop if there is no continuation token
-            if not continuation_token:
-                logger.info(f"Finished retrieving all items for branch {branch_name}.")
                 break
         else:
-            logger.error('Failed to retrieve items in branch with pagination.')
             break
 
     return all_files
 
-
-def get_file_size(server_url, project, repository_id, sha1, pat, api_version):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    encoded_sha1 = encode_url_component(sha1)
-    
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/blobs/{encoded_sha1}?api-version={api_version}'
-    response = make_request_with_retries(url, pat, method='GET')
-
-    if response:
-        return response.headers.get('Content-Length', 0)
-    logger.error('Failed to retrieve blob size.')
-    return 0
+def get_file_size(server_url, project, repository_id, sha1_list, pat, api_version):
+    """Retrieve file sizes in batch using SHA1 list."""
+    file_sizes = {}
+    for sha1 in sha1_list:
+        url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/blobs/{sha1}?api-version={api_version}'
+        response = make_request_with_retries(url, pat)
+        if response:
+            file_sizes[sha1] = int(response.headers.get('Content-Length', 0))
+    return file_sizes
 
 
-def get_commit_count(server_url, project, repository_id, file_path, pat, api_version):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    encoded_file_path = encode_url_component(file_path)
-    
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemPath={encoded_file_path}&api-version={api_version}'
-    response = make_request_with_retries(url, pat, method='GET')
+def get_commit_count(server_url, project, repository_id, file_paths, pat, api_version):
+    """Retrieve commit counts for each file in batch using file paths."""
+    commit_counts = {}
+    for file_path in file_paths:
+        url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.itemPath={file_path}&api-version={api_version}'
+        response = make_request_with_retries(url, pat)
+        if response:
+            commit_counts[file_path] = response.json().get('count', 1)
+    return commit_counts
 
-    if response:
-        return max(response.json().get('count', 1), 1)
-    logger.error(f'Failed to retrieve commit count for {file_path}.')
-    return 1
-
-    
-def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version, batch_size=150):
+def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version, batch_size=50):
+    """Retrieve all commits in a branch with direct token handling, URL updates, and empty response checks."""
     encoded_project = encode_url_component(project)
     encoded_repository_id = encode_url_component(repository_id)
     encoded_branch_name = encode_url_component(branch_name)
     
     url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top={batch_size}&api-version={api_version}'
     all_commits = []
-    continuation_token = None
+    commit_set = set()
 
     while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
+        response = make_request_with_retries(url, pat)
         
         if response:
-            data = response.json().get('value', [])
-            all_commits.extend(data)
+            response_data = response.json()
+            # Ensure 'value' key exists and is a list
+            if 'value' in response_data and isinstance(response_data['value'], list):
+                data = response_data['value']
+                if not data:
+                    logger.info("No commits found in the current batch; stopping.")
+                    break
+                for commit in data:
+                    # Check if each commit is a dictionary before accessing 'commitId'
+                    if isinstance(commit, dict):
+                        commit_id = commit.get('commitId')
+                        if commit_id and commit_id not in commit_set:
+                            all_commits.append(commit)
+                            commit_set.add(commit_id)
+                    else:
+                        logger.error(f"Unexpected format for commit item: {commit}")
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
+                continuation_token = response.headers.get('x-ms-continuationtoken')
+                if continuation_token:
+                    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top={batch_size}&api-version={api_version}&continuationToken={continuation_token}'
+                else:
+                    break
+            else:
+                logger.error(f"Unexpected response format: {response_data}")
                 break
         else:
-            logger.error('Failed to retrieve all commits with pagination.')
+            logger.error('Failed to retrieve commits with pagination or no valid data found.')
             break
 
     return all_commits
 
-    
-def get_all_repo_commits(server_url, project, repository_id, pat, api_version, batch_size=150):
+
+
+def get_all_repo_commits(server_url, project, repository_id, pat, api_version, batch_size=50):
+    """Retrieve all commits in a repository with direct token handling, URL updates, and empty response checks."""
     encoded_project = encode_url_component(project)
     encoded_repository_id = encode_url_component(repository_id)
     
     url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?$top={batch_size}&api-version={api_version}'
     all_commits = []
-    continuation_token = None
+    commit_set = set()
 
     while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
+        response = make_request_with_retries(url, pat)
         
         if response:
-            data = response.json().get('value', [])
-            all_commits.extend(data)
+            response_data = response.json()
+            # Ensure 'value' key exists and is a list
+            if 'value' in response_data and isinstance(response_data['value'], list):
+                data = response_data['value']
+                if not data:
+                    logger.info("No repository commits found in the current batch; stopping.")
+                    break
+                for commit in data:
+                    # Check if each commit is a dictionary before accessing 'commitId'
+                    if isinstance(commit, dict):
+                        commit_id = commit.get('commitId')
+                        if commit_id and commit_id not in commit_set:
+                            all_commits.append(commit)
+                            commit_set.add(commit_id)
+                    else:
+                        logger.error(f"Unexpected format for commit item: {commit}")
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
+                continuation_token = response.headers.get('x-ms-continuationtoken')
+                if continuation_token:
+                    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?$top={batch_size}&api-version={api_version}&continuationToken={continuation_token}'
+                else:
+                    break
+            else:
+                logger.error(f"Unexpected response format: {response_data}")
                 break
         else:
-            logger.error('Failed to retrieve all repository commits with pagination.')
+            logger.error('Failed to retrieve repository commits with pagination or no valid data found.')
             break
 
     return all_commits
 
-
-def get_tags(server_url, project, repository_id, pat, api_version, batch_size=150):
+def get_tags(server_url, project, repository_id, pat, api_version, batch_size=50):
+    """Retrieve all tags in a repository with direct token handling, URL updates, and empty response checks."""
     encoded_project = encode_url_component(project)
     encoded_repository_id = encode_url_component(repository_id)
     
     url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=tags&$top={batch_size}&api-version={api_version}'
     all_tags = []
-    continuation_token = None
+    tag_set = set()
 
     while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
+        response = make_request_with_retries(url, pat)
         
         if response:
-            data = response.json().get('value', [])
-            all_tags.extend(data)
+            response_data = response.json()
+            # Ensure 'value' key exists and is a list
+            if 'value' in response_data and isinstance(response_data['value'], list):
+                data = response_data['value']
+                if not data:
+                    logger.info("No tags found in the current batch; stopping.")
+                    break
+                for tag in data:
+                    # Check if each tag is a dictionary before accessing 'name'
+                    if isinstance(tag, dict):
+                        tag_name = tag.get('name')
+                        if tag_name and tag_name not in tag_set:
+                            all_tags.append(tag)
+                            tag_set.add(tag_name)
+                    else:
+                        logger.error(f"Unexpected format for tag item: {tag}")
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
+                continuation_token = response.headers.get('x-ms-continuationtoken')
+                if continuation_token:
+                    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=tags&$top={batch_size}&api-version={api_version}&continuationToken={continuation_token}'
+                else:
+                    break
+            else:
+                logger.error(f"Unexpected response format: {response_data}")
                 break
         else:
-            logger.error('Failed to retrieve tags with pagination.')
+            logger.error('Failed to retrieve tags with pagination or no valid data found.')
             break
 
     return all_tags
 
 
-def get_tag_details(server_url, project, repository_id, tag_id, pat, api_version):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    encoded_tag_id = encode_url_component(tag_id)
-    
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/annotatedtags/{encoded_tag_id}?api-version=6.0-preview.1'
-    response = make_request_with_retries(url, pat, method='GET')
+def get_tag_details(server_url, project, repository_id, tag_ids, pat, api_version):
+    """Retrieve details for each tag in batch using tag IDs."""
+    tag_details = {}
+    for tag_id in tag_ids:
+        url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/annotatedtags/{tag_id}?api-version=6.0-preview.1'
+        response = make_request_with_retries(url, pat)
+        if response:
+            tag_details[tag_id] = response.json()
+    return tag_details
 
-    if response:
-        return response.json()
-    logger.error(f'Failed to retrieve tag details for {tag_id}.')
-    return None
+
 
 def get_commit_details(server_url, project, repository_id, commit_id, pat, api_version):
     encoded_project = encode_url_component(project)
@@ -353,11 +409,11 @@ def get_commit_details(server_url, project, repository_id, commit_id, pat, api_v
     encoded_commit_id = encode_url_component(commit_id)
     
     url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits/{encoded_commit_id}?api-version={api_version}'
-    response = make_request_with_retries(url, pat, method='GET')
+    response = make_request_with_retries(url, pat)
 
     if response:
         return response.json()
-    logger.error(f'Failed to retrieve commit details for {commit_id}.')
+    logger.error(f'Failed to retrieve commit details for {commit_id}. Skipping.')
     return None
 
 
@@ -424,9 +480,7 @@ def sanitize_sheet_name(name):
     return name[:31]  # Excel sheet names can have a maximum of 31 characters
 
 
-def generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project_name, repo_name,
-                    server_url):
-    start_time = datetime.now()
+def generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project_name, repo_name,server_url, start_time):
     
     with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
         # Create an empty summary sheet
@@ -458,8 +512,9 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
     # Make header text bold for all sheets except the summary sheet
     for sheet_name in ['source_code', 'commits', 'tags']:
         sheet = workbook[sheet_name]
-        for cell in sheet[1]:
-            cell.font = Font(bold=True)
+        apply_header_styles(workbook, sheet_name)
+        apply_black_border(sheet)
+        remove_gridlines(sheet)
         adjust_column_width(sheet)
         align_cells(sheet)
 
@@ -505,130 +560,137 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
 
     workbook.save(output_path)
 
+def process(server_url, pat, project, repository_name, branch_name, batch_size=50):
+    api_version = '6.0'  # Adjust if your server uses a different version
 
-def process(server_url, pat, project, repository_name, branch_name):
-    api_version = '6.0'  # Change this if your server uses a different version
-
-    # Print the server URL and project for debugging
+    # Debug information
     print(f"Server URL: {server_url}")
     print(f"Project: {project}")
     print(f"Repo: {repository_name}")
     print(f"Branch: {branch_name}")
 
-    # Authenticate and get projects (optional step to confirm login)
-    projects = authenticate_and_get_projects(server_url, pat, api_version)
-    if projects:
-        # Retrieve repository info
-        repositories = get_repositories(server_url, project, pat, api_version)
-        if repositories:
-            for repo in repositories['value']:
-                if repo['name'] == repository_name:
-                    repo_id = repo['id']
+    repositories = get_repositories(server_url, project, pat, api_version, batch_size)
+    if isinstance(repositories, list):  # Check that repositories is a list
+        for repo in repositories:
+            if isinstance(repo, dict) and repo.get('name') == repository_name:
+                repo_id = repo['id']
 
-                    data_source_code = []
-                    data_commits = []
-                    data_all_commits = []
-                    data_tags = []
+                # Initialize data collections
+                data_source_code = []
+                data_commits = []
+                data_all_commits = []
+                data_tags = []
 
-                    # Get branches
-                    branches = get_branches(server_url, project, repo_id, pat, api_version)
-                    if branches:
-                        branch_names = [branch['name'].replace('refs/heads/', '') for branch in
-                                        branches] if branch_name is None else [branch_name]
-                        for branch in branch_names:
-                            commit_id, comment, author, last_modified = get_latest_commit_info(server_url, project,
-                                                                                               repo_id, branch, pat,
-                                                                                               api_version)
-                            if commit_id:
-                                # Get all commits for the branch
-                                commits = get_all_commits(server_url, project, repo_id, branch, pat, api_version)
-                                for commit in commits:
-                                    commit_info = {
-                                        'Collection Name': server_url.split('/')[-1],
-                                        'Project Name': project,
-                                        'Repository Name': repository_name,
-                                        'Branch Name': branch,
-                                        'Commit ID': commit['commitId'],
-                                        'Commit Message': commit['comment'],
-                                        'Author': commit['author']['name'],
-                                        'Commit Date': commit['author']['date']
-                                    }
-                                    data_commits.append(commit_info)
+                # Get branches and retrieve latest commits in batch
+                branches = get_branches(server_url, project, repo_id, pat, api_version, batch_size=batch_size)
+                branch_names = [branch['name'].replace('refs/heads/', '') for branch in branches] if branch_name is None else [branch_name]
 
-                                files = get_files_in_branch(server_url, project, repo_id, branch, pat, api_version)
-                                if files:
-                                    for file in files:
-                                        print(f"Processing file: {file}")  # Debugging statement
-                                        is_folder = file.get('isFolder', file['gitObjectType'] == 'tree')
-                                        if not is_folder:
-                                            sha1 = file['objectId']
-                                            size = get_file_size(server_url, project, repo_id, sha1, pat, api_version)
-                                            try:
-                                                commit_count = get_commit_count(server_url, project, repo_id,
-                                                                                file['path'], pat, api_version)
-                                            except Exception as e:
-                                                print(f'Failed to retrieve commit count for {file["path"]}: {e}')
-                                                commit_count = 0
-                                        else:
-                                            size = 0
-                                            commit_count = 0
-                                        file_info = {
-                                            'Collection Name': server_url.split('/')[-1],
-                                            'Project Name': project,
-                                            'Repository Name': repository_name,
-                                            'Branch Name': branch,
-                                            'File Name': file['path'].split('/')[-1],
-                                            'File Type': 'Folder' if is_folder else 'File',
-                                            'Folder Level': file['path'].count('/') - 1,
-                                            'Path': file['path'],  # Relative path from the repository root
-                                            'Size (Bytes)': int(size),
-                                            'Last Modified Time': last_modified,
-                                            'Author': author,
-                                            'Comments': comment,
-                                            'Commit ID': commit_id,
-                                            'Commit Count': commit_count
-                                        }
-                                        data_source_code.append(file_info)
+                # Fetch latest commits for each branch
+                latest_commits = get_latest_commit_info(server_url, project, repo_id, branch_names, pat, api_version)
 
-                    # Get all commits in the repository
-                    all_commits = get_all_repo_commits(server_url, project, repo_id, pat, api_version)
-                    tags = get_tags(server_url, project, repo_id, pat, api_version)
+                for branch in branch_names:
+                    commit_info = latest_commits.get(branch)
+                    if commit_info:
+                        commit_id = commit_info['commitId']
+                        comment = commit_info['comment']
+                        author = commit_info['author']
+                        last_modified = commit_info['date']
 
-                    for tag in tags:
-                        tag_id = tag['objectId']
-                        tag_details = get_tag_details(server_url, project, repo_id, tag_id, pat, api_version)
-                        if tag_details:
-                            commit_details = get_commit_details(server_url, project, repo_id,
-                                                                tag_details['taggedObject']['objectId'], pat,
-                                                                api_version)
-                            if commit_details:
-                                tag_date, tag_time = tag_details['taggedBy']['date'].split('T')
-                                tag_time = tag_time.split('Z')[0]
-                                tag_info = {
-                                    'Tag Name': tag['name'].replace('refs/tags/', ''),
-                                    'Tag ID': tag['objectId'],
-                                    'Tag Message': tag_details['message'],
-                                    'Commit ID': tag_details['taggedObject']['objectId'],
-                                    'Commit Message': commit_details['comment'],
-                                    'Author': tag_details['taggedBy']['name'],
-                                    'Date & Time': f"{tag_date} {tag_time}"
-                                }
-                                data_tags.append(tag_info)
+                        # Retrieve all commits for the branch
+                        commits = get_all_commits(server_url, project, repo_id, branch, pat, api_version, batch_size=batch_size)
+                        for commit in commits:
+                            commit_data = {
+                                'Collection Name': server_url.split('/')[-1],
+                                'Project Name': project,
+                                'Repository Name': repository_name,
+                                'Branch Name': branch,
+                                'Commit ID': commit['commitId'],
+                                'Commit Message': commit['comment'],
+                                'Author': commit['author']['name'],
+                                'Commit Date': commit['author']['date']
+                            }
+                            data_commits.append(commit_data)
 
-                    commit_tag_map = map_commit_tags(tags)
-                    for commit in all_commits:
-                        tag_name = commit_tag_map.get(commit['commitId'], 'not tagged')
-                        all_commit_info = {
-                            'Author': commit['author']['name'],
-                            'Commit Message': commit['comment'],
-                            'Commit ID': commit['commitId'],
-                            'Commit Date': commit['author']['date'],
-                            'Tag Name': tag_name  # Include the Tag Name column
-                        }
-                        data_all_commits.append(all_commit_info)
+                        # Get files in branch and retrieve file size and commit count in batch
+                        files = get_files_in_branch(server_url, project, repo_id, branch, pat, api_version, batch_size=batch_size)
+                        sha1_list = [file['objectId'] for file in files if not file.get('isFolder', file['gitObjectType'] == 'tree')]
+                        file_sizes = get_file_size(server_url, project, repo_id, sha1_list, pat, api_version)
 
-                    return data_source_code, data_commits, data_all_commits, data_tags
+                        file_paths = [file['path'] for file in files if not file.get('isFolder', file['gitObjectType'] == 'tree')]
+                        commit_counts = get_commit_count(server_url, project, repo_id, file_paths, pat, api_version)
+
+                        for file in files:
+                            is_folder = file.get('isFolder', file['gitObjectType'] == 'tree')
+                            file_path = file['path']
+                            sha1 = file['objectId'] if not is_folder else None
+                            size = file_sizes.get(sha1, 0)
+                            commit_count = commit_counts.get(file_path, 0)
+
+                            file_info = {
+                                'Collection Name': server_url.split('/')[-1],
+                                'Project Name': project,
+                                'Repository Name': repository_name,
+                                'Branch Name': branch,
+                                'File Name': file_path.split('/')[-1],
+                                'File Type': 'Folder' if is_folder else 'File',
+                                'Folder Level': file_path.count('/') - 1,
+                                'Path': file_path,
+                                'Size (Bytes)': int(size),
+                                'Last Modified Time': last_modified,
+                                'Author': author,
+                                'Comments': comment,
+                                'Commit ID': commit_id,
+                                'Commit Count': commit_count
+                            }
+                            data_source_code.append(file_info)
+
+                # Retrieve all commits in the repository
+                all_commits = get_all_repo_commits(server_url, project, repo_id, pat, api_version, batch_size=batch_size)
+                for commit in all_commits:
+                    all_commit_info = {
+                        'Author': commit['author']['name'],
+                        'Commit Message': commit['comment'],
+                        'Commit ID': commit['commitId'],
+                        'Commit Date': commit['author']['date'],
+                        'Tag Name': 'not tagged'  # Placeholder, will update if tags found
+                    }
+                    data_all_commits.append(all_commit_info)
+
+                # Retrieve tags for the repository and fetch tag details in batch
+                tags = get_tags(server_url, project, repo_id, pat, api_version, batch_size=batch_size)
+                tag_ids = [tag['objectId'] for tag in tags]
+                tag_details_map = get_tag_details(server_url, project, repo_id, tag_ids, pat, api_version)
+
+                commit_tag_map = map_commit_tags(tags)  # Map for quick tag lookup by commit ID
+
+                for tag in tags:
+                    tag_id = tag['objectId']
+                    tag_details = tag_details_map.get(tag_id)
+                    if tag_details:
+                        commit_details = get_commit_details(server_url, project, repo_id, tag_details['taggedObject']['objectId'], pat, api_version)
+                        if commit_details:
+                            tag_date, tag_time = tag_details['taggedBy']['date'].split('T')
+                            tag_time = tag_time.split('Z')[0]
+                            tag_info = {
+                                'Tag Name': tag['name'].replace('refs/tags/', ''),
+                                'Tag ID': tag['objectId'],
+                                'Tag Message': tag_details['message'],
+                                'Commit ID': tag_details['taggedObject']['objectId'],
+                                'Commit Message': commit_details['comment'],
+                                'Author': tag_details['taggedBy']['name'],
+                                'Date & Time': f"{tag_date} {tag_time}"
+                            }
+                            data_tags.append(tag_info)
+
+                # Update all_commit_info with tag names using commit_tag_map
+                for commit in data_all_commits:
+                    commit['Tag Name'] = commit_tag_map.get(commit['Commit ID'], 'not tagged')
+
+                return data_source_code, data_commits, data_all_commits, data_tags
+
+    # Return empty data if no repositories or data found
     return [], [], [], []
+
 
 
 def construct_input(df):
@@ -653,7 +715,7 @@ def construct_input(df):
         if project_name:
             # Check if the project already exists
             project = next((p for p in result[server_url]["projects"] if p["name"] == project_name), None)
-            if not project:
+            if project is None:
                 project = {"name": project_name, "repos": []}
                 result[server_url]["projects"].append(project)
         else:
@@ -740,6 +802,7 @@ def main():
         print(f"Final input combination: {input_data}")
 
         for server_url, server_data in input_data.items():
+            start_time = datetime.now()
             pat = server_data["pat"]
             for project in server_data["projects"]:
                 proj_name = project["name"]
@@ -762,9 +825,16 @@ def main():
                         file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
                         output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
                         output_path = os.path.join(output_directory, output_filename)
-                        generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
-                                        output_path, proj_name, repo_name, server_url)
+                        generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,output_path, proj_name, repo_name, server_url, start_time)
                         print(f'Report generated: {output_path}')
+
+                        # Clear data and enforce garbage collection after each repository's report is generated
+                        master_data_source_code.clear()
+                        master_data_commits.clear()
+                        master_data_all_commits.clear()
+                        master_data_tags.clear()
+                        gc.collect()  # Enforce garbage collection
+                        gc.collect()
                 except Exception as e:
                     logger.error(f"Error occurred while processing project '{proj_name}': {e}")
     except Exception as e:
