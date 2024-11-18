@@ -115,7 +115,7 @@ def get_all_branches(server_url, project_name, pat):
     
     return branches
 
-def file_discovery(root_folder, branches):
+def file_discovery(collection_name, project_name,root_folder, branches):
     """
     Discovers all files and folders in the specified root folder and returns their details as a DataFrame.
 
@@ -131,6 +131,8 @@ def file_discovery(root_folder, branches):
         file_details = []
 
         for dirpath, dirnames, filenames in os.walk(root_folder):
+            if '$tf' in dirpath:
+                continue
             root_folder_name = os.path.basename(root_folder)
             project_folder_name = os.path.relpath(dirpath, root_folder)
             is_branch = "Yes" if dirpath in branches else "No"
@@ -139,8 +141,8 @@ def file_discovery(root_folder, branches):
             for dirname in dirnames:
                 folder_path = os.path.join(dirpath, dirname)
                 file_details.append([
-                    root_folder_name,
-                    project_folder_name,
+                    collection_name,
+                    project_name,
                     dirname,
                     "Folder",
                     "",  # File size is not applicable for folders
@@ -150,8 +152,6 @@ def file_discovery(root_folder, branches):
 
             # Add file details
             for filename in filenames:
-                if filename == 'DictionaryServerEvent.as':
-                    a=0
                 file_path = os.path.join(dirpath, filename)
                 if os.path.exists(file_path):
                     file_size = os.path.getsize(file_path)
@@ -160,8 +160,8 @@ def file_discovery(root_folder, branches):
                 file_type = os.path.splitext(filename)[1]
 
                 file_details.append([
-                    root_folder_name,
-                    project_folder_name,
+                    collection_name,
+                    project_name,
                     filename,
                     'File',
                     file_size,
@@ -171,7 +171,7 @@ def file_discovery(root_folder, branches):
 
         # Create a DataFrame and return
         df = pd.DataFrame(file_details, columns=[
-            "Root Folder", "Project Folder", "Name", "Type", "File Size (bytes)", "Path", "Is Branch"
+            "Collection Name", "Project Name", "Folder/File Name", "Folder/File Type", "File Size (bytes)", "Path", "Is Branch"
         ])
         
         logger.info("File and folder discovery completed successfully.")
@@ -298,7 +298,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time, loca
 
             # File Discovery Data
             branches = get_all_branches(server_url, project_name, pat)
-            file_discovery_df = file_discovery(local_clone_path, branches)
+            file_discovery_df = file_discovery(collection_name, project_name, local_clone_path, branches)
             write_formatted_sheet(writer, file_discovery_df, 'File_Discovery')
             logger.info("File discovery details added to Excel report.")
 
@@ -309,7 +309,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time, loca
 def clean_local_clone_path(local_clone_path):
     if os.path.exists(local_clone_path):
         logger.info(f"Cleaning up the existing clone folder at {local_clone_path}")
-        shutil.rmtree(local_clone_path)
+        shutil.rmtree(local_clone_path, ignore_errors=True)
         logger.info("Clone folder cleaned up successfully.")
     os.makedirs(local_clone_path)
 
@@ -317,7 +317,7 @@ def clone_project_from_tfvc(surl, proj_name, username, password, local_clone_pat
 
     logger.info("Starting TFVC clone process...")
     clean_local_clone_path(local_clone_path)
-
+    os.chdir(local_clone_path)
     # Read the Excel file
     try:
         collection_url = surl
@@ -353,11 +353,11 @@ def clone_project_from_tfvc(surl, proj_name, username, password, local_clone_pat
         ]
         p0 = subprocess.run(tf_workspace_exists_command, capture_output=True, text=True)
 
-        if "MyWorkspace" in p0.stdout:
-            logger.info("Workspace 'MyWorkspace' already exists. Deleting it...")
+        if "My_Workspace" in p0.stdout:
+            logger.info("Workspace 'My_Workspace' already exists. Deleting it...")
             tf_delete_workspace_command = [
                 "tf", "workspace", "/delete",
-                "MyWorkspace",
+                "My_Workspace",
                 f"/collection:{collection_url}",
                 f"/login:{username},{password}"
             ]
@@ -372,7 +372,7 @@ def clone_project_from_tfvc(surl, proj_name, username, password, local_clone_pat
         # Create a new workspace
         tf_workspace_command = [
             "tf", "workspace", "-new",
-            "MyWorkspace",
+            "My_Workspace",
             f"/collection:{collection_url}",
             f"/login:{username},{password}"
         ]
@@ -418,11 +418,13 @@ def clone_project_from_tfvc(surl, proj_name, username, password, local_clone_pat
         logger.error("An error occurred during the TFVC clone process.")
         logger.exception(e)
         return
+    
+    finally:
+        os.chdir(cwd)
 
 
 def main(username, password):
     start_time = datetime.now()
-    cwd = os.getcwd()
     input_file = os.path.join(cwd, 'tfvc_discovery_input_form.xlsx')
     local_clone_path = os.path.join(cwd, 'clone')
 
@@ -462,8 +464,6 @@ def main(username, password):
                     proj_name = project_names[0]
                 if surl not in input_data:
                     input_data[surl] = {"pat": ptoken, "projects": proj_name}
-                else:
-                    add_if_not_exists(input_data[surl]["projects"], proj_name)
                 try:
                     generate_excel_report(output_directory, surl, ptoken, proj_name, start_time, local_clone_path)
                 except Exception as e:
@@ -471,13 +471,12 @@ def main(username, password):
             else:
                 logger.info(f"Tfvc Project doesn't exist.") 
                 break
-
-                
     except Exception as e:
         logger.error(f"Error occurred while processing input file '{input_file}': {e}")
 
 if __name__ == "__main__":
-    
+    cwd = os.getcwd()
+    clean_local_clone_path(os.path.join(cwd, 'clone'))
     print("Enter Username and Password")
     username = input("Please enter your username: ")
     password = input("Please enter your password: ")
