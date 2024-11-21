@@ -1,4 +1,7 @@
 import os
+import re
+import shutil
+import subprocess
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
@@ -6,8 +9,105 @@ from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from datetime import datetime
 import getpass
+import logging
+import git
+from git import Repo
+from urllib.parse import quote
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from collections import defaultdict
 from utils.common import get_project_names, get_repo_names_by_project
+
+log_dir = "logs"
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+# Create a logger
+logger = logging.getLogger()
+# Set the log level
+logger.setLevel(logging.INFO)
+# File handler
+file_handler = logging.FileHandler(os.path.join(log_dir, f'git_discovery_{datetime.now().strftime("%Y%m%d%H%M%S")}.log'))
+file_handler.setLevel(logging.INFO)
+# Console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+# Log format
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+# Add handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+
+def modify_value(value):
+    try:
+        # Replacement dictionary for special characters
+        replacements = {
+            '+': '%2B', '%24': '$', '&': '%26', ',': '%2C', ':': '%3A',
+            ';': '%3B', '=': '%3D', '?': '%3F', '@': '%40', ' ': '%20',
+            '"': '%22', '<': '%3C', '>': '%3E', '#': '%23', '{': '%7B',
+            '}': '%7D', '|': '%7C', '\\': '%5C', '^': '%5E', '[': '%5B',
+            ']': '%5D', '`': '%60'
+        }
+
+        # Log the original password (for debugging purposes, make sure this is secure in production!)
+        logger.info(f"Original password: XXXXXX")
+
+        # Replace all special characters in the password
+        for char, replacement in replacements.items():
+            value = value.replace(char, replacement)
+        
+        # Log the modified password
+        logger.info(f"Modified password: XXXXX")
+        return value
+    
+    except Exception as e:
+        logger.error(f"Failed to modify password: {e}")
+        return value
+
+def encode_url_component(component):
+    return quote(component, safe='')
+
+
+def make_request_with_retries(url, pat, method='GET', data=None, timeout=300, max_retries=10, backoff_factor=0.5):
+    auth = HTTPBasicAuth('', pat)
+    session = requests.Session()
+    retries = Retry(
+        total=max_retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=[408, 429, 500, 502, 503, 504],
+        allowed_methods=["HEAD", "GET", "OPTIONS", "POST"]
+    )
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    for attempt in range(max_retries):
+        try:
+            if method == 'GET':
+                response = session.get(url, auth=auth, timeout=timeout)
+            elif method == 'POST':
+                response = session.post(url, auth=auth, json=data, timeout=timeout)
+            else:
+                logger.error(f"HTTP method '{method}' is not supported.")
+                return None
+            if response.status_code == 200:
+                logger.info(f"Request succeeded for URL {url}")
+                return response
+            elif response.status_code == 409:
+                logger.warning("Received 409 Conflict. Retrying after delay...")
+            elif response.status_code == 404:
+                logger.info(f"Resource not found (404) for URL {url}.")
+                return None
+            elif response.status_code == 403:
+                logger.error("Access forbidden (403). Check permissions or credentials.")
+                return None
+            else:
+                logger.warning(f"Unexpected status code {response.status_code} for URL {url}.")
+                return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error occurred while making request to {url}: {e}")
+            return None
+    logger.error(f"Exceeded max retries for URL {url}")
+    return None
 
 
 # Function to read configuration from Excel file
@@ -33,167 +133,295 @@ def read_config_from_excel(file_path):
 
     return server_url, project, pat, repository_name, branch_name, df
 
-
+    
 def authenticate_and_get_projects(server_url, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    try:
-        response = requests.get(f'{server_url}/_apis/projects?api-version={api_version}', auth=auth)
-        response.raise_for_status()
-        print('Login successful.')
+    url = f'{server_url}/_apis/projects?api-version={api_version}'
+    response = make_request_with_retries(url, pat)
+    if response:
+        logger.info('Login successful.')
         return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to authenticate: {e}')
+    else:
+        logger.error('Failed to authenticate.')
         return None
 
 
-def get_repositories(server_url, project, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    repos_url = f'{server_url}/{project}/_apis/git/repositories?api-version={api_version}'
-    print(f"Requesting repositories with URL: {repos_url}")
-    try:
-        response = requests.get(repos_url, auth=auth)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve repositories: {e}')
-        return None
+def get_repositories(server_url, project, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories?$top={batch_size}&api-version={api_version}'
+    
+    all_repositories = []
+    continuation_token = None
+
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_repositories.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logger.error('Failed to retrieve repositories with pagination.')
+            break
+
+    return {"value": all_repositories}
 
 
-def get_branches(server_url, project, repository_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    branches_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/refs?filter=heads&api-version={api_version}'
-    print(f"Requesting branches with URL: {branches_url}")
-    try:
-        response = requests.get(branches_url, auth=auth)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve branches: {e}')
-        return None
+def get_branches(server_url, project, repository_id, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=heads&$top={batch_size}&api-version={api_version}'
+    all_branches = []
+    continuation_token = None
+
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+
+        if response:
+            data = response.json().get('value', [])
+            all_branches.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logger.error('Failed to retrieve branches with pagination.')
+            break
+
+    return all_branches
 
 
 def get_latest_commit_info(server_url, project, repository_id, branch_name, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.itemVersion.' \
-                  f'version={branch_name}&$top=1&api-version={api_version}'
-    try:
-        response = requests.get(commits_url, auth=auth)
-        response.raise_for_status()
-        commit = response.json()['value'][0]
-        commit_id = commit['commitId']
-        comment = commit['comment']
-        author = commit['author']['name']
-        last_modified = commit['author']['date']
-        return commit_id, comment, author, last_modified
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve last commit: {e}')
-        return None, None, None, None
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_branch_name = encode_url_component(branch_name)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top=1&api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
+
+    if response:
+        commit = response.json().get('value', [None])[0]
+        if commit:
+            return commit['commitId'], commit['comment'], commit['author']['name'], commit['author']['date']
+    logger.error('Failed to retrieve latest commit info.')
+    return None, None, None, None
 
 
-def get_files_in_branch(server_url, project, repository_id, branch_name, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    items_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/items?scopePath=/&recursionLevel=' \
-                f'Full&versionDescriptor[version]={branch_name}&api-version={api_version}'
-    print(f"Requesting items with URL: {items_url}")
-    try:
-        response = requests.get(items_url, auth=auth)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve items in branch: {e}')
-        return None
+def get_files_in_branch(server_url, project, repository_id, branch_name, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_branch_name = encode_url_component(branch_name)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/items?scopePath=/&recursionLevel=Full&versionDescriptor[version]={encoded_branch_name}&$top={batch_size}&api-version={api_version}'
+    all_files = []
+    continuation_token = None
+    last_token = None  # To detect repetitive tokens
+    repeat_count = 0   # Count for repeated tokens to avoid infinite loops
+    
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+
+        if response:
+            data = response.json().get('value', [])
+            all_files.extend(data)
+            
+            # Update continuation token
+            last_token = continuation_token
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            
+            # Logging for continuation token
+            logger.info(f"Continuation token for next batch: {continuation_token}")
+            
+            # Check if the continuation token is the same as the last one
+            if continuation_token == last_token:
+                repeat_count += 1
+                if repeat_count > 3:  # Break after 3 repeated tokens
+                    logger.warning(f"Breaking due to repeated continuation tokens for branch {branch_name}.")
+                    break
+            else:
+                repeat_count = 0  # Reset repeat count if the token changes
+            
+            # Exit loop if there is no continuation token
+            if not continuation_token:
+                logger.info(f"Finished retrieving all items for branch {branch_name}.")
+                break
+        else:
+            logger.error('Failed to retrieve items in branch with pagination.')
+            break
+
+    return all_files
 
 
 def get_file_size(server_url, project, repository_id, sha1, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    blob_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/blobs/{sha1}?api-version={api_version}'
-    print(f"Requesting blob size with URL: {blob_url}")
-    try:
-        response = requests.get(blob_url, auth=auth)
-        response.raise_for_status()
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_sha1 = encode_url_component(sha1)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/blobs/{encoded_sha1}?api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
+
+    if response:
         return response.headers.get('Content-Length', 0)
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve blob size: {e}')
-        return 0
+    logger.error('Failed to retrieve blob size.')
+    return 0
 
 
 def get_commit_count(server_url, project, repository_id, file_path, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.' \
-                  f'itemPath={file_path}&api-version={api_version}'
-    print(f"Requesting commit count with URL: {commits_url}")
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_file_path = encode_url_component(file_path)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemPath={encoded_file_path}&api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
+
+    if response:
+        return max(response.json().get('count', 1), 1)
+    logger.error(f'Failed to retrieve commit count for {file_path}.')
+    return 1
+
+    
+def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_branch_name = encode_url_component(branch_name)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top={batch_size}&api-version={api_version}'
+    all_commits = []
+    continuation_token = None
+
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_commits.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logger.error('Failed to retrieve all commits with pagination.')
+            break
+
+    return all_commits
+
+
+def clone_repo_branch(repo_url, destination_path, pat, branch_name, username, password):
     try:
-        response = requests.get(commits_url, auth=auth)
-        response.raise_for_status()
-        commit_count = response.json()['count']
-        return max(commit_count, 1)  # Ensure at least one commit
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve commit count for {file_path}: {e}')
-        return 1  # Assume at least one commit
+        # Prepare the URL with authentication (PAT)
+        if repo_url.startswith('http://'):
+            auth_repo_url = repo_url.replace('http://', f'http://{username}:{password}@')
+        else:
+            auth_repo_url = repo_url.replace('https://', f'https://{username}:{password}@')
+
+        logger.info(f'Cloning started {datetime.now()}')
+
+        # Use subprocess to clone the repository with the specified branch
+        command = f'git clone --branch {branch_name} --single-branch {auth_repo_url} {destination_path}'
+
+        print(command)
+        # Run the clone command
+        print(f"Cloning branch '{branch_name}' from repository at {repo_url}...")
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+        # Check for errors in the cloning process
+        if result.returncode != 0:
+            print(f"Error cloning repository: {result.stderr}")
+            logger.error(f"Error cloning repository: {result.stderr}")
+            return
+
+        print(f"Branch '{branch_name}' successfully cloned to {destination_path}")
+        logger.info(f'Cloning completed {datetime.now()}')
+
+    except Exception as e:
+        print(f"An error occurred while cloning the repository branch: {e}")
+        logger.error(f"An error occurred while cloning the repository branch: {e}")
+
+    
+def get_all_repo_commits(server_url, project, repository_id, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?$top={batch_size}&api-version={api_version}'
+    all_commits = []
+    continuation_token = None
+
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_commits.extend(data)
+
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logger.error('Failed to retrieve all repository commits with pagination.')
+            break
+
+    return all_commits
 
 
-def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?searchCriteria.' \
-                  f'itemVersion.version={branch_name}&api-version={api_version}'
-    print(f"Requesting all commits with URL: {commits_url}")
-    try:
-        response = requests.get(commits_url, auth=auth)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve commits: {e}')
-        return []
+def get_tags(server_url, project, repository_id, pat, api_version, batch_size=150):
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=tags&$top={batch_size}&api-version={api_version}'
+    all_tags = []
+    continuation_token = None
 
+    while True:
+        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
+        response = make_request_with_retries(url, pat, method='GET')
+        
+        if response:
+            data = response.json().get('value', [])
+            all_tags.extend(data)
 
-def get_all_repo_commits(server_url, project, repository_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commits_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits?api-version={api_version}'
-    print(f"Requesting all repository commits with URL: {commits_url}")
-    try:
-        response = requests.get(commits_url, auth=auth)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve all repository commits: {e}')
-        return []
+            continuation_token = response.headers.get('x-ms-continuationtoken')
+            if not continuation_token:
+                break
+        else:
+            logger.error('Failed to retrieve tags with pagination.')
+            break
 
-
-def get_tags(server_url, project, repository_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    tags_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/refs?filter=tags&api-version={api_version}'
-    print(f"Requesting tags with URL: {tags_url}")
-    try:
-        response = requests.get(tags_url, auth=auth)
-        response.raise_for_status()
-        return response.json()['value']
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve tags: {e}')
-        return []
+    return all_tags
 
 
 def get_tag_details(server_url, project, repository_id, tag_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    tag_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/annotatedtags/{tag_id}?api-version=6.0-preview.1'
-    try:
-        response = requests.get(tag_url, auth=auth)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve tag details for {tag_id}: {e}')
-        return None
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_tag_id = encode_url_component(tag_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/annotatedtags/{encoded_tag_id}?api-version=6.0-preview.1'
+    response = make_request_with_retries(url, pat, method='GET')
 
+    if response:
+        return response.json()
+    logger.error(f'Failed to retrieve tag details for {tag_id}.')
+    return None
 
 def get_commit_details(server_url, project, repository_id, commit_id, pat, api_version):
-    auth = HTTPBasicAuth('', pat)
-    commit_url = f'{server_url}/{project}/_apis/git/repositories/{repository_id}/commits/{commit_id}?api-version={api_version}'
-    try:
-        response = requests.get(commit_url, auth=auth)
-        response.raise_for_status()
+    encoded_project = encode_url_component(project)
+    encoded_repository_id = encode_url_component(repository_id)
+    encoded_commit_id = encode_url_component(commit_id)
+    
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits/{encoded_commit_id}?api-version={api_version}'
+    response = make_request_with_retries(url, pat, method='GET')
+
+    if response:
         return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to retrieve commit details for {commit_id}: {e}')
-        return None
+    logger.error(f'Failed to retrieve commit details for {commit_id}.')
+    return None
 
 
 def map_commit_tags(tags):
@@ -207,9 +435,9 @@ def map_commit_tags(tags):
 def apply_header_styles(workbook, sheet_name):
     sheet = workbook[sheet_name]
     header_fill = PatternFill(start_color='000080', end_color='000080', fill_type='solid')
-    header_font = Font(color='FFFFFF', bold=True)
-    for cell in sheet[1]:  # Assuming headers are in the first row
-        cell.fill = header_fill
+    header_font = Font(bold=True, color='FFFFFF') 
+    for cell in sheet[1]:  
+        cell.fill = header_fill   
         cell.font = header_font
 
 
@@ -260,8 +488,7 @@ def sanitize_sheet_name(name):
 
 
 def generate_report(data_source_code, data_commits, data_all_commits, data_tags, output_path, project_name, repo_name,
-                    server_url):
-    start_time = datetime.now()
+                    server_url, start_time):
     
     with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
         # Create an empty summary sheet
@@ -290,15 +517,17 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
     remove_gridlines(workbook['commits'])
     remove_gridlines(workbook['tags'])
 
-    # Make header text bold for all sheets except the summary sheet
+
+
+        # Make header text bold for all sheets except the summary sheet
     for sheet_name in ['source_code', 'commits', 'tags']:
         sheet = workbook[sheet_name]
-        for cell in sheet[1]:
-            cell.font = Font(bold=True)
+        apply_header_styles(workbook, sheet_name)
+        apply_black_border(sheet)
+        remove_gridlines(sheet)
         adjust_column_width(sheet)
         align_cells(sheet)
 
-    # Calculate run duration
     run_duration = datetime.now() - start_time
     hours, remainder = divmod(run_duration.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
@@ -341,130 +570,180 @@ def generate_report(data_source_code, data_commits, data_all_commits, data_tags,
 
     workbook.save(output_path)
 
+def remove_readonly(func, path, exc_info):
+    """Clear the read-only flag before attempting to delete."""
+    os.chmod(path, 0o777)  # Change the permissions to make it writable
+    func(path)
 
-def process(server_url, pat, project, repository_name, branch_name):
-    api_version = '6.0'  # Change this if your server uses a different version
+def clean_local_clone_path(local_clone_path):
+    try:
+        # Check if the directory exists
+        if os.path.exists(local_clone_path):
+            logger.info(f"Force cleaning up the existing clone folder at {local_clone_path}")
 
-    # Print the server URL and project for debugging
-    print(f"Server URL: {server_url}")
-    print(f"Project: {project}")
-    print(f"Repo: {repository_name}")
-    print(f"Branch: {branch_name}")
+            # Force delete by changing permissions and using shutil.rmtree
+            shutil.rmtree(local_clone_path, onerror=remove_readonly)
+            logger.info("Clone folder cleaned up successfully.")
+        else:
+            # If the directory doesn't exist, create it
+            os.makedirs(local_clone_path)
+            logger.info(f"Clone folder {local_clone_path} created successfully.")
+    except PermissionError:
+        logger.error(f"Permission denied while trying to clean or create the folder: {local_clone_path}")
+    except Exception as e:
+        logger.error(f"An error occurred while cleaning the folder: {e}")
 
-    # Authenticate and get projects (optional step to confirm login)
-    projects = authenticate_and_get_projects(server_url, pat, api_version)
-    if projects:
-        # Retrieve repository info
-        repositories = get_repositories(server_url, project, pat, api_version)
-        if repositories:
-            for repo in repositories['value']:
-                if repo['name'] == repository_name:
-                    repo_id = repo['id']
 
-                    data_source_code = []
-                    data_commits = []
-                    data_all_commits = []
-                    data_tags = []
+def process(server_url, pat, project, repository_name, branch_name, username, password):
 
-                    # Get branches
-                    branches = get_branches(server_url, project, repo_id, pat, api_version)
-                    if branches:
-                        branch_names = [branch['name'].replace('refs/heads/', '') for branch in
-                                        branches] if branch_name is None else [branch_name]
-                        for branch in branch_names:
-                            commit_id, comment, author, last_modified = get_latest_commit_info(server_url, project,
-                                                                                               repo_id, branch, pat,
-                                                                                               api_version)
-                            if commit_id:
-                                # Get all commits for the branch
-                                commits = get_all_commits(server_url, project, repo_id, branch, pat, api_version)
-                                for commit in commits:
-                                    commit_info = {
-                                        'Collection Name': server_url.split('/')[-1],
-                                        'Project Name': project,
-                                        'Repository Name': repository_name,
-                                        'Branch Name': branch,
-                                        'Commit ID': commit['commitId'],
-                                        'Commit Message': commit['comment'],
-                                        'Author': commit['author']['name'],
-                                        'Commit Date': commit['author']['date']
-                                    }
-                                    data_commits.append(commit_info)
+    try:
+        api_version = '6.0'  # Change this if your server uses a different version
 
-                                files = get_files_in_branch(server_url, project, repo_id, branch, pat, api_version)
-                                if files:
-                                    for file in files:
-                                        print(f"Processing file: {file}")  # Debugging statement
-                                        is_folder = file.get('isFolder', file['gitObjectType'] == 'tree')
-                                        if not is_folder:
-                                            sha1 = file['objectId']
-                                            size = get_file_size(server_url, project, repo_id, sha1, pat, api_version)
-                                            try:
-                                                commit_count = get_commit_count(server_url, project, repo_id,
-                                                                                file['path'], pat, api_version)
-                                            except Exception as e:
-                                                print(f'Failed to retrieve commit count for {file["path"]}: {e}')
-                                                commit_count = 0
-                                        else:
-                                            size = 0
-                                            commit_count = 0
-                                        file_info = {
+
+        # Print the server URL and project for debugging
+        print(f"Server URL: {server_url}")
+        print(f"Project: {project}")
+        print(f"Repo: {repository_name}")
+        print(f"Branch: {branch_name}")
+
+        # Authenticate and get projects (optional step to confirm login)
+        projects = authenticate_and_get_projects(server_url, pat, api_version)
+        if projects:
+            # Retrieve repository info
+            repositories = get_repositories(server_url, project, pat, api_version)
+            if repositories:
+                for repo in repositories['value']:
+                    if repo['name'] == repository_name:
+                        repo_id = repo['id']
+
+                        data_source_code = []
+                        data_commits = []
+                        data_all_commits = []
+                        data_tags = []
+                        repo_url = f"{server_url}/{project}/_git/{repo['name']}"
+                        destination_path = os.path.join(cwd, 'clone', repo['name'])
+                        if not os.path.exists(destination_path):
+                            os.makedirs(destination_path)
+                        # Get branches
+                        
+                        branches = get_branches(server_url, project, repo_id, pat, api_version)
+                        if branches:
+                            branch_names = [branch['name'].replace('refs/heads/', '') for branch in
+                                            branches] if branch_name is None else [branch_name]
+
+                            for branch in branch_names:
+                                destination_path = os.path.join(cwd, 'clone', repo['name'], branch)
+                                if not os.path.exists(destination_path):
+                                    os.makedirs(destination_path)
+                                clean_local_clone_path(os.path.join(cwd, 'clone'))
+                                clone_repo_branch(repo_url, destination_path, pat, branch, username, password)
+                                commit_id, comment, author, last_modified = get_latest_commit_info(server_url, project,
+                                                                                                repo_id, branch, pat,
+                                                                                                api_version)
+                                if commit_id:
+                                    # Get all commits for the branch
+                                    commits = get_all_commits(server_url, project, repo_id, branch, pat, api_version)
+                                    for commit in commits:
+                                        commit_info = {
                                             'Collection Name': server_url.split('/')[-1],
                                             'Project Name': project,
                                             'Repository Name': repository_name,
                                             'Branch Name': branch,
-                                            'File Name': file['path'].split('/')[-1],
-                                            'File Type': 'Folder' if is_folder else 'File',
-                                            'Folder Level': file['path'].count('/') - 1,
-                                            'Path': file['path'],  # Relative path from the repository root
-                                            'Size (Bytes)': int(size),
-                                            'Last Modified Time': last_modified,
-                                            'Author': author,
-                                            'Comments': comment,
-                                            'Commit ID': commit_id,
-                                            'Commit Count': commit_count
+                                            'Commit ID': commit['commitId'],
+                                            'Commit Message': commit['comment'],
+                                            'Author': commit['author']['name'],
+                                            'Commit Date': commit['author']['date']
                                         }
-                                        data_source_code.append(file_info)
+                                        data_commits.append(commit_info)
 
-                    # Get all commits in the repository
-                    all_commits = get_all_repo_commits(server_url, project, repo_id, pat, api_version)
-                    tags = get_tags(server_url, project, repo_id, pat, api_version)
+                                    for dirpath, dirnames, filenames in os.walk(destination_path):
+                                        if '.git' in dirpath:
+                                            continue
+                                        root_folder_name = os.path.basename(destination_path)
+                                        project_folder_name = os.path.relpath(dirpath, destination_path)
+                                        is_branch = "Yes" if dirpath in branches else "No"
 
-                    for tag in tags:
-                        tag_id = tag['objectId']
-                        tag_details = get_tag_details(server_url, project, repo_id, tag_id, pat, api_version)
-                        if tag_details:
-                            commit_details = get_commit_details(server_url, project, repo_id,
-                                                                tag_details['taggedObject']['objectId'], pat,
-                                                                api_version)
-                            if commit_details:
-                                tag_date, tag_time = tag_details['taggedBy']['date'].split('T')
-                                tag_time = tag_time.split('Z')[0]
-                                tag_info = {
-                                    'Tag Name': tag['name'].replace('refs/tags/', ''),
-                                    'Tag ID': tag['objectId'],
-                                    'Tag Message': tag_details['message'],
-                                    'Commit ID': tag_details['taggedObject']['objectId'],
-                                    'Commit Message': commit_details['comment'],
-                                    'Author': tag_details['taggedBy']['name'],
-                                    'Date & Time': f"{tag_date} {tag_time}"
-                                }
-                                data_tags.append(tag_info)
+                                        # Add folder details
+                                        for dirname in dirnames:
+                                            folder_path = os.path.join(dirpath, dirname)
+                                            file_info = {
+                                                    'Collection Name': server_url.split('/')[-1],
+                                                    'Project Name': project,
+                                                    'Repository Name': repository_name,
+                                                    'Branch Name': branch,
+                                                    'Name': root_folder_name,
+                                                    'File Type': 'Folder',
+                                                    'Folder Level': project_folder_name.count('/') - 0,
+                                                    'Path': project_folder_name,  
+                                                    'Size (Bytes)': ""
+                                                }
+                                            data_source_code.append(file_info)
 
-                    commit_tag_map = map_commit_tags(tags)
-                    for commit in all_commits:
-                        tag_name = commit_tag_map.get(commit['commitId'], 'not tagged')
-                        all_commit_info = {
-                            'Author': commit['author']['name'],
-                            'Commit Message': commit['comment'],
-                            'Commit ID': commit['commitId'],
-                            'Commit Date': commit['author']['date'],
-                            'Tag Name': tag_name  # Include the Tag Name column
-                        }
-                        data_all_commits.append(all_commit_info)
+                                        # Add file details
+                                        for filename in filenames:
+                                            if filename == 'DictionaryServerEvent.as':
+                                                a=0
+                                            file_path = os.path.join(dirpath, filename)
+                                            if os.path.exists(file_path):
+                                                file_size = os.path.getsize(file_path)
+                                            else:
+                                                file_size = 0
+                                            file_type = os.path.splitext(filename)[1]
 
-                    return data_source_code, data_commits, data_all_commits, data_tags
-    return [], [], [], []
+                                            file_info = {
+                                                    'Collection Name': server_url.split('/')[-1],
+                                                    'Project Name': project,
+                                                    'Repository Name': repository_name,
+                                                    'Branch Name': branch,
+                                                    'Name': filename,
+                                                    'File Type': 'File',
+                                                    'Folder Level': file_path.count('/') - 0,
+                                                    'Path': file_path,  
+                                                    'Size (Bytes)': file_size
+                                                }
+                                            data_source_code.append(file_info)
+                        all_commits = get_all_repo_commits(server_url, project, repo_id, pat, api_version)
+                        tags = get_tags(server_url, project, repo_id, pat, api_version)
+
+                        for tag in tags:
+                            tag_id = tag['objectId']
+                            tag_details = get_tag_details(server_url, project, repo_id, tag_id, pat, api_version)
+                            if tag_details:
+                                commit_details = get_commit_details(server_url, project, repo_id,
+                                                                    tag_details['taggedObject']['objectId'], pat,
+                                                                    api_version)
+                                if commit_details:
+                                    tag_date, tag_time = tag_details['taggedBy']['date'].split('T')
+                                    tag_time = tag_time.split('Z')[0]
+                                    tag_info = {
+                                        'Tag Name': tag['name'].replace('refs/tags/', ''),
+                                        'Tag ID': tag['objectId'],
+                                        'Tag Message': tag_details['message'],
+                                        'Commit ID': tag_details['taggedObject']['objectId'],
+                                        'Commit Message': commit_details['comment'],
+                                        'Author': tag_details['taggedBy']['name'],
+                                        'Date & Time': f"{tag_date} {tag_time}"
+                                    }
+                                    data_tags.append(tag_info)
+
+                        commit_tag_map = map_commit_tags(tags)
+                        for commit in all_commits:
+                            tag_name = commit_tag_map.get(commit['commitId'], 'not tagged')
+                            all_commit_info = {
+                                'Author': commit['author']['name'],
+                                'Commit Message': commit['comment'],
+                                'Commit ID': commit['commitId'],
+                                'Commit Date': commit['author']['date'],
+                                'Tag Name': tag_name  # Include the Tag Name column
+                            }
+                            data_all_commits.append(all_commit_info)
+
+                        return data_source_code, data_commits, data_all_commits, data_tags
+        return [], [], [], []
+    except Exception as e:
+        logger.error(f"Error occurred while processing fetching details {e}")
+        return
+    
 
 
 def construct_input(df):
@@ -533,73 +812,92 @@ def construct_input(df):
     return dict(result)
 
 
-def main():
+def main(username, password):
     input_file = r'git_discovery_input_form.xlsx'
-    run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
-    output_directory = os.path.join("Git", run_id)
+    username = modify_value(username)
+    password = modify_value(password)
+    try:
+        run_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+        output_directory = os.path.join("Git", run_id)
 
-    # Create output directory if it doesn't exist
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
+        # Create output directory if it doesn't exist
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+            print(f"Output directory created: {output_directory}")
 
-    df = pd.read_excel(input_file)
-    # Read the values from the Excel file and strip any leading/trailing spaces
-    df['Server URL'] = df['Server URL'].fillna('').str.strip()
-    df['Project Name'] = df['Project Name'].fillna('').str.strip()
-    df['PAT'] = df['PAT'].fillna('').str.strip()
-    df['Repository Name'] = df['Repository Name'].fillna('').str.strip()
-    df['Branch Name'] = df['Branch Name'].fillna('').str.strip()
+        df = pd.read_excel(input_file)
 
-    # Form the input data in below format
-    # Sample format below
-    """
-        {
-           "server_url":{
-              "pat":"123test_token",
-              "projects":[
-                 {
-                    "name":"proj_name",
-                    "repos":[
-                       {
-                          "name":"repo_name",
-                          "branches":["branch_name_1", "branch_name_2"]
-                       }
-                    ]
-                 }
-              ]
-           }
-        }
-    """
-    input_data = construct_input(df)
-    print(f"Final input combination: {input_data}")
+        # Read the values from the Excel file and strip any leading/trailing spaces
+        df['Server URL'] = df['Server URL'].fillna('').str.strip()
+        df['Project Name'] = df['Project Name'].fillna('').str.strip()
+        df['PAT'] = df['PAT'].fillna('').str.strip()
+        df['Repository Name'] = df['Repository Name'].fillna('').str.strip()
+        df['Branch Name'] = df['Branch Name'].fillna('').str.strip()
 
-    for server_url, server_data in input_data.items():
-        pat = server_data["pat"]
-        for project in server_data["projects"]:
-            proj_name = project["name"]
-            print(f"Processing project {proj_name}")
-            for repo in project["repos"]:
-                master_data_source_code = []
-                master_data_commits = []
-                master_data_all_commits = []
-                master_data_tags = []
-                repo_name = repo["name"]
-                branches = repo.get("branches", [])
-                # If branches exist, iterate through them; otherwise, use an empty string for branch_name
-                for branch_name in branches if branches else [None]:
-                    data_source_code, data_commits, data_all_commits, data_tags = process(server_url, pat, proj_name, repo_name, branch_name)
-                    master_data_source_code = master_data_source_code + data_source_code
-                    master_data_commits = master_data_commits + data_commits
-                    master_data_all_commits = master_data_all_commits + data_all_commits
-                    master_data_tags = master_data_tags + data_tags
-                # Create the output file name with the desired format
-                file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
-                output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
-                output_path = os.path.join(output_directory, output_filename)
-                generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
-                                output_path, proj_name, repo_name, server_url)
-                print(f'Report generated: {output_path}')
+        # Form the input data in below format
+        # Sample format below
+        """
+            {
+               "server_url":{
+                  "pat":"123test_token",
+                  "projects":[
+                     {
+                        "name":"proj_name",
+                        "repos":[
+                           {
+                              "name":"repo_name",
+                              "branches":["branch_name_1", "branch_name_2"]
+                           }
+                        ]
+                     }
+                  ]
+               }
+            }
+        """
+        input_data = construct_input(df)
+        print(f"Final input combination: {input_data}")
+
+        for server_url, server_data in input_data.items():
+            pat = server_data["pat"]
+            for project in server_data["projects"]:
+                proj_name = project["name"]
+                print(f"Processing project {proj_name}")
+                try:
+                    for repo in project["repos"]:
+                        start_time = datetime.now()
+                        master_data_source_code = []
+                        master_data_commits = []
+                        master_data_all_commits = []
+                        master_data_tags = []
+                        repo_name = repo["name"]
+                        branches = repo.get("branches", [])
+                        file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+                        output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
+                        output_path = os.path.join(output_directory, output_filename)
+                        # If branches exist, iterate through them; otherwise, use an empty string for branch_name
+                        for branch_name in branches if branches else [None]:
+                            data_source_code, data_commits, data_all_commits, data_tags = process(server_url, pat, proj_name, repo_name, branch_name, username, password)
+                            master_data_source_code = master_data_source_code + data_source_code
+                            master_data_commits = master_data_commits + data_commits
+                            master_data_all_commits = master_data_all_commits + data_all_commits
+                            master_data_tags = master_data_tags + data_tags
+                        file_id = str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
+                        output_filename = f"{proj_name}_{repo_name}__git_discovery_report_{file_id}.xlsx"
+                        output_path = os.path.join(output_directory, output_filename)
+                        generate_report(master_data_source_code, master_data_commits, master_data_all_commits, master_data_tags,
+                                        output_path, proj_name, repo_name, server_url, start_time)
+                        logger.info(f'Report generated: {output_path}')
+                except Exception as e:
+                    logger.error(f"Error occurred while processing project '{proj_name}': {e}")
+    except Exception as e:
+        logger.error(f"Error occurred while processing input file '{input_file}': {e}")
+        return
 
 
 if __name__ == "__main__":
-    main()
+    cwd = os.getcwd()
+    clean_local_clone_path(os.path.join(cwd, 'clone'))
+    print("Enter Username and Password")
+    username = input("Please enter your username: ")
+    password = input("Please enter your password: ")
+    main(username, password)
