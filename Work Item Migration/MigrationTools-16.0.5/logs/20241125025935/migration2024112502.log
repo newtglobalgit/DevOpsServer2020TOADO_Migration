@@ -1,0 +1,35 @@
+[02:59:35 VRB] [16.0.5] Starting ExecuteMigrationCommand 
+[02:59:36 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[02:59:36 INF] [16.0.5] 16.0.5 
+[02:59:36 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[02:59:36 INF] [16.0.5] =============================================================================== 
+[02:59:36 INF] [16.0.5] -------------------------------------- 
+[02:59:36 INF] [16.0.5] Telemetry Note: 
+[02:59:36 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[02:59:36 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[02:59:36 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[02:59:36 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[02:59:36 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[02:59:36 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[02:59:36 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[02:59:36 INF] [16.0.5] -------------------------------------- 
+[02:59:36 INF] [16.0.5] Start Time: "2024-11-25T02:59:36.0257127+05:30" 
+[02:59:36 INF] [16.0.5] Running with settings: {"ConfigFile":"C:\\Users\\romy\\Desktop\\AzureDevOpsServer2020_To_Services\\Work Item Migration\\MigrationTools-16.0.5\\temp_workitem_migration.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[02:59:36 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[02:59:36 INF] [16.0.5] Version (Assembly): 16.0.5 
+[02:59:36 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241125025935 
+[02:59:36 DBG] [16.0.5] DetectOnlineService::IsOnline 
+[02:59:36 VRB] [16.0.5] Package Management Info: 
+[02:59:36 DBG] [16.0.5]      IsPackageManagerInstalled: true 
+[02:59:36 DBG] [16.0.5] Searching for package! 
+[02:59:39 DBG] [16.0.5] Found package with id nkdAgility.AzureDevOpsMigrationTools 
+[02:59:39 DBG] [16.0.5]      IsPackageInstalled: false 
+[02:59:39 DBG] [16.0.5]      IsUpdateAvailable: false 
+[02:59:39 DBG] [16.0.5]      IsNewLocalVersionAvailable: false 
+[02:59:39 DBG] [16.0.5]      IsRunningInDebug: false 
+[02:59:39 VRB] [16.0.5] Full version data: $MigrationTools.Host.Services.DetectVersionService2 
+[02:59:39 INF] [16.0.5] Verion Info: 
+[02:59:39 INF] [16.0.5]      Running: 16.0.5.0 
+[02:59:39 INF] [16.0.5]      Installed: 0.0.0 
+[02:59:39 INF] [16.0.5]      Available: 0.0.0 
+[02:59:39 INF] [16.0.5] It looks like this application has been installed from a zip, would you like to use the managed version? 

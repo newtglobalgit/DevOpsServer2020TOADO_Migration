@@ -1,0 +1,78 @@
+[23:46:38 DBG] [16.0.5] Enabling Telemetry DebugTrace ExecuteMigrationCommand 
+[23:46:38 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[23:46:38 INF] [16.0.5] 16.0.5 
+[23:46:38 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[23:46:38 INF] [16.0.5] =============================================================================== 
+[23:46:38 INF] [16.0.5] -------------------------------------- 
+[23:46:38 INF] [16.0.5] Telemetry Note: 
+[23:46:38 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[23:46:38 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[23:46:38 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[23:46:38 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[23:46:38 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[23:46:38 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[23:46:38 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[23:46:38 INF] [16.0.5] -------------------------------------- 
+[23:46:38 INF] [16.0.5] Start Time: "2024-11-20T23:46:38.2870203+05:30" 
+[23:46:38 INF] [16.0.5] Running with settings: {"ConfigFile":"workitem_configuration-upgraded.json","DisableTelemetry":false,"DebugTrace":true,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[23:46:38 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[23:46:38 INF] [16.0.5] Version (Assembly): 16.0.5 
+[23:46:38 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241120234637 
+[23:46:38 DBG] [16.0.5] DetectOnlineService::IsOnline 
+[23:46:38 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:DetectOnlineService:IsOnline - Start 
+[23:46:38 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:DetectOnlineService:IsOnline - Stop 
+[23:46:38 DBG] [16.0.5]      IsPackageManagerInstalled: true 
+[23:46:38 DBG] [16.0.5] Searching for package! 
+[23:46:40 DBG] [16.0.5] Found package with id nkdAgility.AzureDevOpsMigrationTools 
+[23:46:40 DBG] [16.0.5]      IsPackageInstalled: false 
+[23:46:40 DBG] [16.0.5]      IsUpdateAvailable: false 
+[23:46:40 DBG] [16.0.5]      IsNewLocalVersionAvailable: false 
+[23:46:40 DBG] [16.0.5]      IsRunningInDebug: false 
+[23:46:40 INF] [16.0.5] Verion Info: 
+[23:46:40 INF] [16.0.5]      Running: 16.0.5.0 
+[23:46:40 INF] [16.0.5]      Installed: 0.0.0 
+[23:46:40 INF] [16.0.5]      Available: 0.0.0 
+[23:46:40 INF] [16.0.5] It looks like this application has been installed from a zip, would you like to use the managed version? 
+[23:46:40 DBG] [16.0.5] =================================== 
+[23:46:40 DBG] [16.0.5] Configuring 'MigrationTools:Processors:0:Enrichers' 
+[23:46:40 DBG] [16.0.5] =================================== 
+[23:46:40 INF] [16.0.5] Creating Migration Engine 29d233d2-a5bc-469f-b260-9d6a03eb9197 
+[23:46:40 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:MigrationEngine:Run - Start 
+[23:46:40 INF] [16.0.5] ProcessorContainer: Of 1 configured Processors only 1 are enabled 
+[23:46:40 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[23:46:40 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[23:46:40 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[23:46:40 DBG] [16.0.5] =================================== 
+[23:46:40 DBG] [16.0.5] Configuring 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[23:46:40 DBG] [16.0.5] Configuring '0' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[23:46:40 DBG] [16.0.5] Configuring '1' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[23:46:40 DBG] [16.0.5] =================================== 
+[23:46:40 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[23:46:40 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[23:46:40 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[23:46:40 INF] [16.0.5]                               Max Logfile: Verbose.  
+[23:46:40 INF] [16.0.5]                               Max Console: Debug.  
+[23:46:40 INF] [16.0.5]                  Max Application Insights: Error.  
+[23:46:40 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[23:46:40 INF] [16.0.5] Beginning run of 1 processors 
+[23:46:40 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:MigrationEngine:Run:Processor[TfsWorkItemMigrationProcessor] - Start 
+[23:46:40 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[23:46:40 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:MigrationEngine:Run:Processor[TfsWorkItemMigrationProcessor]:TfsWorkItemMigrationProcessor - Start 
+[23:46:40 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[23:46:40 DBG] [16.0.5] WorkItemMigrationContext::InternalExecute  
+[23:46:41 INF] [16.0.5] Migrating all Nodes before the Processor run. 
+[23:46:41 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:MigrationEngine:Run:Processor[TfsWorkItemMigrationProcessor]:TfsWorkItemMigrationProcessor:GetDependantTfsCollection - Start 
+[23:46:41 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[23:46:41 INF] [16.0.5] Connecting with AccessToken  
+[23:46:41 DBG] [16.0.5] MigrationClient: Connecting to "http://172.191.4.85/DefaultCollection"  
+[23:46:41 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:MigrationEngine:Run:Processor[TfsWorkItemMigrationProcessor]:TfsWorkItemMigrationProcessor:GetDependantTfsCollection - Stop 
+[23:46:41 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:MigrationEngine:Run:Processor[TfsWorkItemMigrationProcessor]:TfsWorkItemMigrationProcessor:OpenTelemetry.Instrumentation.Http.HttpWebRequest.HttpRequestOut - Start 
+[23:46:42 DBG] [16.0.5] Telemetry:MigrationToolsCli:ExecuteMigrationCommand:MigrationEngine:Run:Processor[TfsWorkItemMigrationProcessor]:TfsWorkItemMigrationProcessor:POST - Stop 
+[23:46:42 ERR] [16.0.5] Unable to configure store: Check persmissions and credentials for "AccessToken": Basic authentication requires a secure connection to the server. 
+[23:46:42 ERR] [16.0.5] The PAT MUST be 'full access' for it to work with the Object Model API. 
+[23:46:42 DBG] [16.0.5] Telemetry:MigrationToolsCli:OpenTelemetry.Instrumentation.Http.HttpWebRequest.HttpRequestOut - Start 
+[23:46:43 DBG] [16.0.5] Telemetry:MigrationToolsCli:POST - Stop 
+[23:46:43 DBG] [16.0.5] Telemetry:MigrationToolsCli:OpenTelemetry.Instrumentation.Http.HttpWebRequest.HttpRequestOut - Start 
+[23:46:43 DBG] [16.0.5] Telemetry:MigrationToolsCli:GET - Stop 
+[23:46:43 DBG] [16.0.5] Telemetry:MigrationToolsCli:OpenTelemetry.Instrumentation.Http.HttpWebRequest.HttpRequestOut - Start 
+[23:46:43 DBG] [16.0.5] Telemetry:MigrationToolsCli:POST - Stop 

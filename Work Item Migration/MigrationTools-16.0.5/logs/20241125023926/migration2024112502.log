@@ -1,0 +1,268 @@
+[02:39:27 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[02:39:27 INF] [16.0.5] 16.0.5 
+[02:39:27 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[02:39:27 INF] [16.0.5] =============================================================================== 
+[02:39:27 INF] [16.0.5] -------------------------------------- 
+[02:39:27 INF] [16.0.5] Telemetry Note: 
+[02:39:27 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[02:39:27 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[02:39:27 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[02:39:27 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[02:39:27 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[02:39:27 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[02:39:27 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[02:39:27 INF] [16.0.5] -------------------------------------- 
+[02:39:27 INF] [16.0.5] Start Time: "2024-11-25T02:39:27.0908119+05:30" 
+[02:39:27 INF] [16.0.5] Running with settings: {"ConfigFile":"C:\\Users\\romy\\Desktop\\AzureDevOpsServer2020_To_Services\\Work Item Migration\\MigrationTools-16.0.5\\temp_workitem_migration.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[02:39:27 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[02:39:27 INF] [16.0.5] Version (Assembly): 16.0.5 
+[02:39:27 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241125023926 
+[02:39:27 DBG] [16.0.5] DetectOnlineService::IsOnline 
+[02:39:27 DBG] [16.0.5]      IsPackageManagerInstalled: true 
+[02:39:27 DBG] [16.0.5] Searching for package! 
+[02:39:29 DBG] [16.0.5] Found package with id nkdAgility.AzureDevOpsMigrationTools 
+[02:39:29 DBG] [16.0.5]      IsPackageInstalled: false 
+[02:39:29 DBG] [16.0.5]      IsUpdateAvailable: false 
+[02:39:29 DBG] [16.0.5]      IsNewLocalVersionAvailable: false 
+[02:39:29 DBG] [16.0.5]      IsRunningInDebug: false 
+[02:39:29 INF] [16.0.5] Verion Info: 
+[02:39:29 INF] [16.0.5]      Running: 16.0.5.0 
+[02:39:29 INF] [16.0.5]      Installed: 0.0.0 
+[02:39:29 INF] [16.0.5]      Available: 0.0.0 
+[02:39:29 INF] [16.0.5] It looks like this application has been installed from a zip, would you like to use the managed version? 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 DBG] [16.0.5] Configuring 'MigrationTools:Processors:0:Enrichers' 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 DBG] [16.0.5] Configuring 'MigrationTools:Processors:1:Enrichers' 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 INF] [16.0.5] No validator found for processor type TfsSharedQueryProcessorOptions 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 DBG] [16.0.5] Configuring 'MigrationTools:Processors:2:Enrichers' 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 INF] [16.0.5] No validator found for processor type TfsTestConfigurationsMigrationProcessorOptions 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 DBG] [16.0.5] Configuring 'MigrationTools:Processors:3:Enrichers' 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 INF] [16.0.5] No validator found for processor type TfsTestPlansAndSuitesMigrationProcessorOptions 
+[02:48:27 INF] [16.0.5] Creating Migration Engine 0346ae1c-d39b-4da8-84c5-e28b8a510d65 
+[02:48:27 INF] [16.0.5] ProcessorContainer: Of 4 configured Processors only 4 are enabled 
+[02:48:27 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[02:48:27 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[02:48:27 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 DBG] [16.0.5] Configuring 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[02:48:27 DBG] [16.0.5] Configuring '0' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[02:48:27 DBG] [16.0.5] Configuring '1' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[02:48:27 DBG] [16.0.5] =================================== 
+[02:48:27 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[02:48:27 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[02:48:27 INF] [16.0.5] ProcessorContainer: Adding Processor TfsSharedQueryProcessor 
+[02:48:27 DBG] [16.0.5] Constructor found: IOptions`1, CommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[02:48:27 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[02:48:27 INF] [16.0.5] ProcessorContainer: Adding Processor TfsTestConfigurationsMigrationProcessor 
+[02:48:27 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[02:48:27 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[02:48:27 INF] [16.0.5] ProcessorContainer: Adding Processor TfsTestPlansAndSuitesMigrationProcessor 
+[02:48:27 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[02:48:27 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[02:48:27 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[02:48:27 INF] [16.0.5]                               Max Logfile: Verbose.  
+[02:48:27 INF] [16.0.5]                               Max Console: Debug.  
+[02:48:27 INF] [16.0.5]                  Max Application Insights: Error.  
+[02:48:27 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[02:48:27 INF] [16.0.5] Beginning run of 4 processors 
+[02:48:27 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[02:48:27 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[02:48:27 DBG] [16.0.5] WorkItemMigrationContext::InternalExecute  
+[02:48:28 INF] [16.0.5] Migrating all Nodes before the Processor run. 
+[02:48:28 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[02:48:28 INF] [16.0.5] Connecting with AccessToken  
+[02:48:28 DBG] [16.0.5] MigrationClient: Connecting to "https://newtdevops.duckdns.org/DefaultCollection"  
+[02:48:29 INF] [16.0.5] Access granted to "https://newtdevops.duckdns.org/DefaultCollection" for lexcon (devopsPOC\lexcon) 
+[02:48:30 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[02:48:30 INF] [16.0.5] Connecting with AccessToken  
+[02:48:30 DBG] [16.0.5] MigrationClient: Connecting to "https://dev.azure.com/AdoMigrateorg"  
+[02:48:31 INF] [16.0.5] Access granted to "https://dev.azure.com/AdoMigrateorg" for romyngorg (romyngorg@outlook.com) 
+[02:48:31 DBG] [16.0.5] NodeStructureEnricher.MigrateAllNodeStructures(@MigrationTools.Tools.NodeOptions, @MigrationTools.Tools.NodeOptions) 
+[02:48:31 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Area, Area) 
+[02:48:31 DBG] [16.0.5] Source Node Path StartsWith [\catcore\area] 
+[02:48:31 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\devbet Team, Area) 
+[02:48:31 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:31 DBG] [16.0.5] TfsNodeStructureTool:GetOrCreateNode(\dandadan\Area\devbet Team, null, null) 
+[02:48:31 INF] [16.0.5]  Processing Node: \dandadan\Area\devbet Team, start date: null, finish date: null 
+[02:48:31 DBG] [16.0.5]   Node \dandadan\Area\devbet Team already exists 
+[02:48:31 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Iteration, Iteration) 
+[02:48:31 DBG] [16.0.5] Source Node Path StartsWith [\catcore\iteration] 
+[02:48:32 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[02:48:32 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:32 DBG] [16.0.5] TfsNodeStructureTool:GetOrCreateNode(\dandadan\Iteration\Sprint 1, null, null) 
+[02:48:32 INF] [16.0.5]  Processing Node: \dandadan\Iteration\Sprint 1, start date: null, finish date: null 
+[02:48:32 DBG] [16.0.5]   Node \dandadan\Iteration\Sprint 1 already exists 
+[02:48:32 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://dev.azure.com/AdoMigrateorg", "BypassRules") 
+[02:48:32 INF] [16.0.5] Work Item Store connected to "https://dev.azure.com/AdoMigrateorg" with BypassRules set to true 
+[02:48:34 INF] [16.0.5] ---------------------------------------------- 
+[02:48:34 INF] [16.0.5] Migrating all Teams before the Processor run. 
+[02:48:34 INF] [16.0.5] TfsTeamSettingsProcessor::InternalExecute: Found 2 teams in Source? 
+[02:48:34 DBG] [16.0.5] Found 2 teams in Target? 
+[02:48:34 DBG] [16.0.5] Processing team 'devbet Team': 
+[02:48:35 DBG] [16.0.5] -> Team 'devbet Team' created 
+[02:48:35 DBG] [16.0.5] -> Processing team 'devbet Team' settings: 
+[02:48:35 INF] [16.0.5] -> Settings found for team 'devbet Team'.. 
+[02:48:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Iteration) 
+[02:48:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:35 DBG] [16.0.5] targetConfig.TeamSettings.BacklogIterationPath=dandadan 
+[02:48:35 DBG] [16.0.5] targetConfig.TeamSettings.IterationPaths={@IterationPaths} 
+[02:48:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\devbet Team, Area) 
+[02:48:35 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:35 DBG] [16.0.5] targetConfig.TeamSettings.TeamFieldValues={"IncludeChildren":false,"Value":"dandadan\\devbet Team","$type":"TeamFieldValue"} 
+[02:48:36 DBG] [16.0.5] -> Team 'devbet Team' settings... applied 
+[02:48:36 INF] [16.0.5] Migrating team capacities.. 
+[02:48:36 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://newtdevops.duckdns.org/DefaultCollection", "BypassRules") 
+[02:48:37 INF] [16.0.5] Work Item Store connected to "https://newtdevops.duckdns.org/DefaultCollection" with BypassRules set to true 
+[02:48:38 INF] [16.0.5] Team capacities migration done.. 
+[02:48:38 DBG] [16.0.5] Processing team 'CatCore Team': 
+[02:48:38 DBG] [16.0.5] -> Team 'CatCore Team' created 
+[02:48:38 DBG] [16.0.5] -> Processing team 'CatCore Team' settings: 
+[02:48:39 INF] [16.0.5] -> Settings found for team 'CatCore Team'.. 
+[02:48:39 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Iteration) 
+[02:48:39 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:39 DBG] [16.0.5] targetConfig.TeamSettings.BacklogIterationPath=dandadan 
+[02:48:39 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[02:48:39 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:39 DBG] [16.0.5] targetConfig.TeamSettings.IterationPaths=dandadan\Sprint 1 
+[02:48:39 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[02:48:39 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:39 DBG] [16.0.5] targetConfig.TeamSettings.TeamFieldValues={"IncludeChildren":false,"Value":"dandadan","$type":"TeamFieldValue"} 
+[02:48:39 DBG] [16.0.5] -> Team 'CatCore Team' settings... applied 
+[02:48:39 INF] [16.0.5] Migrating team capacities.. 
+[02:48:40 WRN] [16.0.5] [SKIP] Team Member romy was not found on target when replacing capacities on iteration dandadan\Sprint 1. 
+[02:48:40 WRN] [16.0.5] [SKIP] Team Member sabarish was not found on target when replacing capacities on iteration dandadan\Sprint 1. 
+[02:48:40 WRN] [16.0.5] [SKIP] Team Member ram was not found on target when replacing capacities on iteration dandadan\Sprint 1. 
+[02:48:40 WRN] [16.0.5] [SKIP] Team Member lexcon was not found on target when replacing capacities on iteration dandadan\Sprint 1. 
+[02:48:40 INF] [16.0.5] Team capacities migration done.. 
+[02:48:40 DBG] [16.0.5] DONE in 00:00:06.1733013  
+[02:48:40 INF] [16.0.5] Querying items to be migrated: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @TeamProject ORDER BY [System.ChangedDate] desc ... 
+[02:48:40 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[02:48:40 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://newtdevops.duckdns.org/DefaultCollection 
+[02:48:40 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = 'CatCore' ORDER BY [System.ChangedDate] desc 
+[02:48:40 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"CatCore","ReflectedWorkItemIdField":"Custom.ReflectedWorkItemId"} 
+[02:48:40 DBG] [16.0.5] WorkItemQuery: TeamProject: CatCore 
+[02:48:40 DBG] [16.0.5] WorkItemQuery: ReflectedWorkItemIdField: Custom.ReflectedWorkItemId 
+[02:48:40 DBG] [16.0.5] Query sent 
+[02:48:40 INF] [16.0.5] 12 Work items received, verifying 
+[02:48:41 INF] [16.0.5] Loading 12 Work Items 
+[02:48:57 DBG] [16.0.5] 12 Work Items loaded 
+[02:48:57 INF] [16.0.5] Replay all revisions of 12 work items? 
+[02:48:57 INF] [16.0.5] Validating::Check all Target Work Items have the RefectedWorkItemId field 
+[02:48:57 DBG] [16.0.5] ValidatingRequiredField: Test Case contains Custom.ReflectedWorkItemId 
+[02:48:57 DBG] [16.0.5] ValidatingRequiredField: Test Suite contains Custom.ReflectedWorkItemId 
+[02:48:57 DBG] [16.0.5] ValidatingRequiredField: Test Plan contains Custom.ReflectedWorkItemId 
+[02:48:57 DBG] [16.0.5] ValidatingRequiredField: Issue contains Custom.ReflectedWorkItemId 
+[02:48:57 INF] [16.0.5] Validating::Check that all work item types needed in the Target exist or are mapped 
+[02:48:57 DBG] [16.0.5] Validating::WorkItemTypes::sourceWorkItemTypes: 4 WorkItemTypes in the full source history Test Case,Test Suite,Test Plan,Issue 
+[02:48:57 DBG] [16.0.5] Validating::WorkItemTypes::targetWorkItemTypes::12 WorkItemTypes in Target process: Issue,Epic,Task,Test Case,Test Plan,Test Suite,Shared Steps,Shared Parameter,Code Review Request,Code Review Response,Feedback Request,Feedback Response 
+[02:48:57 INF] [16.0.5] Validating::Check that all Area & Iteration paths from Source have a valid mapping on Target 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths::AreaNodes::1 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[02:48:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[02:48:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\dandadan\Area 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths::IterationNodes::2 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[02:48:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[02:48:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:PopulateIterationDatesFronSource:\CatCore\Iteration\Sprint 1 
+[02:48:57 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\dandadan\Iteration\Sprint 1 
+[02:48:58 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[02:48:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Iteration) 
+[02:48:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[02:48:58 DBG] [16.0.5] TfsNodeStructureTool:PopulateIterationDatesFronSource:\CatCore\Iteration 
+[02:48:58 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\dandadan\Iteration 
+[02:48:58 INF] [16.0.5] Validating::Check that all users in the source exist in the target or are mapped! 
+[02:48:58 WRN] [16.0.5] TfsUserMappingTool is disabled in settings. You may have users in the source that are not mapped to the target.  
+[02:48:58 INF] [16.0.5] Found target project as dandadan 
+[02:48:58 INF] [16.0.5] [FilterWorkItemsThatAlreadyExistInTarget] is enabled. Searching for 12 work items that may have already been migrated to the target... 
+[02:48:58 INF] [16.0.5] [FilterWorkItemsThatAlreadyExistInTarget] is enabled. Source project CatCore is replaced with target project dandadan on the WIQLQuery which resulted into this target WIQLQuery 
+ "SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @TeamProject ORDER BY [System.ChangedDate] desc" . 
+[02:48:58 DBG] [16.0.5] FilterByTarget: Query Execute... 
+[02:48:58 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[02:48:58 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[02:48:58 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = 'dandadan' ORDER BY [System.ChangedDate] desc 
+[02:48:58 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"dandadan","ReflectedWorkItemIdField":"Custom.ReflectedWorkItemId"} 
+[02:48:58 DBG] [16.0.5] WorkItemQuery: TeamProject: dandadan 
+[02:48:58 DBG] [16.0.5] WorkItemQuery: ReflectedWorkItemIdField: Custom.ReflectedWorkItemId 
+[02:48:58 DBG] [16.0.5] Query sent 
+[02:48:58 INF] [16.0.5] 10 Work items received, verifying 
+[02:48:58 INF] [16.0.5] Loading 10 Work Items 
+[02:49:01 DBG] [16.0.5] 10 Work Items loaded 
+[02:49:01 DBG] [16.0.5] FilterByTarget: ... query complete. 
+[02:49:01 DBG] [16.0.5] FilterByTarget: Found 10 based on the WIQLQuery in the target system. 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[02:49:01 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[02:49:01 DBG] [16.0.5] FilterByTarget: After removing all found work items there are 12 remaining to be migrated. 
+[02:49:01 DBG] [16.0.5] FilterByTarget: END 
+[02:49:01 INF] [16.0.5] !! After removing all found work items there are 6 remaining to be migrated. 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 DBG] [16.0.5] ProcessWorkItem: 1047 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 WRN] [16.0.5] [          Test Suite][Complete:     1/6][sid:  1047|Rev:  2][tid:  null | SKIP: Unable to migrate Test Suite/1047. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[02:49:01 INF] [16.0.5] [          Test Suite][Complete:     1/6][sid:  1047|Rev:  2][tid:  null | Average time of 10.000 per work item and 0 hours 1 minutes 0.000 seconds estimated to completion 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 DBG] [16.0.5] ProcessWorkItem: 1048 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 WRN] [16.0.5] [          Test Suite][Complete:     2/6][sid:  1048|Rev:  1][tid:  null | SKIP: Unable to migrate Test Suite/1048. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[02:49:01 INF] [16.0.5] [          Test Suite][Complete:     2/6][sid:  1048|Rev:  1][tid:  null | Average time of 5.000 per work item and 0 hours 0 minutes 25.000 seconds estimated to completion 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 DBG] [16.0.5] ProcessWorkItem: 1046 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 WRN] [16.0.5] [           Test Plan][Complete:     3/6][sid:  1046|Rev:  1][tid:  null | SKIP: Unable to migrate Test Plan/1046. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[02:49:01 INF] [16.0.5] [           Test Plan][Complete:     3/6][sid:  1046|Rev:  1][tid:  null | Average time of 3.333 per work item and 0 hours 0 minutes 13.333 seconds estimated to completion 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 DBG] [16.0.5] ProcessWorkItem: 1042 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 WRN] [16.0.5] [          Test Suite][Complete:     4/6][sid:  1042|Rev:  7][tid:  null | SKIP: Unable to migrate Test Suite/1042. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[02:49:01 INF] [16.0.5] [          Test Suite][Complete:     4/6][sid:  1042|Rev:  7][tid:  null | Average time of 2.550 per work item and 0 hours 0 minutes 7.550 seconds estimated to completion 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 DBG] [16.0.5] ProcessWorkItem: 1040 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 WRN] [16.0.5] [          Test Suite][Complete:     5/6][sid:  1040|Rev:  3][tid:  null | SKIP: Unable to migrate Test Suite/1040. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[02:49:01 INF] [16.0.5] [          Test Suite][Complete:     5/6][sid:  1040|Rev:  3][tid:  null | Average time of 2.000 per work item and 0 hours 0 minutes 4.000 seconds estimated to completion 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 DBG] [16.0.5] ProcessWorkItem: 1039 
+[02:49:01 DBG] [16.0.5] ###################################################################################### 
+[02:49:01 WRN] [16.0.5] [           Test Plan][Complete:     6/6][sid:  1039|Rev:  1][tid:  null | SKIP: Unable to migrate Test Plan/1039. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[02:49:01 INF] [16.0.5] [           Test Plan][Complete:     6/6][sid:  1039|Rev:  1][tid:  null | Average time of 1.666 per work item and 0 hours 0 minutes 1.666 seconds estimated to completion 
+[02:49:01 INF] [16.0.5]  Migration Processor Complete TfsWorkItemMigrationProcessor  
+[02:49:01 INF] [16.0.5] TfsWorkItemMigrationProcessor completed in 00:00:00  
+[02:49:01 INF] [16.0.5] Processor: TfsSharedQueryProcessor 
+[02:49:01 INF] [16.0.5] Migration Context Start: TfsSharedQueryProcessor  
+[02:49:01 FTL] [16.0.5] Error while running TfsSharedQueryProcessor 
+System.InvalidCastException: Unable to cast object of type 'MigrationTools.Clients.TfsTeamProjectEndpoint' to type 'MigrationTools.Endpoints.TfsEndpoint'.
+   at MigrationTools.Processors.TfsSharedQueryProcessor.get_Source() in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools.Clients.TfsObjectModel\Processors\TfsSharedQueryProcessor.cs:line 35
+   at MigrationTools.Processors.TfsSharedQueryProcessor.InternalExecute() in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools.Clients.TfsObjectModel\Processors\TfsSharedQueryProcessor.cs:line 46
+   at MigrationTools.Processors.Infrastructure.Processor.Execute() in D:\a\azure-devops-migration-tools\azure-devops-migration-tools\src\MigrationTools\Processors\Infrastructure\Processor.cs:line 99
+[02:49:02 INF] [16.0.5] TfsSharedQueryProcessor completed in 00:00:00  
+[02:49:02 ERR] [16.0.5] TfsSharedQueryProcessor The Processor MigrationEngine entered the failed state...stopping run 
+[02:49:02 INF] [16.0.5] Command ExecuteMigrationCommand completed in "00:09:35.7087102" 
+[02:49:02 INF] [16.0.5] Check the logs for errors: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241125023926 

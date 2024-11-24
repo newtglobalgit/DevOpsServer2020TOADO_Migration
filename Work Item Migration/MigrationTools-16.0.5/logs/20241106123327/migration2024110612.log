@@ -1,0 +1,13 @@
+[12:33:28 ERR] [16.0.5] An unexpected error occurred 
+Spectre.Console.Cli.CommandParseException: Unexpected option 'c'.
+   at Spectre.Console.Cli.CommandTreeParser.Parse(CommandTreeParserContext context, CommandTreeTokenizerResult tokenizerResult) in /_/src/Spectre.Console.Cli/Internal/Parsing/CommandTreeParser.cs:line 52
+   at Spectre.Console.Cli.CommandExecutor.ParseCommandLineArguments(CommandModel model, CommandAppSettings settings, IReadOnlyList`1 args) in /_/src/Spectre.Console.Cli/Internal/CommandExecutor.cs:line 110
+   at Spectre.Console.Cli.CommandExecutor.<Execute>d__2.MoveNext() in /_/src/Spectre.Console.Cli/Internal/CommandExecutor.cs:line 53
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Spectre.Console.Cli.CommandApp.<RunAsync>d__7.MoveNext() in /_/src/Spectre.Console.Cli/CommandApp.cs:line 103
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Spectre.Console.Extensions.Hosting.Worker.SpectreConsoleWorker.<>c__DisplayClass5_0.<<StartAsync>b__0>d.MoveNext()

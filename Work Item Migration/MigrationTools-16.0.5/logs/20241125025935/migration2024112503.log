@@ -1,0 +1,53 @@
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 DBG] [16.0.5] Configuring 'MigrationTools:Processors:0:Enrichers' 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 DBG] [16.0.5] Configuring 'MigrationTools:Processors:1:Enrichers' 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 INF] [16.0.5] No validator found for processor type TfsSharedQueryProcessorOptions 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 DBG] [16.0.5] Configuring 'MigrationTools:Processors:2:Enrichers' 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 INF] [16.0.5] No validator found for processor type TfsTestConfigurationsMigrationProcessorOptions 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 DBG] [16.0.5] Configuring 'MigrationTools:Processors:3:Enrichers' 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 INF] [16.0.5] No validator found for processor type TfsTestPlansAndSuitesMigrationProcessorOptions 
+[03:48:34 INF] [16.0.5] Creating Migration Engine 722260c4-5f73-4d3d-81ff-2c4cd2072bdb 
+[03:48:34 INF] [16.0.5] ProcessorContainer: Of 4 configured Processors only 4 are enabled 
+[03:48:34 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[03:48:34 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[03:48:34 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 DBG] [16.0.5] Configuring 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[03:48:34 DBG] [16.0.5] Configuring '0' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[03:48:34 DBG] [16.0.5] Configuring '1' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[03:48:34 DBG] [16.0.5] =================================== 
+[03:48:34 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[03:48:34 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[03:48:34 INF] [16.0.5] ProcessorContainer: Adding Processor TfsSharedQueryProcessor 
+[03:48:34 DBG] [16.0.5] Constructor found: IOptions`1, CommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[03:48:34 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[03:48:34 INF] [16.0.5] ProcessorContainer: Adding Processor TfsTestConfigurationsMigrationProcessor 
+[03:48:34 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[03:48:34 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[03:48:34 INF] [16.0.5] ProcessorContainer: Adding Processor TfsTestPlansAndSuitesMigrationProcessor 
+[03:48:34 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[03:48:34 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[03:48:34 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[03:48:34 INF] [16.0.5]                               Max Logfile: Verbose.  
+[03:48:34 INF] [16.0.5]                               Max Console: Debug.  
+[03:48:34 INF] [16.0.5]                  Max Application Insights: Error.  
+[03:48:34 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[03:48:34 INF] [16.0.5] Beginning run of 4 processors 
+[03:48:34 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[03:48:34 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[03:48:34 DBG] [16.0.5] WorkItemMigrationContext::InternalExecute  
+[03:48:34 FTL] [16.0.5] Validation of your configuration failed: 
+The configuration entry at 'MigrationTools:Processors' did not pass validation!
+ Please check the following failures:
+ -The Endpoint 'Target' specified for `TfsWorkItemMigrationProcessor` is of the wrong type! TfsTeamProjectEndpoint was expected.
+[03:48:34 INF] [16.0.5] TfsWorkItemMigrationProcessor completed in 00:00:00  
+[03:48:34 ERR] [16.0.5] TfsWorkItemMigrationProcessor The Processor MigrationEngine entered the failed state...stopping run 
+[03:48:34 INF] [16.0.5] Command ExecuteMigrationCommand completed in "00:48:59.0129247" 
+[03:48:34 INF] [16.0.5] Check the logs for errors: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241125025935 

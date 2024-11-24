@@ -1,0 +1,47 @@
+[12:58:14 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[12:58:14 INF] [16.0.5] 16.0.5 
+[12:58:14 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[12:58:14 INF] [16.0.5] =============================================================================== 
+[12:58:14 INF] [16.0.5] -------------------------------------- 
+[12:58:14 INF] [16.0.5] Telemetry Note: 
+[12:58:14 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[12:58:14 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[12:58:14 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[12:58:14 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[12:58:14 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[12:58:14 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[12:58:14 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[12:58:14 INF] [16.0.5] -------------------------------------- 
+[12:58:14 INF] [16.0.5] Start Time: "2024-11-03T12:58:14.7122333+05:30" 
+[12:58:14 INF] [16.0.5] Running with settings: {"ConfigFile":"configuration-classic2-pipeline.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[12:58:14 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[12:58:14 INF] [16.0.5] Version (Assembly): 16.0.5 
+[12:58:14 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241103125813 
+[12:58:14 INF] [16.0.5] Verion Info: 
+[12:58:14 INF] [16.0.5]      Running: 16.0.5.0 
+[12:58:14 INF] [16.0.5]      Installed: 0.0.0 
+[12:58:14 INF] [16.0.5]      Available: 0.0.0 
+[12:58:14 WRN] [16.0.5] Windows Client: The Windows Package Manager is not installed, we use it to determine if you have the latest version, and to make sure that this application is up to date. You can download and install it from https://aka.ms/getwinget. After which you can call `winget install nkdAgility.AzureDevOpsMigrationTools` from the Windows Terminal to get a manged version of this program. 
+[12:58:14 WRN] [16.0.5] Windows Server: If you are running on Windows Server you can use the experimental version of Winget, or you can still use Chocolatey to manage the install. Install chocolatey from https://chocolatey.org/install and then use `choco install vsts-sync-migrator` to install, and `choco upgrade vsts-sync-migrator` to upgrade to newer versions. 
+[12:58:14 INF] [16.0.5] No validator found for processor type AzureDevOpsPipelineProcessorOptions 
+[12:58:14 INF] [16.0.5] Creating Migration Engine c07e0fbe-e4b1-4a1a-ace3-0ebe9486455f 
+[12:58:14 INF] [16.0.5] ProcessorContainer: Of 1 configured Processors only 1 are enabled 
+[12:58:14 INF] [16.0.5] ProcessorContainer: Adding Processor AzureDevOpsPipelineProcessor 
+[12:58:14 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[12:58:14 INF] [16.0.5]                               Max Logfile: Verbose.  
+[12:58:14 INF] [16.0.5]                               Max Console: Debug.  
+[12:58:14 INF] [16.0.5]                  Max Application Insights: Error.  
+[12:58:14 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[12:58:14 INF] [16.0.5] Beginning run of 1 processors 
+[12:58:14 INF] [16.0.5] Processor: AzureDevOpsPipelineProcessor 
+[12:58:14 INF] [16.0.5] Migration Context Start: AzureDevOpsPipelineProcessor  
+[12:58:14 INF] [16.0.5] Processor::InternalExecute::Start 
+[12:58:14 INF] [16.0.5] Processor::EnsureConfigured 
+[12:58:14 FTL] [16.0.5] Validation of your configuration failed: 
+The configuration entry at 'MigrationTools:Processors' did not pass validation!
+ Please check the following failures:
+ -The Endpoint 'Source' specified for `AzureDevOpsPipelineProcessor` was not found.
+[12:58:14 INF] [16.0.5] AzureDevOpsPipelineProcessor completed in 00:00:00  
+[12:58:14 ERR] [16.0.5] AzureDevOpsPipelineProcessor The Processor MigrationEngine entered the failed state...stopping run 
+[12:58:14 INF] [16.0.5] Command ExecuteMigrationCommand completed in "00:00:00.2282110" 
+[12:58:14 INF] [16.0.5] Check the logs for errors: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241103125813 

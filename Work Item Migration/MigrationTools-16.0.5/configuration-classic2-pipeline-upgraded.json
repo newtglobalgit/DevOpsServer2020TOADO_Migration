@@ -1,0 +1,60 @@
+{
+  "Serilog": {
+    "MinimumLevel": "Information"
+  },
+  "MigrationTools": {
+    "Version": "16.0",
+    "Endpoints": {
+      "Source": {
+        "EndpointType": "AzureDevOpsEndpoint",
+        "Collection": "https://devopspoc/TestCollection",
+        "Authentication": {
+          "AuthenticationMode": "AccessToken",
+          "AccessToken": ""
+        },
+        "Project": "devserver",
+        "ReflectedWorkItemIdField": "Custom.ReflectedWorkItemId"
+      },
+      "Target": {
+        "EndpointType": "AzureDevOpsEndpoint",
+        "Authentication": {
+          "AuthenticationMode": "AccessToken",
+          "AccessToken": ""
+        },
+        "Organisation": "https://dev.azure.com/AdoMigrateorg",
+        "Project": "change",
+        "ReflectedWorkItemIdField": "Custom.ReflectedWorkItemId"
+      }
+    },
+    "Processors": [
+      {
+        "ProcessorType": "AzureDevOpsPipelineProcessor",
+        "Enabled": true,
+        "MigrateBuildPipelines": true,
+        "MigrateReleasePipelines": true,
+        "MigrateTaskGroups": true,
+        "MigrateVariableGroups": true,
+        "MigrateServiceConnections": true,
+        "BuildPipelines": null,
+        "ReleasePipelines": null,
+        "RepositoryNameMaps": null,
+        "SourceName": "Source",
+        "TargetName": "Target"
+      }
+    ],
+    "CommonTools": {
+      "TfsChangeSetMappingTool": {
+        "Enabled": true,
+        "ChangeSetMappingFile": null
+      },
+      "TfsGitRepositoryTool": {
+        "Enabled": true,
+        "Mappings": null
+      },
+      "FieldMappingTool": {
+        "Enabled": true,
+        "FieldMaps": []
+      }
+    }
+  }
+}

@@ -1,0 +1,721 @@
+[03:53:33 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[03:53:33 INF] [16.0.5] 16.0.5 
+[03:53:33 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[03:53:33 INF] [16.0.5] =============================================================================== 
+[03:53:33 INF] [16.0.5] -------------------------------------- 
+[03:53:33 INF] [16.0.5] Telemetry Note: 
+[03:53:33 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[03:53:33 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[03:53:33 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[03:53:33 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[03:53:33 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[03:53:33 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[03:53:33 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[03:53:33 INF] [16.0.5] -------------------------------------- 
+[03:53:33 INF] [16.0.5] Start Time: "2024-11-25T03:53:33.7459064+05:30" 
+[03:53:33 INF] [16.0.5] Running with settings: {"ConfigFile":"C:\\Users\\romy\\Desktop\\AzureDevOpsServer2020_To_Services\\Work Item Migration\\MigrationTools-16.0.5\\temp_workitem_migration.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[03:53:33 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[03:53:33 INF] [16.0.5] Version (Assembly): 16.0.5 
+[03:53:33 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241125035331 
+[03:53:33 DBG] [16.0.5] DetectOnlineService::IsOnline 
+[03:53:34 DBG] [16.0.5]      IsPackageManagerInstalled: true 
+[03:53:34 DBG] [16.0.5] Searching for package! 
+[03:53:36 DBG] [16.0.5] Found package with id nkdAgility.AzureDevOpsMigrationTools 
+[03:53:36 DBG] [16.0.5]      IsPackageInstalled: false 
+[03:53:36 DBG] [16.0.5]      IsUpdateAvailable: false 
+[03:53:36 DBG] [16.0.5]      IsNewLocalVersionAvailable: false 
+[03:53:36 DBG] [16.0.5]      IsRunningInDebug: false 
+[03:53:36 INF] [16.0.5] Verion Info: 
+[03:53:36 INF] [16.0.5]      Running: 16.0.5.0 
+[03:53:36 INF] [16.0.5]      Installed: 0.0.0 
+[03:53:36 INF] [16.0.5]      Available: 0.0.0 
+[03:53:36 INF] [16.0.5] It looks like this application has been installed from a zip, would you like to use the managed version? 
+[03:54:03 DBG] [16.0.5] =================================== 
+[03:54:03 DBG] [16.0.5] Configuring 'MigrationTools:Processors:0:Enrichers' 
+[03:54:03 DBG] [16.0.5] =================================== 
+[03:54:03 INF] [16.0.5] Creating Migration Engine 69c21cba-c8c9-4a15-944f-f648cbdf41e4 
+[03:54:03 INF] [16.0.5] ProcessorContainer: Of 1 configured Processors only 1 are enabled 
+[03:54:03 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[03:54:03 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[03:54:03 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[03:54:03 DBG] [16.0.5] =================================== 
+[03:54:03 DBG] [16.0.5] Configuring 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[03:54:03 DBG] [16.0.5] Configuring '0' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[03:54:03 DBG] [16.0.5] Configuring '1' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[03:54:03 DBG] [16.0.5] =================================== 
+[03:54:03 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[03:54:03 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[03:54:03 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[03:54:03 INF] [16.0.5]                               Max Logfile: Verbose.  
+[03:54:03 INF] [16.0.5]                               Max Console: Debug.  
+[03:54:03 INF] [16.0.5]                  Max Application Insights: Error.  
+[03:54:03 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[03:54:03 INF] [16.0.5] Beginning run of 1 processors 
+[03:54:03 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[03:54:03 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[03:54:03 DBG] [16.0.5] WorkItemMigrationContext::InternalExecute  
+[03:54:03 INF] [16.0.5] Migrating all Nodes before the Processor run. 
+[03:54:03 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[03:54:03 INF] [16.0.5] Connecting with AccessToken  
+[03:54:03 DBG] [16.0.5] MigrationClient: Connecting to "https://newtdevops.duckdns.org/DefaultCollection"  
+[03:54:04 INF] [16.0.5] Access granted to "https://newtdevops.duckdns.org/DefaultCollection" for lexcon (devopsPOC\lexcon) 
+[03:54:05 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[03:54:05 INF] [16.0.5] Connecting with AccessToken  
+[03:54:05 DBG] [16.0.5] MigrationClient: Connecting to "https://dev.azure.com/AdoMigrateorg"  
+[03:54:06 INF] [16.0.5] Access granted to "https://dev.azure.com/AdoMigrateorg" for romyngorg (romyngorg@outlook.com) 
+[03:54:06 DBG] [16.0.5] NodeStructureEnricher.MigrateAllNodeStructures(@MigrationTools.Tools.NodeOptions, @MigrationTools.Tools.NodeOptions) 
+[03:54:06 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Area, Area) 
+[03:54:06 DBG] [16.0.5] Source Node Path StartsWith [\catcore\area] 
+[03:54:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\devbet Team, Area) 
+[03:54:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:06 DBG] [16.0.5] TfsNodeStructureTool:GetOrCreateNode(\helinstest\Area\devbet Team, null, null) 
+[03:54:06 INF] [16.0.5]  Processing Node: \helinstest\Area\devbet Team, start date: null, finish date: null 
+[03:54:06 DBG] [16.0.5]   Node vstfs:///Classification/Node/aeb68f36-6230-49c8-8969-3bc12c3bfe70 has been created 
+[03:54:06 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Iteration, Iteration) 
+[03:54:06 DBG] [16.0.5] Source Node Path StartsWith [\catcore\iteration] 
+[03:54:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[03:54:07 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:07 DBG] [16.0.5] TfsNodeStructureTool:GetOrCreateNode(\helinstest\Iteration\Sprint 1, null, null) 
+[03:54:07 INF] [16.0.5]  Processing Node: \helinstest\Iteration\Sprint 1, start date: null, finish date: null 
+[03:54:07 DBG] [16.0.5]   Node \helinstest\Iteration\Sprint 1 already exists 
+[03:54:07 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://dev.azure.com/AdoMigrateorg", "BypassRules") 
+[03:54:08 INF] [16.0.5] Work Item Store connected to "https://dev.azure.com/AdoMigrateorg" with BypassRules set to true 
+[03:54:09 WRN] [16.0.5] WorkItemMigrationContext::InternalExecute: teamSettingsEnricher is disabled! 
+[03:54:09 INF] [16.0.5] Querying items to be migrated: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @TeamProject ORDER BY [System.ChangedDate] desc ... 
+[03:54:09 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:09 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://newtdevops.duckdns.org/DefaultCollection", "BypassRules") 
+[03:54:10 INF] [16.0.5] Work Item Store connected to "https://newtdevops.duckdns.org/DefaultCollection" with BypassRules set to true 
+[03:54:10 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://newtdevops.duckdns.org/DefaultCollection 
+[03:54:10 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = 'CatCore' ORDER BY [System.ChangedDate] desc 
+[03:54:10 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"CatCore","ReflectedWorkItemIdField":"Custom.ReflectedWorkItemId"} 
+[03:54:10 DBG] [16.0.5] WorkItemQuery: TeamProject: CatCore 
+[03:54:10 DBG] [16.0.5] WorkItemQuery: ReflectedWorkItemIdField: Custom.ReflectedWorkItemId 
+[03:54:10 DBG] [16.0.5] Query sent 
+[03:54:11 INF] [16.0.5] 12 Work items received, verifying 
+[03:54:12 INF] [16.0.5] Loading 12 Work Items 
+[03:54:41 DBG] [16.0.5] 12 Work Items loaded 
+[03:54:41 INF] [16.0.5] Replay all revisions of 12 work items? 
+[03:54:41 INF] [16.0.5] Validating::Check all Target Work Items have the RefectedWorkItemId field 
+[03:54:41 DBG] [16.0.5] ValidatingRequiredField: Test Case contains Custom.ReflectedWorkItemId 
+[03:54:41 DBG] [16.0.5] ValidatingRequiredField: Test Suite contains Custom.ReflectedWorkItemId 
+[03:54:41 DBG] [16.0.5] ValidatingRequiredField: Test Plan contains Custom.ReflectedWorkItemId 
+[03:54:41 DBG] [16.0.5] ValidatingRequiredField: Issue contains Custom.ReflectedWorkItemId 
+[03:54:41 INF] [16.0.5] Validating::Check that all work item types needed in the Target exist or are mapped 
+[03:54:41 DBG] [16.0.5] Validating::WorkItemTypes::sourceWorkItemTypes: 4 WorkItemTypes in the full source history Test Case,Test Suite,Test Plan,Issue 
+[03:54:41 DBG] [16.0.5] Validating::WorkItemTypes::targetWorkItemTypes::12 WorkItemTypes in Target process: Issue,Epic,Task,Test Case,Test Plan,Test Suite,Shared Steps,Shared Parameter,Code Review Request,Code Review Response,Feedback Request,Feedback Response 
+[03:54:41 INF] [16.0.5] Validating::Check that all Area & Iteration paths from Source have a valid mapping on Target 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths::AreaNodes::1 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[03:54:41 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[03:54:41 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\helinstest\Area 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths::IterationNodes::2 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[03:54:41 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[03:54:41 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:41 DBG] [16.0.5] TfsNodeStructureTool:PopulateIterationDatesFronSource:\CatCore\Iteration\Sprint 1 
+[03:54:42 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\helinstest\Iteration\Sprint 1 
+[03:54:42 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:Checking::null 
+[03:54:42 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Iteration) 
+[03:54:42 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:42 DBG] [16.0.5] TfsNodeStructureTool:PopulateIterationDatesFronSource:\CatCore\Iteration 
+[03:54:42 DBG] [16.0.5] TfsNodeStructureTool:CheckForMissingPaths:CheckTarget::\helinstest\Iteration 
+[03:54:42 INF] [16.0.5] Validating::Check that all users in the source exist in the target or are mapped! 
+[03:54:42 WRN] [16.0.5] TfsUserMappingTool is disabled in settings. You may have users in the source that are not mapped to the target.  
+[03:54:42 INF] [16.0.5] Found target project as helinstest 
+[03:54:42 INF] [16.0.5] [FilterWorkItemsThatAlreadyExistInTarget] is enabled. Searching for 12 work items that may have already been migrated to the target... 
+[03:54:42 INF] [16.0.5] [FilterWorkItemsThatAlreadyExistInTarget] is enabled. Source project CatCore is replaced with target project helinstest on the WIQLQuery which resulted into this target WIQLQuery 
+ "SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @TeamProject ORDER BY [System.ChangedDate] desc" . 
+[03:54:42 DBG] [16.0.5] FilterByTarget: Query Execute... 
+[03:54:42 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:42 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:42 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = 'helinstest' ORDER BY [System.ChangedDate] desc 
+[03:54:42 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","ReflectedWorkItemIdField":"Custom.ReflectedWorkItemId"} 
+[03:54:42 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:42 DBG] [16.0.5] WorkItemQuery: ReflectedWorkItemIdField: Custom.ReflectedWorkItemId 
+[03:54:42 DBG] [16.0.5] Query sent 
+[03:54:43 DBG] [16.0.5] FilterByTarget: ... query complete. 
+[03:54:43 DBG] [16.0.5] FilterByTarget: Found 0 based on the WIQLQuery in the target system. 
+[03:54:43 DBG] [16.0.5] FilterByTarget: After removing all found work items there are 12 remaining to be migrated. 
+[03:54:43 DBG] [16.0.5] FilterByTarget: END 
+[03:54:43 INF] [16.0.5] !! After removing all found work items there are 12 remaining to be migrated. 
+[03:54:43 DBG] [16.0.5] ###################################################################################### 
+[03:54:43 DBG] [16.0.5] ProcessWorkItem: 1050 
+[03:54:43 DBG] [16.0.5] ###################################################################################### 
+[03:54:43 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:43 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:43 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1050' 
+[03:54:43 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1050"} 
+[03:54:43 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:43 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1050 
+[03:54:43 DBG] [16.0.5] Query sent 
+[03:54:43 INF] [16.0.5] [           Test Case][Complete:     1/12][sid:  1050|Rev:  1][tid:  null | Work Item has 1 revisions and revision migration is set to true 
+[03:54:43 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[03:54:43 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:43 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:43 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:11:04.2070000+05:30" 
+[03:54:43 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:43 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[03:54:43 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 1 revisions 
+[03:54:43 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[03:54:43 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:43 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:43 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:11:04.2070000+05:30" 
+[03:54:43 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:43 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[03:54:43 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-11-20T16:11:04.2070000+05:30" 
+[03:54:43 INF] [16.0.5] Attached a consolidated set of {"RevisionCount":1} revisions. 
+[03:54:43 INF] [16.0.5] [           Test Case][Complete:     1/12][sid:  1050|Rev:  1][tid:  null |  Processing Revision [1] 
+[03:54:43 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.AutomationStatus | Source:Not Automated Target:Not Automated 
+[03:54:43 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:43 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-11-20T16:11:04.2070000+05:30" Target:"2024-11-20T16:11:04.2070000+05:30" 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:romyngorg 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:New Target:New 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Design Target:Design 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:44 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-11-20T16:11:04.2070000+05:30" Target:null 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:CatCore Target:helinstest 
+[03:54:44 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:CatCore\Sprint 1 Target:helinstest 
+[03:54:44 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[03:54:44 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:44 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[03:54:44 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:44 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.AcceptanceCriteria System.AcceptanceCriteria2 
+[03:54:44 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.Description System.Description2 
+[03:54:44 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[03:54:44 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:44 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[03:54:44 INF] [16.0.5] [           Test Case][Complete:     1/12][sid:  1050|Rev:  1][tid:  null |  Saved TargetWorkItem 194. Replayed revision 1 of 1 
+[03:54:44 INF] [16.0.5] [           Test Case][Complete:     1/12][sid:  1050|Rev:  1][tid:  null | Links 1 | LinkMigrator:true 
+[03:54:44 INF] [16.0.5] Migrating link for 1050 of type RelatedLink 
+[03:54:44 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='Microsoft.VSTS.Common.TestedBy-Reverse' on WorkItemId s:1050 t:194 
+[03:54:44 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(1044) 
+[03:54:45 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:45 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:45 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044' 
+[03:54:45 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044"} 
+[03:54:45 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:45 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044 
+[03:54:45 DBG] [16.0.5] Query sent 
+[03:54:45 WRN] [16.0.5]   [SKIP] Unable to migrate link where Link of type Microsoft.VSTS.Common.TestedBy-Reverse where wiSourceL=1050, wiSourceR=1044, wiTargetL=194, wiTargetR=1044 as target WI has not been migrated 
+[03:54:45 INF] [16.0.5] GitRepositoryEnricher: Enriching 194 To fix Git Repo Links 
+[03:54:47 DBG] [16.0.5] GitRepositoryEnricher: Saving 194 
+[03:54:47 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:47 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:47 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:47 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:47 INF] [16.0.5] [           Test Case][Complete:     1/12][sid:  1050|Rev:  1][tid:  null | ...Saved as 194 
+[03:54:47 INF] [16.0.5] [           Test Case][Complete:     1/12][sid:  1050|Rev:  1][tid:  null | Average time of 10.000 per work item and 0 hours 2 minutes 0.000 seconds estimated to completion 
+[03:54:47 DBG] [16.0.5] ###################################################################################### 
+[03:54:47 DBG] [16.0.5] ProcessWorkItem: 1049 
+[03:54:47 DBG] [16.0.5] ###################################################################################### 
+[03:54:47 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:47 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:47 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1049' 
+[03:54:47 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1049"} 
+[03:54:47 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:47 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1049 
+[03:54:47 DBG] [16.0.5] Query sent 
+[03:54:47 INF] [16.0.5] [           Test Case][Complete:     2/12][sid:  1049|Rev:  1][tid:  null | Work Item has 1 revisions and revision migration is set to true 
+[03:54:47 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[03:54:47 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:47 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:47 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:10:56.9300000+05:30" 
+[03:54:47 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:47 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[03:54:47 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 1 revisions 
+[03:54:47 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[03:54:47 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:47 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:47 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:10:56.9300000+05:30" 
+[03:54:47 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:47 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[03:54:47 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-11-20T16:10:56.9300000+05:30" 
+[03:54:47 INF] [16.0.5] Attached a consolidated set of {"RevisionCount":1} revisions. 
+[03:54:47 INF] [16.0.5] [           Test Case][Complete:     2/12][sid:  1049|Rev:  1][tid:  null |  Processing Revision [1] 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.AutomationStatus | Source:Not Automated Target:Not Automated 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-11-20T16:10:56.9300000+05:30" Target:"2024-11-20T16:10:56.9300000+05:30" 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:romyngorg 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:New Target:New 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Design Target:Design 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:47 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-11-20T16:10:56.9300000+05:30" Target:null 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:CatCore Target:helinstest 
+[03:54:47 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:CatCore\Sprint 1 Target:helinstest 
+[03:54:47 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[03:54:47 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:47 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[03:54:47 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:47 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.AcceptanceCriteria System.AcceptanceCriteria2 
+[03:54:47 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.Description System.Description2 
+[03:54:47 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[03:54:47 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:47 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[03:54:47 INF] [16.0.5] [           Test Case][Complete:     2/12][sid:  1049|Rev:  1][tid:  null |  Saved TargetWorkItem 195. Replayed revision 1 of 1 
+[03:54:47 INF] [16.0.5] [           Test Case][Complete:     2/12][sid:  1049|Rev:  1][tid:  null | Links 1 | LinkMigrator:true 
+[03:54:47 INF] [16.0.5] Migrating link for 1049 of type RelatedLink 
+[03:54:47 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='Microsoft.VSTS.Common.TestedBy-Reverse' on WorkItemId s:1049 t:195 
+[03:54:47 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(1044) 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044' 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044"} 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044 
+[03:54:48 DBG] [16.0.5] Query sent 
+[03:54:48 WRN] [16.0.5]   [SKIP] Unable to migrate link where Link of type Microsoft.VSTS.Common.TestedBy-Reverse where wiSourceL=1049, wiSourceR=1044, wiTargetL=195, wiTargetR=1044 as target WI has not been migrated 
+[03:54:48 INF] [16.0.5] GitRepositoryEnricher: Enriching 195 To fix Git Repo Links 
+[03:54:48 DBG] [16.0.5] GitRepositoryEnricher: Saving 195 
+[03:54:48 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:48 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:48 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:48 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:48 INF] [16.0.5] [           Test Case][Complete:     2/12][sid:  1049|Rev:  1][tid:  null | ...Saved as 195 
+[03:54:48 INF] [16.0.5] [           Test Case][Complete:     2/12][sid:  1049|Rev:  1][tid:  null | Average time of 5.000 per work item and 0 hours 0 minutes 55.000 seconds estimated to completion 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 DBG] [16.0.5] ProcessWorkItem: 1047 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 WRN] [16.0.5] [          Test Suite][Complete:     3/12][sid:  1047|Rev:  2][tid:  null | SKIP: Unable to migrate Test Suite/1047. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[03:54:48 INF] [16.0.5] [          Test Suite][Complete:     3/12][sid:  1047|Rev:  2][tid:  null | Average time of 3.333 per work item and 0 hours 0 minutes 33.333 seconds estimated to completion 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 DBG] [16.0.5] ProcessWorkItem: 1048 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 WRN] [16.0.5] [          Test Suite][Complete:     4/12][sid:  1048|Rev:  1][tid:  null | SKIP: Unable to migrate Test Suite/1048. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[03:54:48 INF] [16.0.5] [          Test Suite][Complete:     4/12][sid:  1048|Rev:  1][tid:  null | Average time of 2.550 per work item and 0 hours 0 minutes 22.550 seconds estimated to completion 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 DBG] [16.0.5] ProcessWorkItem: 1046 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 WRN] [16.0.5] [           Test Plan][Complete:     5/12][sid:  1046|Rev:  1][tid:  null | SKIP: Unable to migrate Test Plan/1046. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[03:54:48 INF] [16.0.5] [           Test Plan][Complete:     5/12][sid:  1046|Rev:  1][tid:  null | Average time of 2.000 per work item and 0 hours 0 minutes 16.000 seconds estimated to completion 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 DBG] [16.0.5] ProcessWorkItem: 1045 
+[03:54:48 DBG] [16.0.5] ###################################################################################### 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1045' 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1045"} 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:48 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1045 
+[03:54:48 DBG] [16.0.5] Query sent 
+[03:54:48 INF] [16.0.5] [           Test Case][Complete:     6/12][sid:  1045|Rev:  1][tid:  null | Work Item has 1 revisions and revision migration is set to true 
+[03:54:48 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[03:54:48 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:48 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:48 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:10:35.4770000+05:30" 
+[03:54:48 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:48 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[03:54:48 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 1 revisions 
+[03:54:48 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[03:54:48 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:48 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:48 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:10:35.4770000+05:30" 
+[03:54:48 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:48 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[03:54:48 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-11-20T16:10:35.4770000+05:30" 
+[03:54:48 INF] [16.0.5] Attached a consolidated set of {"RevisionCount":1} revisions. 
+[03:54:48 INF] [16.0.5] [           Test Case][Complete:     6/12][sid:  1045|Rev:  1][tid:  null |  Processing Revision [1] 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.AutomationStatus | Source:Not Automated Target:Not Automated 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-11-20T16:10:35.4770000+05:30" Target:"2024-11-20T16:10:35.4770000+05:30" 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:romyngorg 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:New Target:New 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Design Target:Design 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:48 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-11-20T16:10:35.4770000+05:30" Target:null 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:CatCore Target:helinstest 
+[03:54:48 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:CatCore\Sprint 1 Target:helinstest 
+[03:54:48 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[03:54:48 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:48 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[03:54:48 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:48 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.AcceptanceCriteria System.AcceptanceCriteria2 
+[03:54:48 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.Description System.Description2 
+[03:54:48 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[03:54:48 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:48 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[03:54:49 INF] [16.0.5] [           Test Case][Complete:     6/12][sid:  1045|Rev:  1][tid:  null |  Saved TargetWorkItem 196. Replayed revision 1 of 1 
+[03:54:49 INF] [16.0.5] [           Test Case][Complete:     6/12][sid:  1045|Rev:  1][tid:  null | Links 1 | LinkMigrator:true 
+[03:54:49 INF] [16.0.5] Migrating link for 1045 of type RelatedLink 
+[03:54:49 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='Microsoft.VSTS.Common.TestedBy-Reverse' on WorkItemId s:1045 t:196 
+[03:54:49 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(1044) 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044' 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044"} 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044 
+[03:54:49 DBG] [16.0.5] Query sent 
+[03:54:49 WRN] [16.0.5]   [SKIP] Unable to migrate link where Link of type Microsoft.VSTS.Common.TestedBy-Reverse where wiSourceL=1045, wiSourceR=1044, wiTargetL=196, wiTargetR=1044 as target WI has not been migrated 
+[03:54:49 INF] [16.0.5] GitRepositoryEnricher: Enriching 196 To fix Git Repo Links 
+[03:54:49 DBG] [16.0.5] GitRepositoryEnricher: Saving 196 
+[03:54:49 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:49 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:49 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:49 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:49 INF] [16.0.5] [           Test Case][Complete:     6/12][sid:  1045|Rev:  1][tid:  null | ...Saved as 196 
+[03:54:49 INF] [16.0.5] [           Test Case][Complete:     6/12][sid:  1045|Rev:  1][tid:  null | Average time of 1.666 per work item and 0 hours 0 minutes 11.666 seconds estimated to completion 
+[03:54:49 DBG] [16.0.5] ###################################################################################### 
+[03:54:49 DBG] [16.0.5] ProcessWorkItem: 1044 
+[03:54:49 DBG] [16.0.5] ###################################################################################### 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044' 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044"} 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:49 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1044 
+[03:54:49 DBG] [16.0.5] Query sent 
+[03:54:49 INF] [16.0.5] [               Issue][Complete:     7/12][sid:  1044|Rev:  1][tid:  null | Work Item has 1 revisions and revision migration is set to true 
+[03:54:49 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[03:54:49 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:49 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:49 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:10:20.8770000+05:30" 
+[03:54:49 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:49 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[03:54:49 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 1 revisions 
+[03:54:49 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[03:54:49 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:49 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:49 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T16:10:20.8770000+05:30" 
+[03:54:49 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:49 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[03:54:49 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-11-20T16:10:20.8770000+05:30" 
+[03:54:49 INF] [16.0.5] Attached a consolidated set of {"RevisionCount":1} revisions. 
+[03:54:50 INF] [16.0.5] [               Issue][Complete:     7/12][sid:  1044|Rev:  1][tid:  null |  Processing Revision [1] 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-11-20T16:10:20.8770000+05:30" Target:"2024-11-20T16:10:20.8770000+05:30" 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:Added to backlog Target:Added to backlog 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:To Do Target:To Do 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:50 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-11-20T16:10:20.8770000+05:30" Target:null 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:CatCore Target:helinstest 
+[03:54:50 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:CatCore\Sprint 1 Target:helinstest 
+[03:54:50 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[03:54:50 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:50 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore\Sprint 1, Iteration) 
+[03:54:50 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:50 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.AcceptanceCriteria System.AcceptanceCriteria2 
+[03:54:50 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.Description System.Description2 
+[03:54:50 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[03:54:50 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:50 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[03:54:50 INF] [16.0.5] [               Issue][Complete:     7/12][sid:  1044|Rev:  1][tid:  null |  Saved TargetWorkItem 197. Replayed revision 1 of 1 
+[03:54:50 INF] [16.0.5] [               Issue][Complete:     7/12][sid:  1044|Rev:  1][tid:  null | Links 3 | LinkMigrator:true 
+[03:54:50 INF] [16.0.5] Migrating link for 1044 of type RelatedLink 
+[03:54:50 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='Microsoft.VSTS.Common.TestedBy-Forward' on WorkItemId s:1044 t:197 
+[03:54:50 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(1049) 
+[03:54:50 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:50 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:50 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1049' 
+[03:54:50 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1049"} 
+[03:54:50 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:50 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1049 
+[03:54:50 DBG] [16.0.5] Query sent 
+[03:54:50 INF] [16.0.5] 1 Work items received, verifying 
+[03:54:50 INF] [16.0.5] Loading 1 Work Items 
+[03:54:52 DBG] [16.0.5] 1 Work Items loaded 
+[03:54:52 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[03:54:52 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[03:54:52 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[03:54:52 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[03:54:52 INF] [16.0.5]   [CREATE-START] Adding Link of type Microsoft.VSTS.Common.TestedBy-Forward where wiSourceL=1044, wiSourceR=1049, wiTargetL=197, wiTargetR=195  
+[03:54:52 INF] [16.0.5]   [CREATE-SUCCESS] Adding Link of type Microsoft.VSTS.Common.TestedBy-Forward where wiSourceL=1044, wiSourceR=1049, wiTargetL=197, wiTargetR=195  
+[03:54:52 INF] [16.0.5] Migrating link for 1044 of type RelatedLink 
+[03:54:52 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='Microsoft.VSTS.Common.TestedBy-Forward' on WorkItemId s:1044 t:197 
+[03:54:52 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(1045) 
+[03:54:53 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:53 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:53 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1045' 
+[03:54:53 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1045"} 
+[03:54:53 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:53 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1045 
+[03:54:53 DBG] [16.0.5] Query sent 
+[03:54:53 INF] [16.0.5] 1 Work items received, verifying 
+[03:54:53 INF] [16.0.5] Loading 1 Work Items 
+[03:54:54 DBG] [16.0.5] 1 Work Items loaded 
+[03:54:54 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[03:54:54 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[03:54:54 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[03:54:54 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[03:54:54 INF] [16.0.5]   [CREATE-START] Adding Link of type Microsoft.VSTS.Common.TestedBy-Forward where wiSourceL=1044, wiSourceR=1045, wiTargetL=197, wiTargetR=196  
+[03:54:54 INF] [16.0.5]   [CREATE-SUCCESS] Adding Link of type Microsoft.VSTS.Common.TestedBy-Forward where wiSourceL=1044, wiSourceR=1045, wiTargetL=197, wiTargetR=196  
+[03:54:54 INF] [16.0.5] Migrating link for 1044 of type RelatedLink 
+[03:54:54 DBG] [16.0.5] RelatedLink is of ArtifactLinkType='Related Workitem':LinkTypeEnd='Microsoft.VSTS.Common.TestedBy-Forward' on WorkItemId s:1044 t:197 
+[03:54:54 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItem(1050) 
+[03:54:55 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:55 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:55 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1050' 
+[03:54:55 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1050"} 
+[03:54:55 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:55 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1050 
+[03:54:55 DBG] [16.0.5] Query sent 
+[03:54:55 INF] [16.0.5] 1 Work items received, verifying 
+[03:54:55 INF] [16.0.5] Loading 1 Work Items 
+[03:54:57 DBG] [16.0.5] 1 Work Items loaded 
+[03:54:57 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[03:54:57 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[03:54:57 DBG] [16.0.5] GetReflectedWorkItemId: START 
+[03:54:57 DBG] [16.0.5] GetReflectedWorkItemId: END - Has ReflectedWorkItemIdField and has value 
+[03:54:57 INF] [16.0.5]   [CREATE-START] Adding Link of type Microsoft.VSTS.Common.TestedBy-Forward where wiSourceL=1044, wiSourceR=1050, wiTargetL=197, wiTargetR=194  
+[03:54:57 INF] [16.0.5]   [CREATE-SUCCESS] Adding Link of type Microsoft.VSTS.Common.TestedBy-Forward where wiSourceL=1044, wiSourceR=1050, wiTargetL=197, wiTargetR=194  
+[03:54:57 INF] [16.0.5] GitRepositoryEnricher: Enriching 197 To fix Git Repo Links 
+[03:54:57 DBG] [16.0.5] GitRepositoryEnricher: Saving 197 
+[03:54:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:57 INF] [16.0.5] [               Issue][Complete:     7/12][sid:  1044|Rev:  1][tid:  null | ...Saved as 197 
+[03:54:57 INF] [16.0.5] [               Issue][Complete:     7/12][sid:  1044|Rev:  1][tid:  null | Average time of 1.442 per work item and 0 hours 0 minutes 8.556 seconds estimated to completion 
+[03:54:57 DBG] [16.0.5] ###################################################################################### 
+[03:54:57 DBG] [16.0.5] ProcessWorkItem: 1042 
+[03:54:57 DBG] [16.0.5] ###################################################################################### 
+[03:54:57 WRN] [16.0.5] [          Test Suite][Complete:     8/12][sid:  1042|Rev:  7][tid:  null | SKIP: Unable to migrate Test Suite/1042. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[03:54:57 INF] [16.0.5] [          Test Suite][Complete:     8/12][sid:  1042|Rev:  7][tid:  null | Average time of 1.225 per work item and 0 hours 0 minutes 6.225 seconds estimated to completion 
+[03:54:57 DBG] [16.0.5] ###################################################################################### 
+[03:54:57 DBG] [16.0.5] ProcessWorkItem: 1043 
+[03:54:57 DBG] [16.0.5] ###################################################################################### 
+[03:54:57 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:57 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:57 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1043' 
+[03:54:57 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1043"} 
+[03:54:57 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:57 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1043 
+[03:54:57 DBG] [16.0.5] Query sent 
+[03:54:57 INF] [16.0.5] [           Test Case][Complete:     9/12][sid:  1043|Rev:  1][tid:  null | Work Item has 1 revisions and revision migration is set to true 
+[03:54:57 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[03:54:57 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:57 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:57 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T11:30:52.8330000+05:30" 
+[03:54:57 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:57 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[03:54:57 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 1 revisions 
+[03:54:57 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[03:54:57 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:57 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:57 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-20T11:30:52.8330000+05:30" 
+[03:54:57 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:57 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[03:54:57 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-11-20T11:30:52.8330000+05:30" 
+[03:54:57 INF] [16.0.5] Attached a consolidated set of {"RevisionCount":1} revisions. 
+[03:54:57 INF] [16.0.5] [           Test Case][Complete:     9/12][sid:  1043|Rev:  1][tid:  null |  Processing Revision [1] 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.AutomationStatus | Source:Not Automated Target:Not Automated 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.Steps | Source:<steps id="0" last="2"><step id="2" type="ActionStep"><parameterizedString isformatted="true">&lt;DIV&gt;&lt;P&gt;eefefef&lt;/P&gt;&lt;/DIV&gt;</parameterizedString><parameterizedString isformatted="true">&lt;DIV&gt;&lt;P&gt;&lt;BR/&gt;&lt;/P&gt;&lt;/DIV&gt;</parameterizedString><description/></step></steps> Target: 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-11-20T11:30:52.8330000+05:30" Target:"2024-11-20T11:30:52.8330000+05:30" 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:romyngorg 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:New Target:New 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Design Target:Design 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:57 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-11-20T11:30:52.8330000+05:30" Target:null 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:CatCore Target:helinstest 
+[03:54:57 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:CatCore Target:helinstest 
+[03:54:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[03:54:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Iteration) 
+[03:54:57 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:57 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.AcceptanceCriteria System.AcceptanceCriteria2 
+[03:54:57 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.Description System.Description2 
+[03:54:57 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[03:54:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:57 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:     9/12][sid:  1043|Rev:  1][tid:  null |  Saved TargetWorkItem 198. Replayed revision 1 of 1 
+[03:54:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:     9/12][sid:  1043|Rev:  1][tid:  null | ...Saved as 198 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:     9/12][sid:  1043|Rev:  1][tid:  null | Average time of 1.111 per work item and 0 hours 0 minutes 4.444 seconds estimated to completion 
+[03:54:58 DBG] [16.0.5] ###################################################################################### 
+[03:54:58 DBG] [16.0.5] ProcessWorkItem: 1040 
+[03:54:58 DBG] [16.0.5] ###################################################################################### 
+[03:54:58 WRN] [16.0.5] [          Test Suite][Complete:    10/12][sid:  1040|Rev:  3][tid:  null | SKIP: Unable to migrate Test Suite/1040. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[03:54:58 INF] [16.0.5] [          Test Suite][Complete:    10/12][sid:  1040|Rev:  3][tid:  null | Average time of 1.000 per work item and 0 hours 0 minutes 3.000 seconds estimated to completion 
+[03:54:58 DBG] [16.0.5] ###################################################################################### 
+[03:54:58 DBG] [16.0.5] ProcessWorkItem: 1041 
+[03:54:58 DBG] [16.0.5] ###################################################################################### 
+[03:54:58 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[03:54:58 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://dev.azure.com/AdoMigrateorg 
+[03:54:58 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject]='helinstest' AND [Custom.ReflectedWorkItemId] = 'https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1041' 
+[03:54:58 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"helinstest","idToFind":"https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1041"} 
+[03:54:58 DBG] [16.0.5] WorkItemQuery: TeamProject: helinstest 
+[03:54:58 DBG] [16.0.5] WorkItemQuery: idToFind: https://newtdevops.duckdns.org/DefaultCollection/CatCore/_workitems/edit/1041 
+[03:54:58 DBG] [16.0.5] Query sent 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:    11/12][sid:  1041|Rev:  1][tid:  null | Work Item has 1 revisions and revision migration is set to true 
+[03:54:58 DBG] [16.0.5] TfsRevisionManagerTool::EnforceDatesMustBeIncreasing 
+[03:54:58 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:58 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:58 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-18T15:25:49.2700000+05:30" 
+[03:54:58 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:58 DBG] [16.0.5] Target: RevisionsToMigrate: No revisions to migrate 
+[03:54:58 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate: Raw Source Has 1 revisions 
+[03:54:58 DBG] [16.0.5] TfsRevisionManagerTool::GetRevisionsToMigrate::RemoveRevisionsAlreadyOnTarget Target is null 
+[03:54:58 INF] [16.0.5] Source: Found 1 revisions to migrate on  Work item:Source 
+[03:54:58 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:58 DBG] [16.0.5] RevisionsToMigrate: Index:0 - Number:1 - ChangedDate:"2024-11-18T15:25:49.2700000+05:30" 
+[03:54:58 DBG] [16.0.5] Source: RevisionsToMigrate:---------------------------------------------------- 
+[03:54:58 DBG] [16.0.5] Setting 'System.CreatedBy'=lexcon 
+[03:54:58 DBG] [16.0.5] Setting 'System.CreatedDate'="2024-11-18T15:25:49.2700000+05:30" 
+[03:54:58 INF] [16.0.5] Attached a consolidated set of {"RevisionCount":1} revisions. 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:    11/12][sid:  1041|Rev:  1][tid:  null |  Processing Revision [1] 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.AutomationStatus | Source:Not Automated Target:Not Automated 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.TCM.Steps | Source:<steps id="0" last="3"><step id="2" type="ActionStep"><parameterizedString isformatted="true">&lt;DIV&gt;&lt;P&gt;login issue&lt;/P&gt;&lt;/DIV&gt;</parameterizedString><parameterizedString isformatted="true">&lt;DIV&gt;&lt;P&gt;&lt;BR/&gt;&lt;/P&gt;&lt;/DIV&gt;</parameterizedString><description/></step><step id="3" type="ActionStep"><parameterizedString isformatted="true">&lt;DIV&gt;&lt;P&gt;login button not functioning&lt;/P&gt;&lt;/DIV&gt;</parameterizedString><parameterizedString isformatted="true">&lt;DIV&gt;&lt;P&gt;&lt;BR/&gt;&lt;/P&gt;&lt;/DIV&gt;</parameterizedString><description/></step></steps> Target: 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.Priority | Source:2 Target:2 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: Microsoft.VSTS.Common.ActivatedBy | Source:lexcon Target:romyngorg 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedBy | Source:lexcon Target:lexcon 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.CreatedDate | Source:"2024-11-18T15:25:49.2700000+05:30" Target:"2024-11-18T15:25:49.2700000+05:30" 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AssignedTo | Source:lexcon Target:romyngorg 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.Reason | Source:New Target:New 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedBy | Source:lexcon Target:romyngorg 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.State | Source:Design Target:Design 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem 
+[03:54:58 DBG] [16.0.5] StringManipulatorTool::ProcessorExecutionWithFieldItem::Running::Remove invalid characters from the end of the string with [^( -~)
+	]+ 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.ChangedDate | Source:"2024-11-18T15:25:49.2700000+05:30" Target:null 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.AreaPath | Source:CatCore Target:helinstest 
+[03:54:58 DBG] [16.0.5] PopulateWorkItem:FieldUpdate: System.IterationPath | Source:CatCore Target:helinstest 
+[03:54:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Area) 
+[03:54:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(CatCore, Iteration) 
+[03:54:58 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[03:54:58 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.AcceptanceCriteria System.AcceptanceCriteria2 
+[03:54:58 DBG] [16.0.5] Running Field Map: FieldToFieldMap System.Description System.Description2 
+[03:54:58 DBG] [16.0.5] CheckClosedDateIsValid::ClosedDate field is Microsoft.VSTS.Common.ClosedDate 
+[03:54:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: lexcon, AuthorisedBy: romyngorg 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:    11/12][sid:  1041|Rev:  1][tid:  null |  Saved TargetWorkItem 199. Replayed revision 1 of 1 
+[03:54:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps 
+[03:54:58 DBG] [16.0.5] TfsExtensions::SaveToAzureDevOps: ChangedBy: Migration, AuthorisedBy: romyngorg 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:    11/12][sid:  1041|Rev:  1][tid:  null | ...Saved as 199 
+[03:54:58 INF] [16.0.5] [           Test Case][Complete:    11/12][sid:  1041|Rev:  1][tid:  null | Average time of 0.990 per work item and 0 hours 0 minutes 1.881 seconds estimated to completion 
+[03:54:58 DBG] [16.0.5] ###################################################################################### 
+[03:54:58 DBG] [16.0.5] ProcessWorkItem: 1039 
+[03:54:58 DBG] [16.0.5] ###################################################################################### 
+[03:54:58 WRN] [16.0.5] [           Test Plan][Complete:    12/12][sid:  1039|Rev:  1][tid:  null | SKIP: Unable to migrate Test Plan/1039. Use the TestPlansAndSuitesMigrationContext after you have migrated all Test Cases.  
+[03:54:58 INF] [16.0.5] [           Test Plan][Complete:    12/12][sid:  1039|Rev:  1][tid:  null | Average time of 0.883 per work item and 0 hours 0 minutes 0.883 seconds estimated to completion 
+[03:54:58 INF] [16.0.5]  Migration Processor Complete TfsWorkItemMigrationProcessor  
+[03:54:58 INF] [16.0.5] TfsWorkItemMigrationProcessor completed in 00:00:00  
+[03:54:58 INF] [16.0.5] Command ExecuteMigrationCommand completed in "00:01:25.2883166" 
+[03:54:58 INF] [16.0.5] Check the logs for errors: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241125035331 

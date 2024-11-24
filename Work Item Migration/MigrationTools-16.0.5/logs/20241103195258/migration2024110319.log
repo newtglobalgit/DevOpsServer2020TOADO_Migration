@@ -1,0 +1,107 @@
+[19:53:01 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[19:53:02 INF] [16.0.5] 16.0.5 
+[19:53:02 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[19:53:02 INF] [16.0.5] =============================================================================== 
+[19:53:02 INF] [16.0.5] -------------------------------------- 
+[19:53:02 INF] [16.0.5] Telemetry Note: 
+[19:53:02 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[19:53:02 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[19:53:02 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[19:53:02 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[19:53:02 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[19:53:02 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[19:53:02 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[19:53:02 INF] [16.0.5] -------------------------------------- 
+[19:53:02 INF] [16.0.5] Start Time: "2024-11-03T19:53:02.0372739+05:30" 
+[19:53:02 INF] [16.0.5] Running with settings: {"ConfigFile":"workitem_configuration-upgraded.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[19:53:02 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[19:53:02 INF] [16.0.5] Version (Assembly): 16.0.5 
+[19:53:02 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\MigrationTools-16.0.5\logs\20241103195258 
+[19:53:02 DBG] [16.0.5] DetectOnlineService::IsOnline 
+[19:53:02 DBG] [16.0.5]      IsPackageManagerInstalled: false 
+[19:53:02 DBG] [16.0.5]      IsPackageInstalled: false 
+[19:53:02 DBG] [16.0.5]      IsUpdateAvailable: false 
+[19:53:02 DBG] [16.0.5]      IsNewLocalVersionAvailable: false 
+[19:53:02 DBG] [16.0.5]      IsRunningInDebug: false 
+[19:53:02 INF] [16.0.5] Verion Info: 
+[19:53:02 INF] [16.0.5]      Running: 16.0.5.0 
+[19:53:02 INF] [16.0.5]      Installed: 0.0.0 
+[19:53:02 INF] [16.0.5]      Available: 0.0.0 
+[19:53:02 WRN] [16.0.5] Windows Client: The Windows Package Manager is not installed, we use it to determine if you have the latest version, and to make sure that this application is up to date. You can download and install it from https://aka.ms/getwinget. After which you can call `winget install nkdAgility.AzureDevOpsMigrationTools` from the Windows Terminal to get a manged version of this program. 
+[19:53:02 WRN] [16.0.5] Windows Server: If you are running on Windows Server you can use the experimental version of Winget, or you can still use Chocolatey to manage the install. Install chocolatey from https://chocolatey.org/install and then use `choco install vsts-sync-migrator` to install, and `choco upgrade vsts-sync-migrator` to upgrade to newer versions. 
+[19:53:02 DBG] [16.0.5] =================================== 
+[19:53:02 DBG] [16.0.5] Configuring 'MigrationTools:Processors:0:Enrichers' 
+[19:53:02 DBG] [16.0.5] =================================== 
+[19:53:02 INF] [16.0.5] Creating Migration Engine 77a3dc90-d7fe-4660-8627-a70581406a49 
+[19:53:02 INF] [16.0.5] ProcessorContainer: Of 1 configured Processors only 1 are enabled 
+[19:53:02 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[19:53:02 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[19:53:02 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[19:53:02 DBG] [16.0.5] =================================== 
+[19:53:02 DBG] [16.0.5] Configuring 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[19:53:02 DBG] [16.0.5] Configuring '0' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[19:53:02 DBG] [16.0.5] Configuring '1' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[19:53:02 DBG] [16.0.5] =================================== 
+[19:53:02 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for SomeWorkItemType 
+[19:53:02 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for SomeWorkItemType 
+[19:53:02 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[19:53:02 INF] [16.0.5]                               Max Logfile: Verbose.  
+[19:53:02 INF] [16.0.5]                               Max Console: Debug.  
+[19:53:02 INF] [16.0.5]                  Max Application Insights: Error.  
+[19:53:02 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[19:53:02 INF] [16.0.5] Beginning run of 1 processors 
+[19:53:02 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[19:53:02 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[19:53:02 DBG] [16.0.5] WorkItemMigrationContext::InternalExecute  
+[19:53:02 INF] [16.0.5] Migrating all Nodes before the Processor run. 
+[19:53:02 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[19:53:02 INF] [16.0.5] Connecting with AccessToken  
+[19:53:02 DBG] [16.0.5] MigrationClient: Connecting to "https://devopspoc/TestCollection"  
+[19:53:04 INF] [16.0.5] Access granted to "https://devopspoc/TestCollection" for lexcon (devopsPOC\lexcon) 
+[19:53:05 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[19:53:05 INF] [16.0.5] Connecting with AccessToken  
+[19:53:05 DBG] [16.0.5] MigrationClient: Connecting to "https://dev.azure.com/AdoMigrateorg"  
+[19:53:05 INF] [16.0.5] Access granted to "https://dev.azure.com/AdoMigrateorg" for romyngorg (romyngorg@outlook.com) 
+[19:53:05 DBG] [16.0.5] NodeStructureEnricher.MigrateAllNodeStructures(@MigrationTools.Tools.NodeOptions, @MigrationTools.Tools.NodeOptions) 
+[19:53:05 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Area, Area) 
+[19:53:05 DBG] [16.0.5] Source Node Path StartsWith [\devserver\area] 
+[19:53:06 WRN] [16.0.5] The node devserver\nyby-Team is being excluded due to your Filters setting on TfsNodeStructureToolOptions.  
+[19:53:06 DBG] [16.0.5] NodeStructureEnricher.ProcessCommonStructure(Iteration, Iteration) 
+[19:53:06 DBG] [16.0.5] Source Node Path StartsWith [\devserver\iteration] 
+[19:53:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName(devserver\Sprint 1, Iteration) 
+[19:53:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers 
+[19:53:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers::^7473924d-c47f-4089-8f5c-077c728b576e([\\]?.*)$ 
+[19:53:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers::^7473924d-c47f-4089-8f5c-077c728b576e([\\]?.*)$::NoMatch 
+[19:53:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers::^Skypoint Cloud([\\]?.*)$ 
+[19:53:06 DBG] [16.0.5] NodeStructureEnricher.GetNewNodeName::Mappers::^Skypoint Cloud([\\]?.*)$::NoMatch 
+[19:53:06 DBG] [16.0.5] TfsNodeStructureTool:GetOrCreateNode(\change\Iteration\Sprint 1, null, null) 
+[19:53:06 INF] [16.0.5]  Processing Node: \change\Iteration\Sprint 1, start date: null, finish date: null 
+[19:53:06 DBG] [16.0.5]   Node \change\Iteration\Sprint 1 already exists 
+[19:53:06 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://dev.azure.com/AdoMigrateorg", "BypassRules") 
+[19:53:07 INF] [16.0.5] Work Item Store connected to "https://dev.azure.com/AdoMigrateorg" with BypassRules set to true 
+[19:53:08 INF] [16.0.5] ---------------------------------------------- 
+[19:53:08 INF] [16.0.5] Migrating all Teams before the Processor run. 
+[19:53:08 INF] [16.0.5] TfsTeamSettingsProcessor::InternalExecute: Found 3 teams in Source? 
+[19:53:08 DBG] [16.0.5] Found 3 teams in Target? 
+[19:53:08 DBG] [16.0.5] DONE in 00:00:00.6231344  
+[19:53:08 INF] [16.0.5] Querying items to be migrated: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @TeamProject AND [System.WorkItemType] NOT IN ('Test Suite', 'Test Plan','Shared Steps','Shared Parameter','Feedback Request') ORDER BY [System.ChangedDate] desc ... 
+[19:53:08 DBG] [16.0.5] WorkItemQuery: ===========GetWorkItems============= 
+[19:53:08 DBG] [16.0.5] TfsWorkItemMigrationClient::GetWorkItemStore("https://devopspoc/TestCollection", "BypassRules") 
+[19:53:10 INF] [16.0.5] Work Item Store connected to "https://devopspoc/TestCollection" with BypassRules set to true 
+[19:53:10 DBG] [16.0.5] WorkItemQuery: TeamProjectCollection: https://devopspoc/TestCollection 
+[19:53:10 DBG] [16.0.5] WorkItemQuery: Query: SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = 'devserver' AND [System.WorkItemType] NOT IN ('Test Suite', 'Test Plan','Shared Steps','Shared Parameter','Feedback Request') ORDER BY [System.ChangedDate] desc 
+[19:53:10 DBG] [16.0.5] WorkItemQuery: Parameters: {"TeamProject":"devserver","ReflectedWorkItemIdField":"Custom.ReflectedWorkItemId"} 
+[19:53:10 DBG] [16.0.5] WorkItemQuery: TeamProject: devserver 
+[19:53:10 DBG] [16.0.5] WorkItemQuery: ReflectedWorkItemIdField: Custom.ReflectedWorkItemId 
+[19:53:10 DBG] [16.0.5] Query sent 
+[19:53:10 INF] [16.0.5] 10 Work items received, verifying 
+[19:53:11 INF] [16.0.5] Loading 10 Work Items 
+[19:53:37 DBG] [16.0.5] 10 Work Items loaded 
+[19:53:37 INF] [16.0.5] Replay all revisions of 10 work items? 
+[19:53:37 INF] [16.0.5] Validating::Check all Target Work Items have the RefectedWorkItemId field 
+[19:53:37 DBG] [16.0.5] ValidatingRequiredField: Issue contains Custom.ReflectedWorkItemId 
+[19:53:37 DBG] [16.0.5] ValidatingRequiredField: Epic contains Custom.ReflectedWorkItemId 
+[19:53:37 DBG] [16.0.5] ValidatingRequiredField: Test Case contains Custom.ReflectedWorkItemId 
+[19:53:37 WRN] [16.0.5] ValidatingRequiredField: Task does not contain Custom.ReflectedWorkItemId 
+[19:53:37 ERR] [16.0.5] Not all work items in scope contain a valid ReflectedWorkItemId Field! 
+Microsoft.TeamFoundation.WorkItemTracking.Client.InvalidFieldValueException: Not all work items in scope contain a valid ReflectedWorkItemId Field!

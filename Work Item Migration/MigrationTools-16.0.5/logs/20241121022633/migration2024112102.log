@@ -1,0 +1,64 @@
+[02:26:35 INF] [16.0.5] Azure DevOps Migration Tools [Object Model]  
+[02:26:35 INF] [16.0.5] 16.0.5 
+[02:26:35 INF] [16.0.5] naked Agility with Martin Hinshelwood  
+[02:26:35 INF] [16.0.5] =============================================================================== 
+[02:26:35 INF] [16.0.5] -------------------------------------- 
+[02:26:35 INF] [16.0.5] Telemetry Note: 
+[02:26:35 INF] [16.0.5]    We use Application Insights to collect usage and error information in order to improve the quality of the tools. 
+[02:26:35 INF] [16.0.5]    Currently we collect the following anonymous data: 
+[02:26:35 INF] [16.0.5]      -Event data: application version, client city/country, hosting type, item count, error count, warning count, elapsed time. 
+[02:26:35 INF] [16.0.5]      -Exceptions: application errors and warnings. 
+[02:26:35 INF] [16.0.5]      -Dependencies: REST/ObjectModel calls to Azure DevOps to help us understand performance issues. 
+[02:26:35 INF] [16.0.5]    This data is tied to a session ID that is generated on each run of the application and shown in the logs. This can help with debugging. If you want to disable telemetry you can run the tool with '--disableTelemetry' on the command prompt. 
+[02:26:35 INF] [16.0.5]    Note: Exception data cannot be 100% guaranteed to not leak production data 
+[02:26:35 INF] [16.0.5] -------------------------------------- 
+[02:26:35 INF] [16.0.5] Start Time: "2024-11-21T02:26:35.9685557+05:30" 
+[02:26:35 INF] [16.0.5] Running with settings: {"ConfigFile":"C:\\Users\\romy\\Desktop\\AzureDevOpsServer2020_To_Services\\Work Item Migration\\MigrationTools-16.0.5\\temp_workitem_migration.json","DisableTelemetry":false,"DebugTrace":false,"skipVersionCheck":false,"$type":"ExecuteMigrationCommandSettings"} 
+[02:26:35 INF] [16.0.5] OSVersion: Microsoft Windows NT 6.2.9200.0 
+[02:26:35 INF] [16.0.5] Version (Assembly): 16.0.5 
+[02:26:35 INF] [16.0.5] Logpath: C:\Users\romy\Desktop\AzureDevOpsServer2020_To_Services\Work Item Migration\MigrationTools-16.0.5\logs\20241121022633 
+[02:26:35 DBG] [16.0.5] DetectOnlineService::IsOnline 
+[02:26:36 DBG] [16.0.5]      IsPackageManagerInstalled: true 
+[02:26:36 DBG] [16.0.5] Searching for package! 
+[02:26:40 DBG] [16.0.5] Found package with id nkdAgility.AzureDevOpsMigrationTools 
+[02:26:40 DBG] [16.0.5]      IsPackageInstalled: false 
+[02:26:40 DBG] [16.0.5]      IsUpdateAvailable: false 
+[02:26:40 DBG] [16.0.5]      IsNewLocalVersionAvailable: false 
+[02:26:40 DBG] [16.0.5]      IsRunningInDebug: false 
+[02:26:40 INF] [16.0.5] Verion Info: 
+[02:26:40 INF] [16.0.5]      Running: 16.0.5.0 
+[02:26:40 INF] [16.0.5]      Installed: 0.0.0 
+[02:26:40 INF] [16.0.5]      Available: 0.0.0 
+[02:26:40 INF] [16.0.5] It looks like this application has been installed from a zip, would you like to use the managed version? 
+[02:26:52 DBG] [16.0.5] =================================== 
+[02:26:52 DBG] [16.0.5] Configuring 'MigrationTools:Processors:0:Enrichers' 
+[02:26:52 DBG] [16.0.5] =================================== 
+[02:26:52 INF] [16.0.5] Creating Migration Engine 0aabfe05-b599-474c-beb3-5938e4e02c7e 
+[02:26:52 INF] [16.0.5] ProcessorContainer: Of 1 configured Processors only 1 are enabled 
+[02:26:52 INF] [16.0.5] ProcessorContainer: Adding Processor TfsWorkItemMigrationProcessor 
+[02:26:52 DBG] [16.0.5] Constructor found: IOptions`1, TfsCommonTools, ProcessorEnricherContainer, IServiceProvider, ITelemetryLogger, ILogger`1 
+[02:26:52 DBG] [16.0.5] Attempting to pass parameters: OptionsWrapper`1 
+[02:26:52 DBG] [16.0.5] =================================== 
+[02:26:52 DBG] [16.0.5] Configuring 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[02:26:52 DBG] [16.0.5] Configuring '0' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[02:26:52 DBG] [16.0.5] Configuring '1' as 'IFieldMapOptions' from 'MigrationTools:CommonTools:FieldMappingTool:FieldMaps' 
+[02:26:52 DBG] [16.0.5] =================================== 
+[02:26:52 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[02:26:52 INF] [16.0.5] FieldMappingTool: Adding FieldMap FieldToFieldMap for * 
+[02:26:52 INF] [16.0.5] Logging has been configured and is set to: unknown.  
+[02:26:52 INF] [16.0.5]                               Max Logfile: Verbose.  
+[02:26:52 INF] [16.0.5]                               Max Console: Debug.  
+[02:26:52 INF] [16.0.5]                  Max Application Insights: Error.  
+[02:26:52 INF] [16.0.5] The Max log levels above show where to go look for extra info. e.g. Even if you set the log level to Verbose you will only see that info in the Log File, however everything up to Debug will be in the Console. 
+[02:26:52 INF] [16.0.5] Beginning run of 1 processors 
+[02:26:52 INF] [16.0.5] Processor: TfsWorkItemMigrationProcessor 
+[02:26:52 INF] [16.0.5] Migration Context Start: TfsWorkItemMigrationProcessor  
+[02:26:52 DBG] [16.0.5] WorkItemMigrationContext::InternalExecute  
+[02:26:53 INF] [16.0.5] Migrating all Nodes before the Processor run. 
+[02:26:53 DBG] [16.0.5] TfsMigrationClient::GetDependantTfsCollection:AuthenticationMode(AccessToken) 
+[02:26:53 INF] [16.0.5] Connecting with AccessToken  
+[02:26:53 DBG] [16.0.5] MigrationClient: Connecting to "https://172.191.4.85/DefaultCollection"  
+[02:26:56 ERR] [16.0.5] Unable to configure store: Check persmissions and credentials for "AccessToken": TF400324: Azure DevOps services are not available from server https://172.191.4.85/DefaultCollection.
+Technical information (for administrator):
+  The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel. 
+[02:26:56 ERR] [16.0.5] The PAT MUST be 'full access' for it to work with the Object Model API. 

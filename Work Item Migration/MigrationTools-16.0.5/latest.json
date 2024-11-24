@@ -1,0 +1,154 @@
+{
+  "Serilog": {
+    "MinimumLevel": "Debug"
+  },
+  "MigrationTools": {
+    "Version": "16.0",
+    "Endpoints": {
+      "Source": {
+        "EndpointType": "TfsTeamProjectEndpoint",
+        "Collection": "https://newtdevops.duckdns.org/DefaultCollection",
+        "Project": "Testv",
+        "AllowCrossProjectLinking": false,
+        "ReflectedWorkItemIdField": "Custom.ReflectedWorkItemId",
+        "Authentication": {
+          "AuthenticationMode": "AccessToken",
+          "AccessToken": ""
+        },
+        "LanguageMaps": {
+          "AreaPath": "Area",
+          "IterationPath": "Iteration"
+        }
+      },
+      "Target": {
+        "EndpointType": "TfsTeamProjectEndpoint",
+        "Collection": "https://dev.azure.com/AdoMigrateorg",
+        "Project": "dandadan",
+        "TfsVersion": "AzureDevOps",
+        "ReflectedWorkItemIdField": "Custom.ReflectedWorkItemId",
+        "AllowCrossProjectLinking": false,
+        "Authentication": {
+          "AuthenticationMode": "AccessToken",
+          "AccessToken": ""
+        },
+        "LanguageMaps": {
+          "AreaPath": "Area",
+          "IterationPath": "Iteration"
+        }
+      }
+    },
+    "CommonTools": {
+      "WorkItemTypeMappingTool": {
+        "Enabled": true,
+        "Mappings": {
+          "*": "*"
+        }
+      },
+      "StringManipulatorTool": {
+        "Enabled": true,
+        "MaxStringLength": 1000000,
+        "Manipulators": [
+          {
+            "$type": "RegexStringManipulator",
+            "Enabled": true,
+            "Pattern": "[^( -~)\n\r\t]+",
+            "Replacement": "",
+            "Description": "Remove invalid characters from the end of the string"
+          }
+        ]
+      },
+      "TfsAttachmentTool": {
+        "RefName": "TfsAttachmentTool",
+        "Enabled": true,
+        "ExportBasePath": "C:\\Temp\\WorkItemAttachmentWorkingFolder\\",
+        "MaxRevisions": 480000000
+      },
+      "FieldMappingTool": {
+        "Enabled": true,
+        "FieldMaps": [
+          {
+            "FieldMapType": "FieldtoFieldMap",
+            "ApplyTo": [
+              "*"
+            ],
+            "sourceField": "System.AcceptanceCriteria",
+            "targetField": "System.AcceptanceCriteria2"
+          },
+          {
+            "FieldMapType": "FieldtoFieldMap",
+            "ApplyTo": [
+              "*"
+            ],
+            "sourceField": "System.Description",
+            "targetField": "System.Description2"
+          }
+        ]
+      },
+      "TfsGitRepositoryTool": {
+        "Enabled": true,
+        "Mappings": {}
+      },
+      "TfsNodeStructureTool": {
+        "Enabled": true,
+        "Areas": {
+          "Filters": [],
+          "Mappings": {}
+        },
+        "Iterations": {
+          "Filters": [],
+          "Mappings": {}
+        },
+        "ShouldCreateMissingRevisionPaths": true,
+        "ReplicateAllExistingNodes": true
+      },
+      "TfsRevisionManagerTool": {
+        "Enabled": true,
+        "ReplayRevisions": true,
+        "MaxRevisions": 0
+      },
+      "TfsTeamSettingsTool": {
+        "Enabled": false,
+        "MigrateTeamSettings": false,
+        "UpdateTeamSettings": false,
+        "MigrateTeamCapacities": false,
+        "Teams": []
+      },
+      "TfsUserMappingTool": {
+        "Enabled": false,
+        "UserMappingFile": "",
+        "IdentityFieldsToCheck": [
+          "System.AssignedTo",
+          "System.ChangedBy",
+          "System.CreatedBy",
+          "Microsoft.VSTS.Common.ActivatedBy",
+          "Microsoft.VSTS.Common.ResolvedBy",
+          "Microsoft.VSTS.Common.ClosedBy"
+        ]
+      }
+    },
+    "Processors": [
+      {
+        "ProcessorType": "TfsWorkItemMigrationProcessor",
+        "Enabled": true,
+        "UpdateCreatedDate": true,
+        "UpdateCreatedBy": true,
+        "WIQLQuery": "SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @TeamProject ORDER BY [System.ChangedDate] desc",
+        "FixHtmlAttachmentLinks": false,
+        "WorkItemCreateRetryLimit": 10,
+        "FilterWorkItemsThatAlreadyExistInTarget": true,
+        "PauseAfterEachWorkItem": false,
+        "AttachRevisionHistory": true,
+        "GenerateMigrationComment": false,
+        "SourceName": "Source",
+        "TargetName": "Target",
+        "WorkItemIDs": [],
+        "MaxGracefulFailures": 2,
+        "SkipRevisionWithInvalidIterationPath": false,
+        "SkipRevisionWithInvalidAreaPath": false
+      }
+    ],
+    "ProcessingContext": {
+      "BypassRules": true
+    }
+  }
+}

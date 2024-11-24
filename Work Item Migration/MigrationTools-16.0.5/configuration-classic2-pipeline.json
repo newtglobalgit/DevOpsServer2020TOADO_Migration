@@ -1,0 +1,58 @@
+{
+  "Serilog": {
+    "MinimumLevel": "Information"
+  },
+  "MigrationTools": {
+    "Version": "16.0",
+    "LogLevel": "Verbose",
+    "Endpoints": {
+      "Source": {
+        "Name": "Source",
+        "EndpointType": "AzureDevOpsEndpoint",
+        "AuthenticationMode": "AccessToken",
+        "AccessToken": "",
+        "Organisation": "https://devopspoc/TestCollection",
+        "Project": "devserver",
+        "ReflectedWorkItemIdField": "Custom.ReflectedWorkItemId",
+        "LanguageMaps": {
+          "AreaPath": "Area",
+          "IterationPath": "Iteration"
+        }
+        
+      },
+      "Target": {
+        "Name": "Target",
+        "EndpointType": "AzureDevOpsEndpoint",
+        "AuthenticationMode": "AccessToken",
+        "AccessToken": "",
+        "Organisation": "https://dev.azure.com/AdoMigrateorg",
+        "Project": "AssetChecklist",
+        "ReflectedWorkItemIdField": "Custom.ReflectedWorkItemId",
+        "LanguageMaps": {
+          "AreaPath": "Area",
+          "IterationPath": "Iteration"
+        }
+      }
+    },
+    "GitRepoMapping": null,
+    "Processors": [
+      {
+        "ProcessorType": "AzureDevOpsPipelineProcessor",
+        "Enabled": true,
+        "MigrateBuildPipelines": true,
+        "MigrateReleasePipelines": false,
+        "MigrateTaskGroups": false,
+        "MigrateVariableGroups": false,
+        "MigrateServiceConnections": false,
+        "BuildPipelines": null,
+        "ReleasePipelines": null,
+        "RefName": null,
+        "SourceName": "Source",
+        "TargetName": "Target",
+        "RepositoryNameMaps": {
+          "devserver":"devserver"
+        }
+      }
+    ]
+  }
+}
