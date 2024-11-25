@@ -18,13 +18,18 @@ def read_excel_and_execute(input_excel, json_template_path):
 
     for index, row in file.iterrows():
         try:
-            # Extract values from the Excel row
-            src_url = row['Source Server URL'].strip()
-            src_project = row['Source Project Name'].strip()
-            src_pat = row['Source PAT'].strip()
-            trg_url = row['Target Organization URL'].strip()
-            trg_project = row['Target Project Name'].strip()
-            trg_pat = row['Target PAT'].strip()
+            # Extract values from the Excel row and handle missing/non-string values
+            src_url = str(row.get('Source Server URL', '')).strip()
+            src_project = str(row.get('Source Project Name', '')).strip()
+            src_pat = str(row.get('Source PAT', '')).strip()
+            trg_url = str(row.get('Target Organization URL', '')).strip()
+            trg_project = row.get('Target Project Name')
+            trg_pat = str(row.get('Target PAT', '')).strip()
+
+            # Handle missing Target Project Name
+            if pd.isna(trg_project) or not str(trg_project).strip():
+                trg_project = src_project  
+            trg_project = str(trg_project).strip() 
 
             # Update the JSON template dynamically
             json_data = json_template.copy()  # Work with a copy
