@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import subprocess
+import time
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
@@ -39,6 +40,24 @@ console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
+
+def make_request_with_retries(url, auth, max_retries=10, timeout=300):
+    logger.info(f"Making request to URL: {url}")
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, auth=auth, timeout=timeout)
+            if response.status_code == 200:
+                logger.info(f"Request successful with status code: {response.status_code}")
+                return response
+            else:
+                logger.warning(f"Issue during request: {response.text}")
+                logger.warning(f"Attempt {attempt + 1}: Request timed out. Retrying...")
+                time.sleep(2 ** attempt)
+        except Exception as e:
+            logger.error(f"Error during request: {e}")
+            break
+    logger.error(f"Failed to connect after {max_retries} attempts.")
+    return None
 
 def modify_value(value):
     try:
@@ -145,55 +164,43 @@ def authenticate_and_get_projects(server_url, pat, api_version):
         return None
 
 
-def get_repositories(server_url, project, pat, api_version, batch_size=150):
-    encoded_project = encode_url_component(project)
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories?$top={batch_size}&api-version={api_version}'
-    
-    all_repositories = []
-    continuation_token = None
+def get_repositories(server_url, project, pat, api_version):
+    # Encode project name for safe URL usage
+    encoded_project = requests.utils.quote(project)
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories?api-version={api_version}'
 
-    while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
-        
-        if response:
-            data = response.json().get('value', [])
-            all_repositories.extend(data)
+    # Make the request
+    response = requests.get(url, auth=HTTPBasicAuth('', pat))
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
-                break
-        else:
-            logger.error('Failed to retrieve repositories with pagination.')
-            break
-
-    return {"value": all_repositories}
+    if response.status_code == 200:
+        # Extract repositories from response
+        all_repositories = response.json().get('value', [])
+        return {"value": all_repositories}
+    else:
+        # Log error and return empty result
+        logger.error(f"Failed to retrieve repositories: {response.status_code}, {response.text}")
+        return {"value": []}
 
 
-def get_branches(server_url, project, repository_id, pat, api_version, batch_size=150):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=heads&$top={batch_size}&api-version={api_version}'
-    all_branches = []
-    continuation_token = None
+def get_branches(server_url, project, repository_id, pat, api_version):
+    # Encode project and repository ID for safe URL usage
+    encoded_project = requests.utils.quote(project)
+    encoded_repository_id = requests.utils.quote(repository_id)
 
-    while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
+    # Construct the URL without batch size
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=heads&api-version={api_version}'
 
-        if response:
-            data = response.json().get('value', [])
-            all_branches.extend(data)
+    # Make the request
+    response = requests.get(url, auth=HTTPBasicAuth('', pat))
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
-                break
-        else:
-            logger.error('Failed to retrieve branches with pagination.')
-            break
-
-    return all_branches
+    if response.status_code == 200:
+        # Extract branches from response
+        all_branches = response.json().get('value', [])
+        return all_branches
+    else:
+        # Log error and return an empty list
+        logger.error(f"Failed to retrieve branches: {response.status_code}, {response.text}")
+        return []
 
 
 def get_latest_commit_info(server_url, project, repository_id, branch_name, pat, api_version):
@@ -286,31 +293,26 @@ def get_commit_count(server_url, project, repository_id, file_path, pat, api_ver
     return 1
 
     
-def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version, batch_size=150):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    encoded_branch_name = encode_url_component(branch_name)
-    
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&$top={batch_size}&api-version={api_version}'
-    all_commits = []
-    continuation_token = None
+def get_all_commits(server_url, project, repository_id, branch_name, pat, api_version):
+    # Encode project, repository ID, and branch name for safe URL usage
+    encoded_project = requests.utils.quote(project)
+    encoded_repository_id = requests.utils.quote(repository_id)
+    encoded_branch_name = requests.utils.quote(branch_name)
 
-    while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
-        
-        if response:
-            data = response.json().get('value', [])
-            all_commits.extend(data)
+    # Construct the URL without batch size
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?searchCriteria.itemVersion.version={encoded_branch_name}&api-version={api_version}'
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
-                break
-        else:
-            logger.error('Failed to retrieve all commits with pagination.')
-            break
+    # Make the request
+    response = requests.get(url, auth=HTTPBasicAuth('', pat))
 
-    return all_commits
+    if response.status_code == 200:
+        # Extract commits from response
+        all_commits = response.json().get('value', [])
+        return all_commits
+    else:
+        # Log error and return an empty list
+        logger.error(f"Failed to retrieve commits: {response.status_code}, {response.text}")
+        return []
 
 
 def clone_repo_branch(repo_url, destination_path, pat, branch_name, username, password):
@@ -346,55 +348,45 @@ def clone_repo_branch(repo_url, destination_path, pat, branch_name, username, pa
 
     
 def get_all_repo_commits(server_url, project, repository_id, pat, api_version, batch_size=150):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    
+    # Encode project and repository ID for safe URL usage
+    encoded_project = requests.utils.quote(project)
+    encoded_repository_id = requests.utils.quote(repository_id)
+
+    # Construct the URL
     url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits?$top={batch_size}&api-version={api_version}'
-    all_commits = []
-    continuation_token = None
 
-    while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
-        
-        if response:
-            data = response.json().get('value', [])
-            all_commits.extend(data)
+    # Make the request
+    response = requests.get(url, auth=HTTPBasicAuth('', pat))
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
-                break
-        else:
-            logger.error('Failed to retrieve all repository commits with pagination.')
-            break
-
-    return all_commits
+    if response.status_code == 200:
+        # Extract commits from response
+        all_commits = response.json().get('value', [])
+        return all_commits
+    else:
+        # Log error and return an empty list
+        logger.error(f"Failed to retrieve commits: {response.status_code}, {response.text}")
+        return []
 
 
-def get_tags(server_url, project, repository_id, pat, api_version, batch_size=150):
-    encoded_project = encode_url_component(project)
-    encoded_repository_id = encode_url_component(repository_id)
-    
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=tags&$top={batch_size}&api-version={api_version}'
-    all_tags = []
-    continuation_token = None
+def get_tags(server_url, project, repository_id, pat, api_version):
+    # Encode project and repository ID for safe URL usage
+    encoded_project = requests.utils.quote(project)
+    encoded_repository_id = requests.utils.quote(repository_id)
 
-    while True:
-        headers = {'x-ms-continuationtoken': continuation_token} if continuation_token else {}
-        response = make_request_with_retries(url, pat, method='GET')
-        
-        if response:
-            data = response.json().get('value', [])
-            all_tags.extend(data)
+    # Construct the URL without batch size
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/refs?filter=tags&api-version={api_version}'
 
-            continuation_token = response.headers.get('x-ms-continuationtoken')
-            if not continuation_token:
-                break
-        else:
-            logger.error('Failed to retrieve tags with pagination.')
-            break
+    # Make the request
+    response = requests.get(url, auth=HTTPBasicAuth('', pat))
 
-    return all_tags
+    if response.status_code == 200:
+        # Extract tags from response
+        all_tags = response.json().get('value', [])
+        return all_tags
+    else:
+        # Log error and return an empty list
+        logger.error(f"Failed to retrieve tags: {response.status_code}, {response.text}")
+        return []
 
 
 def get_tag_details(server_url, project, repository_id, tag_id, pat, api_version):
@@ -415,7 +407,7 @@ def get_commit_details(server_url, project, repository_id, commit_id, pat, api_v
     encoded_repository_id = encode_url_component(repository_id)
     encoded_commit_id = encode_url_component(commit_id)
     
-    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits/{encoded_commit_id}?api-version={api_version}'
+    url = f'{server_url}/{encoded_project}/_apis/git/repositories/{encoded_repository_id}/commits/{encoded_commit_id}?api-version={api_version}&$top=100000'
     response = make_request_with_retries(url, pat, method='GET')
 
     if response:
@@ -613,6 +605,7 @@ def process(server_url, pat, project, repository_name, branch_name, username, pa
             repositories = get_repositories(server_url, project, pat, api_version)
             if repositories:
                 for repo in repositories['value']:
+                    logger.info(f"Repository Name : {repo.get('name')}")
                     if repo['name'] == repository_name:
                         repo_id = repo['id']
 
@@ -702,7 +695,7 @@ def process(server_url, pat, project, repository_name, branch_name, username, pa
                                                     'Size (Bytes)': file_size
                                                 }
                                             data_source_code.append(file_info)
-                        all_commits = get_all_repo_commits(server_url, project, repo_id, pat, api_version)
+                        # all_commits = get_all_repo_commits(server_url, project, repo_id, pat, api_version)
                         tags = get_tags(server_url, project, repo_id, pat, api_version)
 
                         for tag in tags:
@@ -726,17 +719,17 @@ def process(server_url, pat, project, repository_name, branch_name, username, pa
                                     }
                                     data_tags.append(tag_info)
 
-                        commit_tag_map = map_commit_tags(tags)
-                        for commit in all_commits:
-                            tag_name = commit_tag_map.get(commit['commitId'], 'not tagged')
-                            all_commit_info = {
-                                'Author': commit['author']['name'],
-                                'Commit Message': commit['comment'],
-                                'Commit ID': commit['commitId'],
-                                'Commit Date': commit['author']['date'],
-                                'Tag Name': tag_name  # Include the Tag Name column
-                            }
-                            data_all_commits.append(all_commit_info)
+                        # commit_tag_map = map_commit_tags(tags)
+                        # for commit in all_commits:
+                        #     tag_name = commit_tag_map.get(commit['commitId'], 'not tagged')
+                        #     all_commit_info = {
+                        #         'Author': commit['author']['name'],
+                        #         'Commit Message': commit['comment'],
+                        #         'Commit ID': commit['commitId'],
+                        #         'Commit Date': commit['author']['date'],
+                        #         'Tag Name': tag_name  # Include the Tag Name column
+                        #     }
+                        #     data_all_commits.append(all_commit_info)
 
                         return data_source_code, data_commits, data_all_commits, data_tags
         return [], [], [], []

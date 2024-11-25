@@ -125,40 +125,87 @@ def determine_file_type(item):
 # Function to get file count for a TFVC branch
 def get_tfvc_branch_file_count(devops_server_url, project_name, branch_path, pat, exclude_paths=[]):
     try:
-        encoded_project=encode_url_component(project_name)
-        encoded_branch_path=encode_url_component(branch_path)
+        # Encode project name and branch path for safe URL usage
+        encoded_project = requests.utils.quote(project_name)
+        encoded_branch_path = requests.utils.quote(branch_path)
+
+        # Base API URL
         items_api_url = f'{devops_server_url}/{encoded_project}/_apis/tfvc/items?scopePath={encoded_branch_path}&recursionLevel=full&api-version=6.0'
-        items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
-        if items_response.status_code == 200:
-            logger.info(f"Request successful with branch file status code: {items_response.status_code}")
-            items = items_response.json()['value']
-            if exclude_paths:
-                items = [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in exclude_paths)]
-            return len([item for item in items if determine_file_type(item) in ['File', 'Folder']])
-        else:
-            logger.error(f"Failed to retrieve items for branch file'{branch_path}'. Status code: {items_response.status_code}")
-            return 0
+
+        all_items = []
+        batch_size = 10000
+        skip = 0
+        more_data = True
+
+        while more_data:
+            # Add pagination parameters to the URL
+            paginated_url = f'{items_api_url}&$top={batch_size}&$skip={skip}'
+            items_response = make_request_with_retries(paginated_url, auth=HTTPBasicAuth('', pat))
+            
+            if items_response.status_code == 200:
+                logger.info(f"Request successful for batch starting at {skip} with status code: {items_response.status_code}")
+                batch_items = items_response.json().get('value', [])
+                all_items.extend(batch_items)
+                # Check if more data exists
+                more_data = len(batch_items) == batch_size
+                skip += batch_size
+            else:
+                logger.error(f"Failed to retrieve items for branch file '{branch_path}'. Status code: {items_response.status_code}")
+                more_data = False
+
+        # Exclude paths if specified
+        if exclude_paths:
+            all_items = [item for item in all_items if not any(item['path'].startswith(excluded_path) for excluded_path in exclude_paths)]
+
+        # Return count of items that are files or folders
+        return len([item for item in all_items if determine_file_type(item) in ['File', 'Folder']])
     except Exception as e:
         logger.error(f"Failed to retrieve items for branch file: {e}")
         return 0
 
 
 def get_branch_file_details(devops_server_url, project_name, branch_path, pat, excluded_paths=[]):
-    try: 
-        encoded_project=encode_url_component(project_name)
-        encoded_branch_path=encode_url_component(branch_path)
+    try:
+        # Encode project name and branch path for safe URL usage
+        encoded_project = requests.utils.quote(project_name)
+        encoded_branch_path = requests.utils.quote(branch_path)
+
+        # Base API URL
         items_api_url = f'{devops_server_url}/{encoded_project}/_apis/tfvc/items?scopePath={encoded_branch_path}&recursionLevel=full&api-version=6.0'
-        items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
-        if items_response.status_code == 200:
-            logger.info(f"Request successful with branch status code: {items_response.status_code}")
-            items = items_response.json()['value']
-            return [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in excluded_paths)]
-        else:
-            logger.error(f"Failed to retrieve items for branch '{branch_path}'. Status code: {items_response.status_code}")
-            return []
+
+        all_items = []
+        batch_size = 10000
+        skip = 0
+        more_data = True
+
+        while more_data:
+            # Add pagination parameters to the URL
+            paginated_url = f'{items_api_url}&$top={batch_size}&$skip={skip}'
+            items_response = make_request_with_retries(paginated_url, auth=HTTPBasicAuth('', pat))
+            
+            if items_response.status_code == 200:
+                logger.info(f"Request successful for batch starting at {skip} with status code: {items_response.status_code}")
+                batch_items = items_response.json().get('value', [])
+                all_items.extend(batch_items)
+                # Check if more data exists
+                more_data = len(batch_items) == batch_size
+                skip += batch_size
+            else:
+                logger.error(f"Failed to retrieve items for branch '{branch_path}'. Status code: {items_response.status_code}")
+                more_data = False
+
+        # Exclude paths if specified
+        filtered_items = [
+            item for item in all_items
+            if not any(item['path'].startswith(excluded_path) for excluded_path in excluded_paths)
+        ]
+
+        return filtered_items
     except Exception as e:
         logger.error(f"Failed to retrieve items for branch: {e}")
         return []
+
+
 
 
 def get_latest_changeset_for_item(server_url, project_name, item_path, pat):
@@ -359,12 +406,9 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                     else:
                         tfvc_worksheet.write(row_num, col_num, value, regular_format)
             # all_files_data_df = []
-            print(f'All branch - {all_branch_file_details.items()}')
             for branch_name, branch_file_details in all_branch_file_details.items():
                 branch_file_data = []
                 for item in branch_file_details:
-                    print(branch_file_details)
-                    print(f'items - {item}')
                     if item['path'] != f'$/{project_name}':
                         # changeset_id, comment, last_modified, author = get_latest_changeset_for_item(
                         #     server_url, project_name, item['path'], pat)
@@ -395,13 +439,14 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
 
                 # Add borders and right-align numerical and date/time cells in the branch sheet
                 for row_num in range(1, len(branch_df) + 1):
-                    for col_num, value in enumerate(branch_df.iloc[row_num - 1]):
-                        if not value:
-                            value = ''
-                        if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
-                            branch_worksheet.write(row_num, col_num, value, right_align_format)
-                        else:
-                            branch_worksheet.write(row_num, col_num, value, regular_format)
+                    if branch_file_data:
+                        for col_num, value in enumerate(branch_df.iloc[row_num - 1]):
+                            if not value:
+                                value = ''
+                            if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
+                                branch_worksheet.write(row_num, col_num, value, right_align_format)
+                            else:
+                                branch_worksheet.write(row_num, col_num, value, regular_format)
 
             # all_files_df = pd.DataFrame(all_files_data_df)
             # all_files_df = all_files_df[['Root Folder', 'Project Folder', 'File Name', 'File Type', 'File Size (bytes)',
