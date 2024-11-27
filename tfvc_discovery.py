@@ -6,11 +6,12 @@ import pandas as pd
 from datetime import datetime
 import getpass
 import time
+from urllib.parse import quote
 from utils.common import get_project_names, add_if_not_exists
 import logging
 
 
-log_dir = "logs"
+log_dir = "TFVC_logs"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 # Create a logger
@@ -32,58 +33,11 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
 
-def modify_item_path(url):
-    try:
-        # Dictionary of replacements
-        replacements = {
-            '+': '%2B',
-            '%24': '$',
-            '&': '%26',
-            ',': '%2C',
-            # '/': '%2F',
-            ':': '%3A',
-            ';': '%3B',
-            '=': '%3D',
-            '?': '%3F',
-            '@': '%40',
-            ' ': '%20',
-            '"': '%22',
-            '<': '%3C',
-            '>': '%3E',
-            '#': '%23',
-            # '%': '%25',
-            '{': '%7B',
-            '}': '%7D',
-            '|': '%7C',
-            '\\': '%5C',
-            '^': '%5E',
-            '[': '%5B',
-            ']': '%5D',
-            '`': '%60'
-        }
-
-        pattern = r"itemPath=(.+?)&api-version"
-        match = re.search(pattern, url)
-        
-        if match:
-            item_path = match.group(1)
-            logger.info(f"Original item path: {item_path}")
-            for char, replacement in replacements.items():
-                item_path = item_path.replace(char, replacement)
-            
-            modified_url = url.replace(match.group(1), item_path)
-            logger.info(f"Modified item path: {item_path}")
-            return modified_url
-        
-        return url
-    except Exception as e:
-        logger.error(f"Failed to modify item path: {e}")
-        return url
+def encode_url_component(component):
+    return quote(component, safe='/\\$')
 
 
 def make_request_with_retries(url, auth, max_retries=10, timeout=300):
-    url = modify_item_path(url)
-    print(url)
     logger.info(f"Making request to URL: {url}")
     for attempt in range(max_retries):
         try:
@@ -126,7 +80,7 @@ def extract_organization_name(server_url):
 # Function to get shelvesets details
 def get_shelvesets_details(server_url, pat):
     try:
-        url = f"{server_url}/_apis/tfvc/shelvesets?api-version=6.0"
+        url = f"{server_url}/_apis/tfvc/shelvesets?api-version=6.0&$top=100000"
         response = make_request_with_retries(url, auth=HTTPBasicAuth('', pat))
         return response.json().get('value', []) if response else []
     except Exception as e:
@@ -137,7 +91,8 @@ def get_shelvesets_details(server_url, pat):
 # Function to get changeset details
 def get_changeset_details(server_url, project_name, changeset_id, pat):
     try:
-        url = f"{server_url}/{project_name}/_apis/tfvc/changesets/{changeset_id}?api-version=6.0"
+        encoded_project=encode_url_component(project_name)
+        url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets/{changeset_id}?api-version=6.0"
         response = make_request_with_retries(url, auth=HTTPBasicAuth('', pat))
         return response.json() if response else None
     except Exception as e:
@@ -156,54 +111,121 @@ def get_changeset_changes(server_url, changeset_id, pat):
         print(f"Failed to retrieve changes for changeset {changeset_id}: {response.status_code} - {response.text}")
         return None
 
-
 # Function to determine file type
 def determine_file_type(item):
     if 'isFolder' in item:
         return 'Folder' if item['isFolder'] else 'File'
     if 'size' in item and item['size'] == 0:
         return 'Folder'
-    return 'File'
+    path = item['path']
+    if '.' in path and not path.endswith('/'):
+        return 'File'
+    return 'Folder'
 
-
-# Function to get file count for a TFVC branch
 def get_tfvc_branch_file_count(devops_server_url, project_name, branch_path, pat, exclude_paths=[]):
+    """Main function to get file count from a branch."""
     try:
-        items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={branch_path}&recursionLevel=full&api-version=6.0'
-        items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
-        if items_response.status_code == 200:
-            logger.info(f"Request successful with branch file status code: {items_response.status_code}")
-            items = items_response.json()['value']
-            if exclude_paths:
-                items = [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in exclude_paths)]
-            return len([item for item in items if determine_file_type(item) in ['File', 'Folder']])
-        else:
-            logger.error(f"Failed to retrieve items for branch file'{branch_path}'. Status code: {items_response.status_code}")
-            return 0
+        # Fetch root-level files and folders
+        files_and_folders = fetch_root_files_and_folders(devops_server_url, project_name, branch_path, pat, exclude_paths)
+        files_and_folders_details = []
+        # Recursively fetch files and folders for each folder under the root-level
+        for key, item in enumerate(files_and_folders):
+            if item['path'] == f'$/{project_name}':
+                continue
+            if 'isFolder' in item and item['isFolder'] == True:
+                folder_path = item['path']
+                logger.info(f"Fetching items for folder: {folder_path}")
+                folder_files = fetch_folder_details(devops_server_url, project_name, folder_path, pat, exclude_paths)
+                files_and_folders_details.extend(folder_files)
+            else:
+                files_and_folders_details.append(files_and_folders[key])
+
+        # Filter files and folders based on type and excluded paths, then count them
+        count = len(files_and_folders_details)
+        return count, files_and_folders_details
+
     except Exception as e:
-        logger.error(f"Failed to retrieve items for branch file: {e}")
+        logger.error(f"Failed to retrieve items for branch file count: {e}")
         return 0
 
 
-def get_branch_file_details(devops_server_url, project_name, branch_path, pat, excluded_paths=[]):
-    try: 
-        items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={branch_path}&recursionLevel=full&api-version=6.0'
-        items_response = make_request_with_retries(items_api_url, auth=HTTPBasicAuth('', pat))
-        if items_response.status_code == 200:
-            logger.info(f"Request successful with branch status code: {items_response.status_code}")
-            items = items_response.json()['value']
-            return [item for item in items if not any(item['path'].startswith(excluded_path) for excluded_path in excluded_paths)]
+
+def fetch_root_files_and_folders(devops_server_url, project_name, branch_path, pat, excluded_paths=[]):
+    """Fetch root-level files and folders and filter out excluded paths."""
+    try:
+        # Fetch root-level files and folders with recursionLevel=none
+        root_items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={branch_path}&recursionLevel=none&api-version=6.0'
+        root_items_response = make_request_with_retries(root_items_api_url, auth=HTTPBasicAuth('', pat))
+
+        if root_items_response.status_code == 200:
+            logger.info(f"Root-level items fetched successfully for branch: {branch_path}")
+            root_items = root_items_response.json()['value']
+            # Filter out excluded paths
+            files_and_folders = [item for item in root_items if not any(item['path'].startswith(excluded_path) for excluded_path in excluded_paths)]
+            return files_and_folders
         else:
-            logger.error(f"Failed to retrieve items for branch '{branch_path}'. Status code: {items_response.status_code}")
+            logger.error(f"Failed to retrieve root-level items for branch '{branch_path}'. Status code: {root_items_response.status_code}")
             return []
+    except Exception as e:
+        logger.error(f"Failed to retrieve root-level items for branch: {e}")
+        return []
+
+def fetch_folder_details(devops_server_url, project_name, folder_path, pat, excluded_paths=[]):
+    """Recursively fetch details for a folder and filter out excluded paths."""
+    try:
+        # Fetch folder details with recursionLevel=full
+        folder_items_api_url = f'{devops_server_url}/{project_name}/_apis/tfvc/items?scopePath={folder_path}&recursionLevel=full&api-version=6.0'
+        folder_items_response = make_request_with_retries(folder_items_api_url, auth=HTTPBasicAuth('', pat))
+
+        if folder_items_response.status_code == 200:
+            folder_items = folder_items_response.json()['value']
+            # Filter out excluded paths
+            return [folder_item for folder_item in folder_items if not any(folder_item['path'].startswith(excluded_path) for excluded_path in excluded_paths)]
+        else:
+            files_and_folders = fetch_root_files_and_folders(devops_server_url, project_name, folder_path, pat, excluded_paths)
+            # Recursively fetch files and folders for each folder under the root-level
+            for item in files_and_folders:
+                if 'isFolder' in item and item['isFolder'] == True:  # Check if it's a folder
+                    folder_path = item['path']
+                    logger.info(f"Fetching files for folder: {folder_path}")
+                    folder_files = fetch_folder_details(devops_server_url, project_name, folder_path, pat, excluded_paths)
+                    files_and_folders.extend(folder_files)
+                else:
+                    files_and_folders.extend(item)
+            return files_and_folders
+    except Exception as e:
+        logger.error(f"Failed to retrieve items for folder '{folder_path}': {e}")
+        return []
+
+def get_branch_file_details(devops_server_url, project_name, branch_path, pat, excluded_paths=[]):
+    """Main function to get file details from a branch."""
+    try:
+        # Fetch root-level files and folders
+        files_and_folders = fetch_root_files_and_folders(devops_server_url, project_name, branch_path, pat, excluded_paths)
+
+        # Recursively fetch files and folders for each folder under the root-level
+        for item in files_and_folders:
+            if 'isFolder' in item and item['isFolder'] == True:  # Check if it's a folder
+                folder_path = item['path']
+                logger.info(f"Fetching files for folder: {folder_path}")
+                folder_files = fetch_folder_details(devops_server_url, project_name, folder_path, pat, excluded_paths)
+                files_and_folders.extend(folder_files)
+            else:
+                files_and_folders.extend(item)
+        count = len(files_and_folders)
+        return count, files_and_folders
     except Exception as e:
         logger.error(f"Failed to retrieve items for branch: {e}")
         return []
 
 
+
+
 def get_latest_changeset_for_item(server_url, project_name, item_path, pat):
     try: 
-        changesets_url = f"{server_url}/{project_name}/_apis/tfvc/changesets?itemPath={item_path}&api-version=6.0"
+        encoded_project=encode_url_component(project_name)
+        encoded_item_path=encode_url_component(item_path)
+        changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?itemPath={encoded_item_path}&api-version=6.0"
         response = make_request_with_retries(changesets_url, auth=HTTPBasicAuth('', pat))
         if response.status_code == 200:
             logger.info(f"Request successful with changeset status code: {response.status_code}")
@@ -232,6 +254,8 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
         project_name = project
         server_url = server_url
         pat = pat
+        
+    
 
         branch_data = []
         all_branch_file_details = {}
@@ -241,7 +265,9 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
 
         collection_name = server_url.split('/')[-1]
         organization_name = extract_organization_name(server_url)
-        tfvc_changesets_url = f"{server_url}/{project_name}/_apis/tfvc/changesets?api-version=6.0&$top=10000"
+
+        encoded_project=encode_url_component(project_name)
+        tfvc_changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?api-version=6.0&$top=100000"
         print(f"TFVC Changesets URL: {tfvc_changesets_url}")
 
         params = {
@@ -249,9 +275,8 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
             'maxCommentLength': 255,
             '$top': 100,
             '$orderby': 'createdDate desc'
-        }
-
-        tfvc_check_api_url = f'{server_url}/{project_name}/_apis/tfvc/branches?api-version=6.0'
+        }   
+        tfvc_check_api_url = f'{server_url}/{encoded_project}/_apis/tfvc/branches?api-version=6.0'
         tfvc_response = make_request_with_retries(tfvc_check_api_url, auth=HTTPBasicAuth('', pat))
         if tfvc_response.status_code == 200:
             try:
@@ -259,33 +284,35 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                 print(f"TFVC branches for project '{project_name}': {tfvc_branches}")  # Debugging output
                 root_path = f"$/{project_name}"
                 branch_paths = [tfvc_branch.get('path', 'Unnamed Branch') for tfvc_branch in tfvc_branches]
-                root_file_count = get_tfvc_branch_file_count(server_url, project_name, root_path, pat, exclude_paths=branch_paths)
+                root_file_count, root_file_details= get_tfvc_branch_file_count(server_url, project_name, root_path, pat, exclude_paths=branch_paths)
                 branch_data.append({
                     'Collection Name': collection_name,
                     'Project Name': project_name,
                     'Repository Name': 'TFVC',
                     'Branch Name': sanitize_sheet_name(f"{project_name} [root]"),
-                    'File count': root_file_count
+                    'File count': root_file_count,
+                    'Sheet Name':  sanitize_sheet_name(f"{project_name} [root]")
                 })
-                root_file_details = get_branch_file_details(server_url, project_name, root_path, pat, excluded_paths=branch_paths)
                 all_branch_file_details[sanitize_sheet_name(f"{project_name} [root]")] = root_file_details
                 all_files_data.extend(root_file_details)
 
                 if tfvc_branches:
+                    count = 1
                     for tfvc_branch in tfvc_branches:
                         branch_path = tfvc_branch.get('path', 'Unnamed Branch')
                         branch_name = branch_path.split('/')[-1]
-                        branch_file_count = get_tfvc_branch_file_count(server_url, project_name, branch_path, pat)
+                        branch_file_count, branch_file_details = get_tfvc_branch_file_count(server_url, project_name, branch_path, pat)
                         branch_data.append({
                             'Collection Name': collection_name,
                             'Project Name': project_name,
                             'Repository Name': 'TFVC',
                             'Branch Name': sanitize_sheet_name(branch_name),
-                            'File count': branch_file_count
+                            'File count': branch_file_count,
+                            'Sheet Name': f'branch_{count}'
                         })
-                        branch_file_details = get_branch_file_details(server_url, project_name, branch_path, pat)
-                        all_branch_file_details[sanitize_sheet_name(branch_name)] = branch_file_details
+                        all_branch_file_details[sanitize_sheet_name(f'branch_{count}')] = branch_file_details
                         all_files_data.extend(branch_file_details)
+                        count = count+1
             except (ValueError, KeyError) as e:
                 logger.error(f"  Error parsing JSON response for TFVC in project '{project_name}':", e)
         else:
@@ -336,7 +363,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                 'border': 1
             })
             regular_format = workbook.add_format({
-                'border': 1
+                'border': 1, 'text_wrap': True
             })
             right_align_format = workbook.add_format({
                 'border': 1,
@@ -389,32 +416,27 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                         tfvc_worksheet.write(row_num, col_num, value, right_align_format)
                     else:
                         tfvc_worksheet.write(row_num, col_num, value, regular_format)
-
-            all_files_data_df = []
+            # all_files_data_df = []
             for branch_name, branch_file_details in all_branch_file_details.items():
                 branch_file_data = []
                 for item in branch_file_details:
                     if item['path'] != f'$/{project_name}':
-                        changeset_id, comment, last_modified, author = get_latest_changeset_for_item(
-                            server_url, project_name, item['path'], pat)
+                        # changeset_id, comment, last_modified, author = get_latest_changeset_for_item(
+                        #     server_url, project_name, item['path'], pat)
                         item_data = {
                             'Root Folder': project_name,
                             'Project Folder': '/'.join(item['path'].split('/')[2:-1]),
                             'File Name': item['path'].rsplit('/', 1)[-1],
                             'File Type': determine_file_type(item),
-                            'File Size (bytes)': item.get('size', 'N/A'),
-                            'File Path': item['path'],
-                            'Last modified (time&date)': last_modified,
-                            'Author': author,
-                            'Comment': comment,
-                            'Changeset ID': changeset_id
+                            'File Size (bytes)': item.get('size', 0),
+                            'File Path': item['path']
                         }
                         branch_file_data.append(item_data)
-                        all_files_data_df.append(item_data)
+                        # all_files_data_df.append(item_data)
 
                 branch_df = pd.DataFrame(branch_file_data)
                 branch_df = branch_df[['Root Folder', 'Project Folder', 'File Name', 'File Type', 'File Size (bytes)',
-                                    'File Path', 'Last modified (time&date)', 'Author', 'Comment', 'Changeset ID']]
+                                    'File Path']]
                 branch_df.to_excel(writer, sheet_name=sanitize_sheet_name(branch_name), index=False)
 
                 # Apply the header format to each branch sheet
@@ -428,39 +450,65 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
 
                 # Add borders and right-align numerical and date/time cells in the branch sheet
                 for row_num in range(1, len(branch_df) + 1):
-                    for col_num, value in enumerate(branch_df.iloc[row_num - 1]):
-                        if not value:
-                            value = 'NULL'
-                        if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
-                            branch_worksheet.write(row_num, col_num, value, right_align_format)
-                        else:
-                            branch_worksheet.write(row_num, col_num, value, regular_format)
+                    if branch_file_data:
+                        for col_num, value in enumerate(branch_df.iloc[row_num - 1]):
+                            if not value:
+                                value = ''
+                            if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
+                                branch_worksheet.write(row_num, col_num, value, right_align_format)
+                            else:
+                                branch_worksheet.write(row_num, col_num, value, regular_format)
+            
+            run_duration = datetime.now() - start_time
+            hours, remainder = divmod(run_duration.total_seconds(), 3600)
+            minutes, seconds = divmod(remainder, 60)
+            formatted_run_duration = f"{int(hours)} hours, {int(minutes)} minutes, {seconds:.1f} seconds"
 
-            all_files_df = pd.DataFrame(all_files_data_df)
-            all_files_df = all_files_df[['Root Folder', 'Project Folder', 'File Name', 'File Type', 'File Size (bytes)',
-                                        'File Path', 'Last modified (time&date)', 'Author', 'Comment', 'Changeset ID']]
-            all_files_df.to_excel(writer, sheet_name='all_files', index=False)
+            summary_data = {
+                'Report Title': f"Project {project_name} TFVC Report.",
+                'Purpose of the report': f"This report provides a summary and detailed view of the TFVC in project {project_name}.",
+                'Run Date': datetime.now().strftime('%d-%b-%Y %I:%M %p'),
+                'Run Duration': formatted_run_duration,
+                'Run By': getpass.getuser()
+            }
 
-            # Apply the header format to the all_files sheet
-            all_files_worksheet = writer.sheets['all_files']
-            all_files_worksheet.hide_gridlines(2)  # Remove gridlines in the all_files sheet
-            for col_num, value in enumerate(all_files_df.columns.values):
-                all_files_worksheet.write(0, col_num, value, header_format)
+            row = 0
+            for key, value in summary_data.items():
+                worksheet_summary.write(row, 0, key, header_format)
+                worksheet_summary.write(row, 1, value, regular_format)
+                row += 1
 
-            # Set column widths to fit data in all_files sheet
-            set_column_widths(all_files_worksheet, all_files_df)
+            for i in range(len(summary_data)):
+                worksheet_summary.set_column(0, 0, 25.71)  # Adjust column A width
+                worksheet_summary.set_column(1, 1, 76.87)  # Adjust column B width
+                worksheet_summary.set_row(i, 30)  # Adjust row height
 
-            # Add borders and right-align numerical and date/time cells in the all_files sheet
-            for row_num in range(1, len(all_files_df) + 1):
-                for col_num, value in enumerate(all_files_df.iloc[row_num - 1]):
-                    if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
-                        all_files_worksheet.write(row_num, col_num, value, right_align_format)
-                    else:
-                        all_files_worksheet.write(row_num, col_num, value, regular_format)
+            # all_files_df = pd.DataFrame(all_files_data_df)
+            # all_files_df = all_files_df[['Root Folder', 'Project Folder', 'File Name', 'File Type', 'File Size (bytes)',
+            #                             'File Path', 'Last modified (time&date)', 'Author', 'Comment', 'Changeset ID']]
+            # all_files_df.to_excel(writer, sheet_name='all_files', index=False)
+
+            # # Apply the header format to the all_files sheet
+            # all_files_worksheet = writer.sheets['all_files']
+            # all_files_worksheet.hide_gridlines(2)  # Remove gridlines in the all_files sheet
+            # for col_num, value in enumerate(all_files_df.columns.values):
+            #     all_files_worksheet.write(0, col_num, value, header_format)
+
+            # # Set column widths to fit data in all_files sheet
+            # set_column_widths(all_files_worksheet, all_files_df)
+
+            # Add borders to cells in the all_files sheet
+            # for row_num in range(1, len(all_files_df) + 1):
+            #     for col_num, value in enumerate(all_files_df.iloc[row_num - 1]):
+            #         if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
+            #             all_files_worksheet.write(row_num, col_num, value, right_align_format)
+            #         else:
+            #             all_files_worksheet.write(row_num, col_num, value, regular_format)
 
             all_changesets_df = pd.DataFrame(all_changesets_data)
             all_changesets_df = all_changesets_df[['Collection Name', 'Project Name', 'Changeset ID', 'Author',
                                                 'Time Date', 'Comment']]
+            all_changesets_df['Comment'] = all_changesets_df['Comment'].apply(lambda x: x[:35] if isinstance(x, str) else x)
             all_changesets_df.to_excel(writer, sheet_name='all_changesets', index=False)
 
             # Apply the header format to the all_changesets sheet
@@ -472,41 +520,47 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
             # Set column widths to fit data in all_changesets sheet
             set_column_widths(all_changesets_worksheet, all_changesets_df)
 
+            # Wrap text in the Comment column and set a max width of 35
+            comment_col_index = all_changesets_df.columns.get_loc('Comment')
+            all_changesets_worksheet.set_column(comment_col_index, comment_col_index, 35, workbook.add_format({'text_wrap': True}))
+            
             # Add borders and right-align numerical and date/time cells in the all_changesets sheet
             for row_num in range(1, len(all_changesets_df) + 1):
                 for col_num, value in enumerate(all_changesets_df.iloc[row_num - 1]):
                     if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
                         all_changesets_worksheet.write(row_num, col_num, value, right_align_format)
                     else:
-                        all_changesets_worksheet.write(row_num, col_num, value, regular_format)
-
-            all_shelvesets_df = pd.DataFrame(all_shelvesets_data)
-            all_shelvesets_df = all_shelvesets_df[['Collection Name', 'Project Name', 'Shelveset Name', 'Shelveset ID',
+                        if col_num == comment_col_index:
+                            all_changesets_worksheet.write(row_num, col_num, value, workbook.add_format({'text_wrap': True, 'border': 1}))
+                        else:
+                            all_changesets_worksheet.write(row_num, col_num, value, regular_format)
+            if all_shelvesets_data:
+                all_shelvesets_df = pd.DataFrame(all_shelvesets_data)
+                all_shelvesets_df = all_shelvesets_df[['Collection Name', 'Project Name', 'Shelveset Name', 'Shelveset ID',
                                                 'Author', 'Created Date', 'Comment']]
-            all_shelvesets_df.to_excel(writer, sheet_name='shelvesets', index=False)
+                all_shelvesets_df.to_excel(writer, sheet_name='shelvesets', index=False)
 
             # Apply the header format to the shelvesets sheet
-            all_shelvesets_worksheet = writer.sheets['shelvesets']
-            all_shelvesets_worksheet.hide_gridlines(2)  # Remove gridlines in the shelvesets sheet
-            for col_num, value in enumerate(all_shelvesets_df.columns.values):
-                all_shelvesets_worksheet.write(0, col_num, value, header_format)
+                all_shelvesets_worksheet = writer.sheets['shelvesets']
+                all_shelvesets_worksheet.hide_gridlines(2)  # Remove gridlines in the shelvesets sheet
+                for col_num, value in enumerate(all_shelvesets_df.columns.values):
+                    all_shelvesets_worksheet.write(0, col_num, value, header_format)
 
-            # Set column widths to fit data in shelvesets sheet
-            set_column_widths(all_shelvesets_worksheet, all_shelvesets_df)
+                # Set column widths to fit data in shelvesets sheet
+                set_column_widths(all_shelvesets_worksheet, all_shelvesets_df)
 
             # Add borders and right-align numerical and date/time cells in the shelvesets sheet
-            for row_num in range(1, len(all_shelvesets_df) + 1):
-                for col_num, value in enumerate(all_shelvesets_df.iloc[row_num - 1]):
-                    if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
-                        all_shelvesets_worksheet.write(row_num, col_num, value, right_align_format)
-                    else:
-                        all_shelvesets_worksheet.write(row_num, col_num, value, regular_format)
+                for row_num in range(1, len(all_shelvesets_df) + 1):
+                    for col_num, value in enumerate(all_shelvesets_df.iloc[row_num - 1]):
+                        if isinstance(value, (int, float)) or (isinstance(value, str) and 'T' in value and 'Z' in value):
+                            all_shelvesets_worksheet.write(row_num, col_num, value, right_align_format)
+                        else:
+                            all_shelvesets_worksheet.write(row_num, col_num, value, regular_format)
 
         logger.info(f"Report saved to {excel_output_path}")
     except Exception as e:
         logger.error(f"Failed to generate Excel report for project '{project}': {e}")
     
-
 def main():
     input_file = 'tfvc_discovery_input_form.xlsx'
     try:
@@ -564,4 +618,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
