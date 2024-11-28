@@ -247,9 +247,41 @@ def set_column_widths(worksheet, dataframe):
         # Adding some padding and limiting to 30 characters
         worksheet.set_column(idx, idx, max_len)
 
+def get_changesets_in_batches(tfvc_changesets_url, pat, batch_size):
+    """
+    Retrieve changesets in batches of a specified size.
+    Args:
+        tfvc_changesets_url (str): The base URL to fetch the changesets.
+        pat (str): Personal Access Token for authentication.
+        batch_size (int): Number of changesets to fetch per batch.
+    Returns:
+        list: A list of all the changesets.
+    """
+    all_changesets = []
+    batch_start = 0
+    
+    while True:
+        batch_url = f"{tfvc_changesets_url}&$skip={batch_start}&$top={batch_size}"
+        
+        print(f"Requesting batch starting at {batch_start}")
+        
+        # Make the request with retries
+        response = make_request_with_retries(batch_url, auth=HTTPBasicAuth('', pat))
+        
+        # Assuming the response contains JSON with a 'value' key for the changesets
+        changesets = response.json()['value']
+        if not changesets:
+            break  # No more changesets to fetch
+        
+        all_changesets.extend(changesets)
+        batch_start += batch_size  
+        time.sleep(10)
+        
+    return all_changesets
+
 
 # Function to generate the Excel report
-def generate_excel_report(output_dir, server_url, pat, project, start_time):
+def generate_excel_report(output_dir, server_url, pat, project, start_time, batch_size):
     try:
         project_name = project
         server_url = server_url
@@ -267,7 +299,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
         organization_name = extract_organization_name(server_url)
 
         encoded_project=encode_url_component(project_name)
-        tfvc_changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?api-version=6.0&$top=100000"
+        tfvc_changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?api-version=6.0"
         print(f"TFVC Changesets URL: {tfvc_changesets_url}")
 
         params = {
@@ -317,23 +349,16 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time):
                 logger.error(f"  Error parsing JSON response for TFVC in project '{project_name}':", e)
         else:
             logger.error(f"  Failed to retrieve TFVC branches for project '{project_name}'. Status code: {tfvc_response.status_code}")
-
-        # Fetch all changesets
-        changeset_response = make_request_with_retries(tfvc_changesets_url, auth=HTTPBasicAuth('', pat))
-        if changeset_response.status_code == 200:
-            logger.info(f"Changeset status code -{changeset_response.status_code}")
-            changesets = changeset_response.json()['value']
-            for changeset in changesets:
-                all_changesets_data.append({
-                    'Collection Name': collection_name,
-                    'Project Name': project_name,
-                    'Changeset ID': changeset['changesetId'],
-                    'Author': changeset['author']['displayName'],
-                    'Time Date': changeset['createdDate'],
-                    'Comment': changeset.get('comment', 'No comment')
-                })
-        else:
-            logger.error(f"  Failed to retrieve changesets for project '{project_name}'. Status code: {changeset_response.status_code}")
+        changesets =  get_changesets_in_batches(tfvc_changesets_url, pat, batch_size)
+        for changeset in changesets:
+            all_changesets_data.append({
+                'Collection Name': collection_name,
+                'Project Name': project_name,
+                'Changeset ID': changeset['changesetId'],
+                'Author': changeset['author']['displayName'],
+                'Time Date': changeset['createdDate'],
+                'Comment': changeset.get('comment', 'No comment')
+            })
 
         # Fetch all shelvesets
         shelvesets = get_shelvesets_details(server_url, pat)
@@ -571,8 +596,10 @@ def main():
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        df = pd.read_excel(input_file)
-
+        df = pd.read_excel(input_file, sheet_name='Input')
+        config = pd.read_excel(input_file, sheet_name='config')
+        for index, row in config.iterrows():
+            batch_size = int(row['Batch Size'])
         # Read the values from the Excel file and strip any leading/trailing spaces
         df['Server URL'] = df['Server URL'].str.strip().fillna('')
         df['Project Name'] = df['Project Name'].str.strip().fillna('')
@@ -608,7 +635,7 @@ def main():
                 print(f"Processing project {project}")
                 try:
                     # Generate the Excel report
-                    generate_excel_report(output_directory, server_url, pat, project, start_time)
+                    generate_excel_report(output_directory, server_url, pat, project, start_time, batch_size)
                 except Exception as e:
                     logger.error(f"Error occurred while processing project '{project}': {e}")
     except Exception as e:
