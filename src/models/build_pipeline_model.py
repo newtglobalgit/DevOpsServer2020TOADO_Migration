@@ -33,7 +33,7 @@ class BuildPipelineDetails(Base):
 
     def to_dict(self):
         return {
-           "discovery_boards_workitem_id": self.discovery_pipelines_id,
+           "discovery_build_pipeline_id": self.discovery_pipelines_id,
            "project_name" : self.project_name,
             "collection_name" : self.collection_name,
             "pipeline_id" :self.pipeline_id,
