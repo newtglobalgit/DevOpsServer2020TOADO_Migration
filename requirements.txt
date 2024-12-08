@@ -42,3 +42,4 @@ urllib3
 webdriver-manager
 wsproto
 XlsxWriter
+psycopg2-binary

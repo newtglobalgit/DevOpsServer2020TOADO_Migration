@@ -1,0 +1,11 @@
+2024-12-08 11:09:37,091 - INFO - Logging configuration initialized in db.py.
+2024-12-08 11:09:37,156 - INFO - Inserting record: project_name=ProjectXYZ, collection_name=CollectionA, workitem_type=Bug, backlog=Sprint1, tag=123, total_count=10
+2024-12-08 11:09:41,261 - INFO - Record created successfully for the work item.
+2024-12-08 11:09:41,761 - INFO - Records retrieved successfully:
+2024-12-08 11:09:41,761 - INFO - {'discovery_boards_workitem_id': 1, 'project_name': 'ProjectXYZ', 'collection_name': 'CollectionA', 'workitem_type': 'Bug', 'backlog': 'Sprint1', 'tag': '123', 'total_count': 10}
+2024-12-08 11:11:03,296 - INFO - Logging configuration initialized in db.py.
+2024-12-08 11:11:03,711 - INFO - Inserting record: project_name=ProjectXYZ, collection_name=CollectionA, workitem_type=Bug, backlog=Sprint1, tag=123, total_count=10
+2024-12-08 11:11:07,969 - INFO - Record created successfully for the work item.
+2024-12-08 11:11:08,477 - INFO - Records retrieved successfully:
+2024-12-08 11:11:08,480 - INFO - {'discovery_boards_workitem_id': 1, 'project_name': 'ProjectXYZ', 'collection_name': 'CollectionA', 'workitem_type': 'Bug', 'backlog': 'Sprint1', 'tag': '123', 'total_count': 10}
+2024-12-08 11:11:08,480 - INFO - {'discovery_boards_workitem_id': 2, 'project_name': 'ProjectXYZ', 'collection_name': 'CollectionA', 'workitem_type': 'Bug', 'backlog': 'Sprint1', 'tag': '123', 'total_count': 10}
