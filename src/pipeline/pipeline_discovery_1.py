@@ -10,9 +10,10 @@ import openpyxl
 import pandas as pd
 from requests.auth import HTTPBasicAuth
 from openpyxl.styles import Font
-from 
+
 
 # Setup logging
+id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 log_file = 'logs_pipelines'
 
 # Clear the log file before starting a new run
@@ -148,7 +149,6 @@ def get_pipeline_details(project_):
                         artifact_details
                     ]
                     ws.append(pipeline_info)
-                    db_post_build_pipeline(pipeline_info)
                     if count%10 == 0:
                         wb.save(excel_name)
                 # df = pd.DataFrame(pipeline_data)
@@ -290,7 +290,6 @@ def get_releases( project ):
                         queueDepthCount
                     ]
                     ws.append(releases_info)
-                    excel_name = excel_name.replace("\\", f"")
                     if count%10 ==0:
                         wb.save(excel_name)
                 wb.save(excel_name)
