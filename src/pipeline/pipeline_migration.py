@@ -17,7 +17,7 @@ def fetch_discovered_pipelines():
         is_classic = row['Classic Pipeline']
         if name != 'NA' and is_classic == 'No (Build)' :
             pipeline_id_discovery=row['Pipeline ID']
-            pipline_name=row['Name']
+            pipeline_name=row['Name']
             yaml_file_name = row['FileName']
             source_repo_name = row["Repository Name"]
             # yaml_content, file_path,pipeline_name, yaml_file_name =fetch_pipeline_yaml(pipeline_id_discovery , pipline_name , yaml_file_name, project_)
@@ -32,7 +32,8 @@ def fetch_discovered_pipelines():
             # # yaml_file_path = "pipeline_4.yml"  # Path to YAML file
 
             # Step 1: Clone repo and push YAML file
-            clone_and_push_yml_with_pat( yaml_file_name, project_)
+            
+            clone_and_push_yml_with_pat( yaml_file_name, project_, source_repo_name)
             print("Current Directory:", os.getcwd())
 
             os.chdir("..")
@@ -45,7 +46,7 @@ def fetch_discovered_pipelines():
 
             # Step 3: Create pipeline in the target repo
             if repo_id:
-                create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, row['Variables'], project_)
+                create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, row['Variables'], project_, pipeline_id_discovery)
 
 
 
@@ -92,11 +93,11 @@ def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name, pr
     print(f"Pipeline YAML saved to {os.path.abspath(yaml_file_name)}")
     return yaml_response.text, file_path,pipline_name, yaml_file_name
 
-def get_repo_id_from_target(repo,organization_project):
-    if repo == '':
-        repo= target_repo
+def get_repo_id_from_target(repo_,organization_project):
+    if repo_ == '':
+        repo_= target_repo
     # Endpoint to fetch repositories
-    url = f"https://{target_instance}/{organization_project}/_apis/git/repositories?api-version=4.1"
+    url = f"{target_instance}/{organization_project}/_apis/git/repositories?api-version=4.1"
 
     headers = {
         "Authorization": f"Bearer {target_pat}"
@@ -116,16 +117,16 @@ def get_repo_id_from_target(repo,organization_project):
 
     # Find the repository by name
     for repo in repositories:
-        if repo.get("name") == repo:
+        if repo.get("name") == repo_:
             repo_id = repo.get("id")
-            print(f"Repository ID for '{repo}': {repo}")
+            print(f"Repository ID for '{repo_}': {repo_id}")
             return repo_id
 
-    print(f"Repository with name '{repo}' not found.")
+    print(f"Repository with name '{repo_}' not found.")
     return None
 
 
-def create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, variables, organization_project):
+def create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, variables, organization_project,pipeline_id):
    
     # Endpoint to create a pipeline
     url = f"{target_instance}/{organization_project}/_apis/pipelines?api-version=7.0"
@@ -161,7 +162,22 @@ def create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, variables,
         print(response.json())
         print("Pipeline successfully created!")
 
-        variables_dict = ast.literal_eval(variables)
+        file_url = f"{source_instance}/{organization_project}/_apis/pipelines/{pipeline_id}?revision=1"
+        response = requests.get(file_url, auth=HTTPBasicAuth(source_username, source_pat))
+        data = response.json()
+        variable_groups ={}
+        variables={}
+        detailedJson = data['configuration'].get('designerJson')
+        agent_details = ""
+        artifact_details=""
+        phases_=[]
+        if detailedJson:
+            variables = data['configuration']['designerJson'].get('variables', "")
+            variable_groups = data['configuration']['designerJson'].get('variableGroups',"")
+        else:
+            variables = data['configuration'].get('variables', "")
+            variable_groups = data['configuration'].get('variableGroups',"")
+        variables_dict = variables
         # Check if the command was successful
         result = subprocess.run(
                     ["az.cmd", "login"],
@@ -232,22 +248,24 @@ def create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, variables,
         print(f"Error creating pipeline: {response.status_code} - {response.text}")
 
 
-def clone_and_push_yml_with_pat( yaml_file_name, organization_project):
+def clone_and_push_yml_with_pat( yaml_file_name, organization_project,source_repo_name):
     
     # Check if the repository already exists
-    repo_url = f"{target_instance}/{organization_project}/_apis/git/repositories/{target_repo}?api-version=6.0"
+    repo_url = f"{target_instance}/{organization_project}/_apis/git/repositories/{source_repo_name}?api-version=6.0"
     headers = {
         "Authorization": f"Bearer {target_pat}",
         "Content-Type": "application/json",
     }
 
-    response = requests.get(repo_url, headers=headers)
+    response = requests.get(repo_url, auth=HTTPBasicAuth("",target_pat))
 
     if response.status_code == 200:
-        print(f"Repository '{target_repo}' already exists.")
+        print(f"Repository '{source_repo_name}' already exists.")
         # Extract repository clone URL
         repo_clone_url = response.json()["remoteUrl"]
-
+        current =os.getcwd()
+        if current != f"{root}\src\pipeline":
+            os.chdir(f"{current}\src\pipeline")
         # Clone the repository locally
         os.system(f"git clone {repo_clone_url}")
 
@@ -280,7 +298,7 @@ def clone_and_push_yml_with_pat( yaml_file_name, organization_project):
         return
 
     # Add the .yml file to the repository
-    repo_dir = target_repo  # Directory created by Git clone
+    repo_dir = source_repo_name  # Directory created by Git clone
     os.chdir(repo_dir)
     print(os.getcwd())
     if os.path.exists(yaml_file_name):
@@ -316,11 +334,12 @@ if __name__ == "__main__":
         source_instance = row["Source_URL"]	
         source_username = row["Source_Username"]
         source_pat = row["Source_Pat"]
-        target_instance =["Target_URL"]
+        target_instance =row["Target_URL"]
         target_username =row["Target_Username"]
-        target_pat=row["Target_Username"]
+        target_pat=row["Target_Pat"]
         target_repo = row["repo"]
 
         
     fetch_discovered_pipelines()
+    root = os.getcwd()
    
