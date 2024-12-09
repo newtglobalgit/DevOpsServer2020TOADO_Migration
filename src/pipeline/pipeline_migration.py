@@ -9,29 +9,30 @@ import subprocess
 import pandas as pd
 
 def fetch_discovered_pipelines():
-    file_path ='tmp/discovery_pipeline.xlsx'
+    file_path =f'src\pipeline\mapping_migration.xlsx'
     df = pd.read_excel(file_path)
-
     for index, row in df.iterrows():
+        project_ = row['Project']
         name = row['FileName']
-
-        if name != 'No path found':
+        is_classic = row['Classic Pipeline']
+        if name != 'NA' and is_classic == 'No (Build)' :
             pipeline_id_discovery=row['Pipeline ID']
             pipline_name=row['Name']
             yaml_file_name = row['FileName']
-            yaml_content, file_path,pipeline_name, yaml_file_name =fetch_pipeline_yaml(pipeline_id_discovery , pipline_name , yaml_file_name)
-            # Fetch YAML from the source pipeline
-            # yaml_content, file_path,pipeline_name, yaml_file_name = fetch_pipeline_yaml('' , '', '', )
-            if not yaml_content:
-                print("Failed to fetch YAML from the source pipeline.")
-                return
+            source_repo_name = row["Repository Name"]
+            # yaml_content, file_path,pipeline_name, yaml_file_name =fetch_pipeline_yaml(pipeline_id_discovery , pipline_name , yaml_file_name, project_)
+            # # Fetch YAML from the source pipeline
+            # # yaml_content, file_path,pipeline_name, yaml_file_name = fetch_pipeline_yaml('' , '', '', )
+            # if not yaml_content:
+            #     print("Failed to fetch YAML from the source pipeline.")
+            #     return
             
-            # Example usage
-            excel_path = "target_credentials.xlsx"  # Path to target credentials Excel
-            # yaml_file_path = "pipeline_4.yml"  # Path to YAML file
+            # # Example usage
+            # excel_path = "target_credentials.xlsx"  # Path to target credentials Excel
+            # # yaml_file_path = "pipeline_4.yml"  # Path to YAML file
 
             # Step 1: Clone repo and push YAML file
-            clone_and_push_yml_with_pat(excel_path, yaml_file_name)
+            clone_and_push_yml_with_pat( yaml_file_name, project_)
             print("Current Directory:", os.getcwd())
 
             os.chdir("..")
@@ -39,35 +40,27 @@ def fetch_discovered_pipelines():
             print("Current Directory:", os.getcwd())
 
             # Step 2: Fetch repository ID
-            repo_id = get_repo_id_from_target(excel_path)
+            repo_id = get_repo_id_from_target( source_repo_name,project_)
             # repo_id="9b2c8d2b-c271-400d-a006-e0c2c3855fb1"
 
             # Step 3: Create pipeline in the target repo
             if repo_id:
-                create_pipeline_in_target(excel_path, yaml_file_name, repo_id,pipeline_name, row['Variables'])
+                create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, row['Variables'], project_)
 
 
-def fetch_source_details(source_excel_path):
-    
-    # Load source credentials from Excel
-    wb = openpyxl.load_workbook(source_excel_path)
-    sheet = wb.active
 
-    return sheet 
 # Fetch Pipeline YAML from the source
-def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name ):
-    # sheet = fetch_source_details()
-    instance , project , username , pat = sheet['A2'].value  , sheet['B2'].value, sheet['D2'].value, sheet['E2'].value   
+def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name, project ):
     
     pipeline_id =pipeline_id_discovery
 
     # Endpoint to fetch pipeline details
-    pipeline_details_url = f"{instance}/{project}/_apis/pipelines/{pipeline_id}?revision=1"
+    pipeline_details_url = f"{source_instance}/{project}/_apis/pipelines/{pipeline_id}?revision=1"
 
     # Fetch pipeline details
     pipeline_response = requests.get(
         pipeline_details_url,
-        auth=HTTPBasicAuth(username, pat)
+        auth=HTTPBasicAuth(source_username, source_pat)
     )
 
     if pipeline_response.status_code != 200:
@@ -80,11 +73,11 @@ def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name ):
     file_path = pipeline_data["configuration"]["path"]
 
     # Endpoint to download YAML file
-    download_yaml_url = f"{instance}/{project}/_apis/git/repositories/{repo_id}/items?path={file_path}&api-version=6.0"
+    download_yaml_url = f"{source_instance}/{project}/_apis/git/repositories/{repo_id}/items?path={file_path}&api-version=6.0"
 
     yaml_response = requests.get(
         download_yaml_url,
-        auth=HTTPBasicAuth(username, pat)
+        auth=HTTPBasicAuth(source_username, source_pat)
     )
 
     if yaml_response.status_code != 200:
@@ -99,21 +92,14 @@ def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name ):
     print(f"Pipeline YAML saved to {os.path.abspath(yaml_file_name)}")
     return yaml_response.text, file_path,pipline_name, yaml_file_name
 
-def get_repo_id_from_target(excel_path):
-    # Load details from Excel
-    wb = openpyxl.load_workbook(excel_path)
-    sheet = wb.active
-
-    base_url = sheet['A2'].value  # Base URL
-    organization_project = sheet['B2'].value  # Organization and Project
-    repo_name= sheet['C2'].value
-    bearer_token = sheet['D2'].value  # Bearer Token
-
+def get_repo_id_from_target(repo,organization_project):
+    if repo == '':
+        repo= target_repo
     # Endpoint to fetch repositories
-    url = f"https://{base_url}/{organization_project}/_apis/git/repositories?api-version=4.1"
+    url = f"https://{target_instance}/{organization_project}/_apis/git/repositories?api-version=4.1"
 
     headers = {
-        "Authorization": f"Bearer {bearer_token}"
+        "Authorization": f"Bearer {target_pat}"
     }
 
     response = requests.get(url, headers=headers, allow_redirects=True)
@@ -130,26 +116,19 @@ def get_repo_id_from_target(excel_path):
 
     # Find the repository by name
     for repo in repositories:
-        if repo.get("name") == repo_name:
+        if repo.get("name") == repo:
             repo_id = repo.get("id")
-            print(f"Repository ID for '{repo_name}': {repo_id}")
+            print(f"Repository ID for '{repo}': {repo}")
             return repo_id
 
-    print(f"Repository with name '{repo_name}' not found.")
+    print(f"Repository with name '{repo}' not found.")
     return None
 
 
-def create_pipeline_in_target(excel_path, yaml_file_name, repo_id,pipeline_name, variables):
-    # Load details from Excel
-    wb = openpyxl.load_workbook(excel_path)
-    sheet = wb.active
-
-    base_url = sheet['A2'].value  # Base URL
-    organization_project = sheet['B2'].value  # Organization and Project
-    bearer_token = sheet['D2'].value  # Bearer Token
-
+def create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, variables, organization_project):
+   
     # Endpoint to create a pipeline
-    url = f"https://{base_url}/{organization_project}/_apis/pipelines?api-version=7.0"
+    url = f"{target_instance}/{organization_project}/_apis/pipelines?api-version=7.0"
 
     # Extract file name from the YAML file path
     # yaml_file_name = os.path.basename(yaml_file_path)
@@ -170,7 +149,7 @@ def create_pipeline_in_target(excel_path, yaml_file_name, repo_id,pipeline_name,
     }
 
     headers = {
-        "Authorization": f"Bearer {bearer_token}",
+        "Authorization": f"Bearer {target_pat}",
         "Content-Type": "application/json"
     }
 
@@ -194,7 +173,7 @@ def create_pipeline_in_target(excel_path, yaml_file_name, repo_id,pipeline_name,
         if result.returncode == 0:
             print("Login successful!")
             # Parse the JSON output
-            base_url = f"https://{base_url}"
+            base_url = f"{target_instance}"
             account_info = json.loads(result.stdout)
             print(account_info)
             command = [
@@ -253,28 +232,19 @@ def create_pipeline_in_target(excel_path, yaml_file_name, repo_id,pipeline_name,
         print(f"Error creating pipeline: {response.status_code} - {response.text}")
 
 
-def clone_and_push_yml_with_pat(excel_path, yaml_file_name):
-    # Load details from Excel
-    wb = openpyxl.load_workbook(excel_path)
-    sheet = wb.active
-
-    base_url = sheet['A2'].value  # Base URL of the repository
-    organization_project = sheet['B2'].value  # Organization and Project (e.g., 'jiraToAdo/Test1')
-    repo_name = sheet['C2'].value  # Repository name (e.g., 'test1')
-    pat_token = sheet['D2'].value  # Personal Access Token (PAT)
-    # yaml_file_name = os.path.basename(yaml_file_path)  # Extract filename from path
-
+def clone_and_push_yml_with_pat( yaml_file_name, organization_project):
+    
     # Check if the repository already exists
-    repo_url = f"https://{base_url}/{organization_project}/_apis/git/repositories/{repo_name}?api-version=6.0"
+    repo_url = f"{target_instance}/{organization_project}/_apis/git/repositories/{target_repo}?api-version=6.0"
     headers = {
-        "Authorization": f"Bearer {pat_token}",
+        "Authorization": f"Bearer {target_pat}",
         "Content-Type": "application/json",
     }
 
     response = requests.get(repo_url, headers=headers)
 
     if response.status_code == 200:
-        print(f"Repository '{repo_name}' already exists.")
+        print(f"Repository '{target_repo}' already exists.")
         # Extract repository clone URL
         repo_clone_url = response.json()["remoteUrl"]
 
@@ -282,12 +252,12 @@ def clone_and_push_yml_with_pat(excel_path, yaml_file_name):
         os.system(f"git clone {repo_clone_url}")
 
     elif response.status_code == 404:
-        print(f"Repository '{repo_name}' does not exist. Creating a new one.")
+        print(f"Repository '{target_repo}' does not exist. Creating a new one.")
 
         # Construct API endpoint to create a repository
-        create_repo_url = f"https://{base_url}/{organization_project}/_apis/git/repositories?api-version=6.0"
+        create_repo_url = f"{target_instance}/{organization_project}/_apis/git/repositories?api-version=6.0"
         payload = {
-            "name": repo_name,
+            "name": target_repo,
             "project": {"name": organization_project},
         }
 
@@ -295,7 +265,7 @@ def clone_and_push_yml_with_pat(excel_path, yaml_file_name):
         response = requests.post(create_repo_url, json=payload, headers=headers)
 
         if response.status_code == 201:
-            print(f"Repository '{repo_name}' created successfully.")
+            print(f"Repository '{target_repo}' created successfully.")
             repo_clone_url = response.json()["remoteUrl"]
 
             # Clone the repository locally
@@ -310,22 +280,25 @@ def clone_and_push_yml_with_pat(excel_path, yaml_file_name):
         return
 
     # Add the .yml file to the repository
-    repo_dir = repo_name  # Directory created by Git clone
-
+    repo_dir = target_repo  # Directory created by Git clone
+    os.chdir(repo_dir)
+    print(os.getcwd())
     if os.path.exists(yaml_file_name):
+
+        print("Yaml file exist")
         # Copy the .yml file to the repository directory
-        shutil.copy(yaml_file_name, repo_dir)
-        print(f"Successfully copied '{yaml_file_name}' to '{repo_dir}'.")
+        # shutil.copy(yaml_file_name, repo_dir)
+        # print(f"Successfully copied '{yaml_file_name}' to '{repo_dir}'.")
 
-        # Change to the repository directory
-        os.chdir(repo_dir)
+        # # Change to the repository directory
+        # os.chdir(repo_dir)
 
-        # Add, commit, and push the .yml file to the repository
-        subprocess.run(["git", "add", "."], check=True)
-        subprocess.run(["git", "commit", "-m", "Add pipeline YAML file"], check=True)
-        subprocess.run(["git", "push"], check=True)
+        # # Add, commit, and push the .yml file to the repository
+        # subprocess.run(["git", "add", "."], check=True)
+        # subprocess.run(["git", "commit", "-m", "Add pipeline YAML file"], check=True)
+        # subprocess.run(["git", "push"], check=True)
 
-        print(f"Added '{yaml_file_name}' to the repository and pushed changes.")
+        # print(f"Added '{yaml_file_name}' to the repository and pushed changes.")
 
     else:
         print(f"YAML file '{yaml_file_name}' not found in the specified path.")
@@ -333,8 +306,21 @@ def clone_and_push_yml_with_pat(excel_path, yaml_file_name):
     
 # Main execution function
 if __name__ == "__main__":
-    source_excel_path = "source_credentials.xlsx"  # Path to the source Excel file
-    target_excel_path = "target_credentials.xlsx"  # Path to the target Excel file 
-    sheet = fetch_source_details(source_excel_path)
+    source_excel_path = "credentials.xlsx"  # Path to the source Excel file
+
+    # Read the Excel file
+    credentials = pd.read_excel(f'src\pipeline\credentials.xlsx')
+
+    # Iterate over each row in the DataFrame
+    for index, row in credentials.iterrows():
+        source_instance = row["Source_URL"]	
+        source_username = row["Source_Username"]
+        source_pat = row["Source_Pat"]
+        target_instance =["Target_URL"]
+        target_username =row["Target_Username"]
+        target_pat=row["Target_Username"]
+        target_repo = row["repo"]
+
+        
     fetch_discovered_pipelines()
    
