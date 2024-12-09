@@ -5,8 +5,8 @@ from src.dbDetails.db import Base
 
 
 class BuildPipelineDetails(Base):
-    __tablename__ = 'db_discovery_pipelines_details'  # Match the SQL table name
-    __table_args__ = {'schema': 'ado_to_ado'} 
+    __tablename__ = 'db_devops_discovery_pipelines_details'  # Match the SQL table name
+    __table_args__ = {'schema': 'devops_to_ados'} 
     
     discovery_pipelines_id = Column(Integer, primary_key=True, index=True)
     project_name = Column(String(255),nullable=False, index=True)

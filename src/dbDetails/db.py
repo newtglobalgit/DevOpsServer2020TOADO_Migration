@@ -24,7 +24,7 @@ engine = create_engine(DATABASE_URL)
 
 # Set the schema for the session
 def set_search_path(db_session):
-    db_session.execute(text("SET search_path TO ado_to_ado"))
+    db_session.execute(text("SET search_path TO devops_to_ados"))
 
 # Create a SessionLocal class to be used as a factory for session objects
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -49,7 +49,7 @@ def check_db():
     try:
         # Attempt to create a connection and execute a simple query
         with engine.connect() as connection:
-            connection.execute(text("SET search_path TO ado_to_ado"))
+            connection.execute(text("SET search_path TO devops_to_ados"))
             connection.execute(text("SELECT 1"))
         return True
     except Exception as e:
