@@ -4,7 +4,7 @@ import logging
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
-
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -17,53 +17,52 @@ from src.models.build_pipeline_model import  BuildPipelineDetails
 def db_post_build_pipeline(data):
     db = None  
     try:
-        # Validate input
-        discovery_pipelines_id =int(data.get("discovery_pipelines_id", 0))
-        project_name = data.get("project_name","").strip()
-        collection_name =data.get("collection_name","").strip()
-        pipeline_id = int(data.get("pipeline_id", 0))
-        pipeline_name = data.get("pipeline_name","").strip()
-        last_updated_date = data.get("last_updated_date","").strip()
-        file_name =data.get("file_name","").strip()
-        variables = int(data.get("variables", 0))
-        variable_groups = int(data.get("variable_groups", 0))
-        repository_type = data.get("repository_type","").strip()
-        repository_name =data.get("repository_name","").strip()
-        repository_branch =data.get("repository_branch","").strip()
-        classic_pipeline =data.get("classic_pipeline","").strip()
-        agents = data.get("agents","").strip()
-        phases =data.get("phases","").strip()                 
-        execution_type = data.get("execution_type","").strip()  
-        max_concurrency =int(data.get("max_concurrency", 0))
-        continue_on_error =bool(data.get("continue_on_error")) if data.get("continue_on_error") else None
-        builds = int(data.get("builds", 0))
-        artifacts = data.get("artifacts","").strip()
-        
+        project_name = data.get("project_name", "")
+        pipeline_id = str(data.get("pipeline_id",''))
+        pipeline_name = data.get("pipeline_name","")
+        last_updated_date = data.get("last_updated_date","")
+        file_name =data.get("file_name","")
+        variables = data.get("variables",0)
+        variable_groups = data.get("variable_groups",0)
+        repository_type = data.get("repository_type","")
+        repository_name =data.get("repository_name","")
+        repository_branch =data.get("repository_branch","")
+        classic_pipeline =data.get("classic_pipeline","")
+        agents = data.get("agents","")
+        phases =data.get("phases","")               
+        execution_type = data.get("execution_type","")
+        max_concurrency =int(data.get("max_concurrency",0))
+        continue_on_error =data.get("continue_on_error","")
+        builds = data.get("builds",0)
+        artifacts = data.get("artifacts","")
 
-        if not project_name or not collection_name:
+
+        if not project_name:
             raise ValueError("Project name and collection name are required fields.")
 
         # Log the data being inserted
         logging.info(
-            f"Inserting record: project_name={project_name}, collection_name={collection_name}, "
-           f"pipeline_id = {pipeline_id},
-            pipeline_name = {pipeline_name},
-            last_updated_date ={last_updated_date},
-            file_name ={file_name},
-            variables = {variables},
-            variable_groups = {variable_groups},
-            repository_type = {repository_type},
-            repository_name ={repository_name},
-            repository_branch ={repository_branch},
-            classic_pipeline ={classic_pipeline},
-            agents = {agents},
-            phases = {phases},             
-            execution_type = {execution_type},
-            max_concurrency = {max_concurrency},
-            continue_on_error = {continue_on_error},
-            builds = {builds},
-            artifacts ={artifacts}"
-        )
+            f"Inserting record: \
+            project_name={project_name},\
+            pipeline_id={pipeline_id},\
+            pipeline_name={pipeline_name},\
+            last_updated_date={last_updated_date},\
+            file_name={file_name},\
+            variables={variables},\
+            variable_groups={variable_groups},\
+            repository_type={repository_type},\
+            repository_name={repository_name},\
+            repository_branch={repository_branch},\
+            classic_pipeline={classic_pipeline},\
+            agents={agents},\
+            phases={phases},\
+            execution_type={execution_type},\
+            max_concurrency={max_concurrency},\
+            continue_on_error={continue_on_error},\
+            builds={builds},\
+            artifacts={artifacts}"
+            )
+
 
         # Create a new record
         new_record = BuildPipelineDetails(
@@ -89,7 +88,8 @@ def db_post_build_pipeline(data):
 
         # Insert into the database
         with SessionLocal() as db:
-            db.add(new_record)
+            query = db.add(new_record)
+            
             db.commit()
       
         # Log success response
@@ -103,6 +103,7 @@ def db_post_build_pipeline(data):
 
     except Exception as e:
         # Handle database or unexpected errors and log them
+        print(str(e))
         error_message = f"Unexpected error occurred: {str(e)}"
         logging.error(error_message)
 
@@ -142,3 +143,39 @@ def db_get_build_pipeline():
             db.close()  # Ensure the connection is closed
 
 
+# # Main method to simulate data entry
+# def main():
+#     # Sample data to be inserted (you can adjust it as needed)
+#     data = {
+#         "project_name":"qaserver",
+#             "pipeline_id":'1',
+#             "pipeline_name":"qaserver",
+#             "last_updated_date":"2024-12-07T06:31:38.31Z",
+#             "file_name":"azure-pipelines.yml",
+#             "variables":0,
+#             "variable_groups":0,
+#             "repository_type":"TfsGit",
+#             "repository_name":"qaserver",
+#             "repository_branch":"refs/heads/master",
+#             "classic_pipeline":"No (Build)",
+#             "agents":"Default",
+#             "phases":'',
+#             "execution_type":'',
+#             "max_concurrency":0,
+#             "continue_on_error": '',
+#             "builds":1,
+#             "artifacts":''
+#         }
+#     # data =["qaserver","1","qaserver","2024-12-07T06:31:38.31Z","azure-pipelines.yml",0,0,"TfsGit","qaserver","refs/heads/master",
+#     #            "No (Build)","Default",'','','','',1,'']
+#     # data =["qaserver","1","qaserver"]
+
+#     # Call db_post_workitem function to insert data
+#     db_post_build_pipeline(data)
+#     db_get_build_pipeline()
+    
+
+
+# # Entry point of the script
+# if __name__ == "__main__":
+#     main()

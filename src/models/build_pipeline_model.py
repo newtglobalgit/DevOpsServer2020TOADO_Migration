@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP
+from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.sql import func
 from src.dbDetails.db import Base
 
@@ -25,7 +25,7 @@ class BuildPipelineDetails(Base):
     phases =Column(String(255),nullable=False, index=True)                     
     execution_type = Column(String(255),nullable=False, index=True)     
     max_concurrency =Column(Integer,nullable=False, index=True)
-    continue_on_error = Column(bool,nullable=False, index=True)       
+    continue_on_error = Column(String(255),nullable=False, index=True)       
     builds = Column(Integer,nullable=False, index=True)
     artifacts = Column(String(255),nullable=False, index=True)     
     

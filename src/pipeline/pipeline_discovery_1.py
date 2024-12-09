@@ -2,6 +2,7 @@ import base64
 import datetime
 import logging
 import os
+import sys
 import re
 import time
 import requests
@@ -12,9 +13,14 @@ from requests.auth import HTTPBasicAuth
 from openpyxl.styles import Font
 
 
+# Add the 'src' directory to the system path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.pipeline.build_pipeline_db import db_post_build_pipeline
+
+
 # Setup logging
 id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file = 'logs_pipelines'
+log_file = f'src\pipeline\logs_pipelines_{id}'
 
 # Clear the log file before starting a new run
 with open(log_file, 'w'):
@@ -86,7 +92,7 @@ def get_pipeline_details(project_):
                             repository_type = data['repository'].get('type')
                         phases_string =""
                         execution_type=""
-                        maxConcurrency =''
+                        maxConcurrency =0
                         continueOnError =''
                         if is_classic == 'Yes':
                             # agent_details = pipeline.get('queue', "").get('name')
@@ -149,6 +155,27 @@ def get_pipeline_details(project_):
                         artifact_details
                     ]
                     ws.append(pipeline_info)
+                    data = {
+                    "project_name":project_,
+                        "pipeline_id":str(pipeline_id),
+                        "pipeline_name":pipeline['name'],
+                        "last_updated_date":pipeline['createdDate'],
+                        "file_name":path,
+                        "variables":variables_count,
+                        "variable_groups":variable_groups_count,
+                        "repository_type":repository_type,
+                        "repository_name":repository_name,
+                        "repository_branch":repository_branch,
+                        "classic_pipeline":is_classic,
+                        "agents":agent_details,
+                        "phases":phases_string.replace("'",''),
+                        "execution_type":execution_type,
+                        "max_concurrency":maxConcurrency,
+                        "continue_on_error": continueOnError,
+                        "builds":build_count,
+                        "artifacts":artifact_details
+                    }
+                    db_post_build_pipeline(data)
                     if count%10 == 0:
                         wb.save(excel_name)
                 # df = pd.DataFrame(pipeline_data)
@@ -352,7 +379,7 @@ if __name__ == "__main__":
         os.makedirs(folder_path)
 
     # Read the Excel file
-    config_df = pd.read_excel('input_discovery.xlsx')
+    config_df = pd.read_excel(f'src\pipeline\input_discovery.xlsx')
 
     # Iterate over each row in the DataFrame
     for index, row in config_df.iterrows():
