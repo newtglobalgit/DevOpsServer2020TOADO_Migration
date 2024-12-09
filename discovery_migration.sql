@@ -1,45 +1,51 @@
-DROP SCHEMA IF EXISTS "ado_to_ado" CASCADE;
-CREATE SCHEMA IF NOT EXISTS "ado_to_ado" AUTHORIZATION postgres;
+DROP SCHEMA IF EXISTS "devops_to_ados" CASCADE;
+CREATE SCHEMA IF NOT EXISTS "devops_to_ados" AUTHORIZATION postgres;
 
-SET search_path TO "ado_to_ado";
+SET search_path TO "devops_to_ados";
 
 -- Drop tables for discovery for GIT
-DROP TABLE IF EXISTS db_discovery_git_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_discovery_git_project_root CASCADE;
-DROP TABLE IF EXISTS db_discovery_git_project_repo CASCADE;
-DROP TABLE IF EXISTS db_discovery_git_project_branches CASCADE;
-DROP TABLE IF EXISTS db_discovery_git_project_workitems CASCADE;
- DROP TABLE IF EXISTS db_discovery_git_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_discovery_git_repo_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_discovery_git_repo_commits CASCADE;
-DROP TABLE IF EXISTS db_discovery_git_repo_tags CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_project_root CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_project_repo CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_project_branches CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_repo_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_repo_commits CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_repo_tags CASCADE;
 
 -- Drop Tables for discovery for TFVC
 
-DROP TABLE IF EXISTS db_discovery_tfs_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_root CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_branches CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_boards CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_commits CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_label CASCADE;
-DROP TABLE IF EXISTS db_discovery_tfs_project_shelveset  CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_root CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_branches CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_boards CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_commits CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_label CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_project_shelveset  CASCADE;
 
 -- Other Tables
-DROP TABLE IF EXISTS db_discovery_overview_dashboard_details CASCADE;
-DROP TABLE IF EXISTS db_discovery_boards_workitem_details	CASCADE;
-DROP TABLE IF EXISTS db_discovery_release_details	CASCADE;
-DROP TABLE IF EXISTS db_discovery_pipelines_details CASCADE;
-DROP TABLE IF EXISTS db_discovery_wiki_reports CASCADE;
-DROP TABLE IF EXISTS db_discovery_pull_requests CASCADE;
-DROP TABLE IF EXISTS db_discovery_project_configuration_Iterations CASCADE;
-DROP TABLE IF EXISTS db_discovery_project_configuration_Areas CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_overview_dashboard_details CASCADE;
+
+DROP TABLE IF EXISTS db_devops_discovery_boards_workitem_details	CASCADE;  -- source table
+DROP TABLE IF EXISTS db_ados_discovery_boards_workitem_details	CASCADE;    -- target
+
+DROP TABLE IF EXISTS db_devops_discovery_release_details	CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_pipelines_details CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_wiki_reports CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
+
+-- mapping trable for migration
+DROP TABLE IF EXISTS db_devops_ado_migration_details	CASCADE; -- for migration
 
 
 
-CREATE TABLE db_discovery_git_project_projectdetails( 
+CREATE TABLE db_devops_discovery_git_project_projectdetails( 
   project_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
   collection_name VARCHAR(200) NOT NULL, 
   project_name VARCHAR(200) NOT NULL, 
@@ -55,7 +61,7 @@ CREATE TABLE db_discovery_git_project_projectdetails(
 
 -- Trigger for updated_at to mimic ON UPDATE CURRENT_TIMESTAMP on the table db_discovery_git_project_projectdetails 
 
-CREATE OR REPLACE FUNCTION db_discovery_git_project_projectdetails_update_updated_at() 
+CREATE OR REPLACE FUNCTION db_devops_discovery_git_project_projectdetails_update_updated_at() 
 RETURNS TRIGGER AS $$ 
 BEGIN 
   NEW.updated_at = CURRENT_TIMESTAMP; 
@@ -65,13 +71,13 @@ $$ LANGUAGE plpgsql;
 
   
 
-CREATE TRIGGER db_discovery_git_project_projectdetails_set_updated_at
-BEFORE UPDATE ON db_discovery_git_project_projectdetails 
+CREATE TRIGGER db_devops_discovery_git_project_projectdetails_set_updated_at
+BEFORE UPDATE ON db_devops_discovery_git_project_projectdetails 
 FOR EACH ROW 
-EXECUTE FUNCTION db_discovery_git_project_projectdetails_update_updated_at(); 
+EXECUTE FUNCTION db_devops_discovery_git_project_projectdetails_update_updated_at(); 
 
 
-CREATE TABLE db_discovery_git_project_root(   
+CREATE TABLE db_devops_discovery_git_project_root(   
   project_root_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   
   root_folder VARCHAR(200) NOT NULL,   
   project_folder VARCHAR(200) NOT NULL,   
@@ -80,10 +86,10 @@ CREATE TABLE db_discovery_git_project_root(
   file_size INTEGER,   
   file_path VARCHAR(200),   
   project_id BIGINT NOT NULL,  -- Add foreign key column 
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
-CREATE TABLE db_discovery_git_project_repo (  
+CREATE TABLE db_devops_discovery_git_project_repo (  
   project_repo_id BIGINT PRIMARY KEY,  
   repo_name VARCHAR(200) NOT NULL,  
   root_folder VARCHAR(200) NOT NULL,  
@@ -92,10 +98,10 @@ CREATE TABLE db_discovery_git_project_repo (
   file_size INTEGER,  
   file_path VARCHAR (200) Unique , 
   project_id BIGINT NOT NULL,  -- Add foreign key column 
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
-CREATE TABLE db_discovery_git_project_branches (  
+CREATE TABLE db_devops_discovery_git_project_branches (  
   project_branch_id BIGINT PRIMARY KEY,  
   branch_name VARCHAR(200) NOT NULL,  
   root_folder VARCHAR(200) NOT NULL,  
@@ -105,28 +111,28 @@ CREATE TABLE db_discovery_git_project_branches (
   file_path VARCHAR (200) Unique , 
   project_id BIGINT NOT NULL,  -- Add foreign key for project
   repo_id BIGINT NOT NULL,  -- Add foreign key repo
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE,
-  FOREIGN KEY (repo_id) REFERENCES  db_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE,
+  FOREIGN KEY (repo_id) REFERENCES  db_devops_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE
 ); 
 
-CREATE TABLE db_discovery_git_project_workitems (  
+CREATE TABLE db_devops_discovery_git_project_workitems (  
   project_workitems_id BIGINT PRIMARY KEY,  
   workitem_name VARCHAR(200) ,
   workitem_type VARCHAR(200) ,  
   project_id BIGINT NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE
 ); 
 
-CREATE TABLE db_discovery_git_project_boards (  
+CREATE TABLE db_devops_discovery_git_project_boards (  
   project_board_id BIGINT PRIMARY KEY,  
   workitem_id Integer ,  
   workitem_status VARCHAR(100),  
   project_id BIGINT ,
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE,
-  FOREIGN KEY (workitem_id) REFERENCES  db_discovery_git_project_workitems(project_workitems_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE,
+  FOREIGN KEY (workitem_id) REFERENCES  db_devops_discovery_git_project_workitems(project_workitems_id) ON DELETE CASCADE
 );
 
-CREATE TABLE db_discovery_git_project_pipelines (  
+CREATE TABLE db_devops_discovery_git_project_pipelines (  
   project_pipeline_id BIGINT PRIMARY KEY,  
   environments VARCHAR(100) ,  
   releases VARCHAR(100),
@@ -134,10 +140,10 @@ CREATE TABLE db_discovery_git_project_pipelines (
   task_groups VARCHAR(100),
   deployment_groups VARCHAR(100),
   project_id BIGINT , -- Add foreign key project_id
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE
 );
 
-CREATE TABLE db_discovery_git_repo_sourcecode (  
+CREATE TABLE db_devops_discovery_git_repo_sourcecode (  
   source_code_id BIGINT PRIMARY KEY,  
   file_name VARCHAR(200), 
   file_type VARCHAR(200),  
@@ -152,12 +158,12 @@ CREATE TABLE db_discovery_git_repo_sourcecode (
   project_id BIGINT NOT NULL,  -- Add foreign key column to projectsdetails table 
   repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
   branch_id BIGINT NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE ,
-  FOREIGN KEY (repo_id) REFERENCES  db_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE,
-  FOREIGN KEY (branch_id) REFERENCES  db_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE ,
+  FOREIGN KEY (repo_id) REFERENCES  db_devops_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE,
+  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE
 ); 
 
-CREATE TABLE db_discovery_git_repo_commits (  
+CREATE TABLE db_devops_discovery_git_repo_commits (  
   commits_id BIGINT PRIMARY KEY,     
   commit_name VARCHAR(200) NOT NULL,  
   collection_name VARCHAR(200),
@@ -167,27 +173,27 @@ CREATE TABLE db_discovery_git_repo_commits (
   commit_date TIMESTAMPTZ , 
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
   repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (repo_id) REFERENCES  db_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE ,
-  FOREIGN KEY (branch_id) REFERENCES  db_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
+  FOREIGN KEY (repo_id) REFERENCES  db_devops_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE ,
+  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
  
-CREATE TABLE db_discovery_git_repo_tags (  
+CREATE TABLE db_devops_discovery_git_repo_tags (  
   tags_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
   tags_name VARCHAR(200) NOT NULL,  
   branch_id  BIGINT NOT NULL,  -- Add foreign key column to db_git_project_branches  
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
   repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (repo_id) REFERENCES  db_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE ,
-  FOREIGN KEY (branch_id) REFERENCES  db_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
+  FOREIGN KEY (repo_id) REFERENCES  db_devops_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE ,
+  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
 
 ------------------  For TFVC -----------------------------------
 
-CREATE TABLE db_discovery_tfs_project_projectdetails( 
+CREATE TABLE db_devops_discovery_tfs_project_projectdetails( 
   project_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
   collection_name VARCHAR(200) NOT NULL, 
   project_name VARCHAR(200) NOT NULL, 
@@ -204,7 +210,7 @@ CREATE TABLE db_discovery_tfs_project_projectdetails(
 
 -- Trigger for updated_at to mimic ON UPDATE CURRENT_TIMESTAMP on the table db_tfs_project_projectdetails 
 
-CREATE OR REPLACE FUNCTION db_discovery_tfs_project_projectdetails_update_updated_at() 
+CREATE OR REPLACE FUNCTION db_devops_discovery_tfs_project_projectdetails_update_updated_at() 
 RETURNS TRIGGER AS $$ 
 BEGIN 
   NEW.updated_at = CURRENT_TIMESTAMP; 
@@ -214,12 +220,12 @@ $$ LANGUAGE plpgsql;
 
   
 
-CREATE TRIGGER db_discovery_tfs_project_projectdetails_set_updated_at
-BEFORE UPDATE ON db_discovery_tfs_project_projectdetails 
+CREATE TRIGGER db_devops_discovery_tfs_project_projectdetails_set_updated_at
+BEFORE UPDATE ON db_devops_discovery_tfs_project_projectdetails 
 FOR EACH ROW 
-EXECUTE FUNCTION db_discovery_tfs_project_projectdetails_update_updated_at();
+EXECUTE FUNCTION db_devops_discovery_tfs_project_projectdetails_update_updated_at();
 
-CREATE TABLE db_discovery_tfs_project_root(   
+CREATE TABLE db_devops_discovery_tfs_project_root(   
   project_root_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   
   root_folder VARCHAR(200) NOT NULL,   
   project_folder VARCHAR(200) NOT NULL,   
@@ -228,11 +234,11 @@ CREATE TABLE db_discovery_tfs_project_root(
   file_size INTEGER,   
   file_path VARCHAR(200),   
   project_id BIGINT NOT NULL,  -- Add foreign key column 
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
 
-CREATE TABLE db_discovery_tfs_project_branches (  
+CREATE TABLE db_devops_discovery_tfs_project_branches (  
   project_branch_id BIGINT PRIMARY KEY,  
   branch_name VARCHAR(200) NOT NULL,  
   root_folder VARCHAR(200) NOT NULL,  
@@ -241,28 +247,28 @@ CREATE TABLE db_discovery_tfs_project_branches (
   file_size INTEGER,  
   file_path VARCHAR (200) Unique , 
   project_id BIGINT NOT NULL,  -- Add foreign key for project
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE
   ); 
 
-CREATE TABLE db_discovery_tfs_project_workitems (  
+CREATE TABLE db_devops_discovery_tfs_project_workitems (  
   project_workitems_id BIGINT PRIMARY KEY,  
   workitem_name VARCHAR(200) ,
   workitem_type VARCHAR(200) ,  
   project_id BIGINT NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE
 ); 
 
 
-CREATE TABLE db_discovery_tfs_project_boards (  
+CREATE TABLE db_devops_discovery_tfs_project_boards (  
   project_board_id BIGINT PRIMARY KEY,  
   workitem_id Integer ,  
   workitem_status VARCHAR(100),  
   project_id BIGINT ,
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE,
-  FOREIGN KEY (workitem_id) REFERENCES  db_discovery_tfs_project_workitems(project_workitems_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE,
+  FOREIGN KEY (workitem_id) REFERENCES  db_devops_discovery_tfs_project_workitems(project_workitems_id) ON DELETE CASCADE
 );
 
-CREATE TABLE db_discovery_tfs_project_pipelines (  
+CREATE TABLE db_devops_discovery_tfs_project_pipelines (  
   project_pipeline_id BIGINT PRIMARY KEY,  
   environments VARCHAR(100) ,  
   releases VARCHAR(100),
@@ -270,11 +276,11 @@ CREATE TABLE db_discovery_tfs_project_pipelines (
   task_groups VARCHAR(100),
   deployment_groups VARCHAR(100),
   project_id BIGINT , -- Add foreign key project_id
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE db_discovery_tfs_repo_sourcecode (  
+CREATE TABLE db_devops_discovery_tfs_repo_sourcecode (  
   source_code_id BIGINT PRIMARY KEY,  
   collection_name VARCHAR(200) NOT NULL,   
   repository_name VARCHAR(200),  
@@ -290,10 +296,10 @@ CREATE TABLE db_discovery_tfs_repo_sourcecode (
   commit_id BIGINT,	 
   commit_count INTEGER, 
   project_id BIGINT NOT NULL,  -- Add foreign key column to projectsdetails table 
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
-CREATE TABLE db_discovery_tfs_repo_commits (  
+CREATE TABLE db_devops_discovery_tfs_repo_commits (  
   commits_id BIGINT PRIMARY KEY,     
   commit_name VARCHAR(200) NOT NULL,  
   collection_name VARCHAR(200),
@@ -302,22 +308,22 @@ CREATE TABLE db_discovery_tfs_repo_commits (
   author VARCHAR(200), 
   commit_date TIMESTAMPTZ , 
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails  
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE,  
-  FOREIGN KEY (branch_id) REFERENCES  db_discovery_tfs_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE,  
+  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_tfs_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
 
-CREATE TABLE db_discovery_tfs_project_label (  
+CREATE TABLE db_devops_discovery_tfs_project_label (  
   label_id BIGINT PRIMARY KEY,     
   label_name VARCHAR(200) NOT NULL,  
   branch_id  BIGINT NOT NULL,  -- Add foreign key column to db_git_project_branches  
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (branch_id) REFERENCES  db_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
+  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
 
-CREATE TABLE db_discovery_tfs_project_shelveset (  
+CREATE TABLE db_devops_discovery_tfs_project_shelveset (  
   shelveset_id BIGINT PRIMARY KEY,  
   collection_name VARCHAR(200) NOT NULL,  
   repository_name VARCHAR(200),  
@@ -327,40 +333,40 @@ CREATE TABLE db_discovery_tfs_project_shelveset (
   sourcecode_path VARCHAR(300),  
   sourcecode_size INTEGER,  
   project_id BIGINT NOT NULL,  -- Add foreign key column to projectsdetails table 
-  FOREIGN KEY (project_id) REFERENCES  db_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE  
+  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE  
 );
 
--- Table details for migration --
+-- Table details for target --
 
 
--- Drop tables for migration for GIT
-DROP TABLE IF EXISTS db_migration_git_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_migration_git_project_root CASCADE;
-DROP TABLE IF EXISTS db_migration_git_project_repo CASCADE;
-DROP TABLE IF EXISTS db_migration_git_project_branches CASCADE;
-DROP TABLE IF EXISTS db_migration_git_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_migration_git_project_boards CASCADE;
-DROP TABLE IF EXISTS db_migration_git_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_migration_git_repo_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_migration_git_repo_commits CASCADE;
-DROP TABLE IF EXISTS db_migration_git_repo_tags CASCADE;
+-- Drop tables for target for GIT
+DROP TABLE IF EXISTS db_ado_git_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_root CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_repo CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_branches CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_boards CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_tags CASCADE;
 
 -- Drop Tables for discovery for TFVC
 
-DROP TABLE IF EXISTS db_migration_tfs_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_root CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_branches CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_boards CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_commits CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_label CASCADE;
-DROP TABLE IF EXISTS db_migration_tfs_project_shelveset  CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_root CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_branches CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_boards CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_label CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_shelveset  CASCADE;
 
 
 
-CREATE TABLE db_migration_git_project_projectdetails( 
+CREATE TABLE db_ado_git_project_projectdetails( 
   project_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
   collection_name VARCHAR(200) NOT NULL, 
   project_name VARCHAR(200) NOT NULL, 
@@ -376,7 +382,7 @@ CREATE TABLE db_migration_git_project_projectdetails(
 
 -- Trigger for updated_at to mimic ON UPDATE CURRENT_TIMESTAMP on the table db_git_project_projectdetails 
 
-CREATE OR REPLACE FUNCTION db_migration_git_project_projectdetails_update_updated_at() 
+CREATE OR REPLACE FUNCTION db_ado_git_project_projectdetails_update_updated_at() 
 RETURNS TRIGGER AS $$ 
 BEGIN 
   NEW.updated_at = CURRENT_TIMESTAMP; 
@@ -386,13 +392,13 @@ $$ LANGUAGE plpgsql;
 
   
 
-CREATE TRIGGER db_migration_git_project_projectdetails_set_updated_at
-BEFORE UPDATE ON db_migration_git_project_projectdetails 
+CREATE TRIGGER db_ado_git_project_projectdetails_set_updated_at
+BEFORE UPDATE ON db_ado_git_project_projectdetails 
 FOR EACH ROW 
-EXECUTE FUNCTION db_migration_git_project_projectdetails_update_updated_at(); 
+EXECUTE FUNCTION db_ado_git_project_projectdetails_update_updated_at(); 
 
 
-CREATE TABLE db_migration_git_project_root(   
+CREATE TABLE db_ado_git_project_root(   
   project_root_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   
   root_folder VARCHAR(200) NOT NULL,   
   project_folder VARCHAR(200) NOT NULL,   
@@ -401,10 +407,10 @@ CREATE TABLE db_migration_git_project_root(
   file_size INTEGER,   
   file_path VARCHAR(200),   
   project_id BIGINT NOT NULL,  -- Add foreign key column 
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
-CREATE TABLE db_migration_git_project_repo (  
+CREATE TABLE db_ado_git_project_repo (  
   project_repo_id BIGINT PRIMARY KEY,  
   repo_name VARCHAR(200) NOT NULL,  
   root_folder VARCHAR(200) NOT NULL,  
@@ -413,10 +419,10 @@ CREATE TABLE db_migration_git_project_repo (
   file_size INTEGER,  
   file_path VARCHAR (200) Unique , 
   project_id BIGINT NOT NULL,  -- Add foreign key column 
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
-CREATE TABLE db_migration_git_project_branches (  
+CREATE TABLE db_ado_git_project_branches (  
   project_branch_id BIGINT PRIMARY KEY,  
   branch_name VARCHAR(200) NOT NULL,  
   root_folder VARCHAR(200) NOT NULL,  
@@ -426,28 +432,28 @@ CREATE TABLE db_migration_git_project_branches (
   file_path VARCHAR (200) Unique , 
   project_id BIGINT NOT NULL,  -- Add foreign key for project
   repo_id BIGINT NOT NULL,  -- Add foreign key repo
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE,
-  FOREIGN KEY (repo_id) REFERENCES  db_migration_git_project_repo(project_repo_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE,
+  FOREIGN KEY (repo_id) REFERENCES  db_ado_git_project_repo(project_repo_id) ON DELETE CASCADE
 ); 
 
-CREATE TABLE db_migration_git_project_workitems (  
+CREATE TABLE db_ado_git_project_workitems (  
   project_workitems_id BIGINT PRIMARY KEY,  
   workitem_name VARCHAR(200) ,
   workitem_type VARCHAR(200) ,  
   project_id BIGINT NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE
 ); 
 
-CREATE TABLE db_migration_git_project_boards (  
+CREATE TABLE db_ado_git_project_boards (  
   project_board_id BIGINT PRIMARY KEY,  
   workitem_id Integer ,  
   workitem_status VARCHAR(100),  
   project_id BIGINT ,
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE,
-  FOREIGN KEY (workitem_id) REFERENCES  db_migration_git_project_workitems(project_workitems_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE,
+  FOREIGN KEY (workitem_id) REFERENCES  db_ado_git_project_workitems(project_workitems_id) ON DELETE CASCADE
 );
 
-CREATE TABLE db_migration_git_project_pipelines (  
+CREATE TABLE db_ado_git_project_pipelines (  
   project_pipeline_id BIGINT PRIMARY KEY,  
   environments VARCHAR(100) ,  
   releases VARCHAR(100),
@@ -455,10 +461,10 @@ CREATE TABLE db_migration_git_project_pipelines (
   task_groups VARCHAR(100),
   deployment_groups VARCHAR(100),
   project_id BIGINT , -- Add foreign key project_id
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE
 );
 
-CREATE TABLE db_migration_git_repo_sourcecode (  
+CREATE TABLE db_ado_git_repo_sourcecode (  
   source_code_id BIGINT PRIMARY KEY,  
   file_name VARCHAR(200), 
   file_type VARCHAR(200),  
@@ -473,12 +479,12 @@ CREATE TABLE db_migration_git_repo_sourcecode (
   project_id BIGINT NOT NULL,  -- Add foreign key column to projectsdetails table 
   repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
   branch_id BIGINT NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE ,
-  FOREIGN KEY (repo_id) REFERENCES  db_migration_git_project_repo(project_repo_id) ON DELETE CASCADE,
-  FOREIGN KEY (branch_id) REFERENCES  db_migration_git_project_branches(project_branch_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE ,
+  FOREIGN KEY (repo_id) REFERENCES  db_ado_git_project_repo(project_repo_id) ON DELETE CASCADE,
+  FOREIGN KEY (branch_id) REFERENCES  db_ado_git_project_branches(project_branch_id) ON DELETE CASCADE
 ); 
 
-CREATE TABLE db_migration_git_repo_commits (  
+CREATE TABLE db_ado_git_repo_commits (  
   commits_id BIGINT PRIMARY KEY,     
   commit_name VARCHAR(200) NOT NULL,  
   collection_name VARCHAR(200),
@@ -488,27 +494,27 @@ CREATE TABLE db_migration_git_repo_commits (
   commit_date TIMESTAMPTZ , 
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
   repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (repo_id) REFERENCES  db_migration_git_project_repo(project_repo_id) ON DELETE CASCADE ,
-  FOREIGN KEY (branch_id) REFERENCES  db_migration_git_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE, 
+  FOREIGN KEY (repo_id) REFERENCES  db_ado_git_project_repo(project_repo_id) ON DELETE CASCADE ,
+  FOREIGN KEY (branch_id) REFERENCES  db_ado_git_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
  
-CREATE TABLE db_migration_git_repo_tags (  
+CREATE TABLE db_ado_git_repo_tags (  
   tags_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
   tags_name VARCHAR(200) NOT NULL,  
   branch_id  BIGINT NOT NULL,  -- Add foreign key column to db_git_project_branches  
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
   repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (repo_id) REFERENCES  db_migration_git_project_repo(project_repo_id) ON DELETE CASCADE ,
-  FOREIGN KEY (branch_id) REFERENCES  db_migration_git_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE, 
+  FOREIGN KEY (repo_id) REFERENCES  db_ado_git_project_repo(project_repo_id) ON DELETE CASCADE ,
+  FOREIGN KEY (branch_id) REFERENCES  db_ado_git_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
 
 ------------------  For TFVC -----------------------------------
 
-CREATE TABLE db_migration_tfs_project_projectdetails( 
+CREATE TABLE db_ado_tfs_project_projectdetails( 
   project_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
   collection_name VARCHAR(200) NOT NULL, 
   project_name VARCHAR(200) NOT NULL, 
@@ -525,7 +531,7 @@ CREATE TABLE db_migration_tfs_project_projectdetails(
 
 -- Trigger for updated_at to mimic ON UPDATE CURRENT_TIMESTAMP on the table db_tfs_project_projectdetails 
 
-CREATE OR REPLACE FUNCTION db_migration_tfs_project_projectdetails_update_updated_at() 
+CREATE OR REPLACE FUNCTION db_ado_tfs_project_projectdetails_update_updated_at() 
 RETURNS TRIGGER AS $$ 
 BEGIN 
   NEW.updated_at = CURRENT_TIMESTAMP; 
@@ -535,12 +541,12 @@ $$ LANGUAGE plpgsql;
 
   
 
-CREATE TRIGGER db_migration_tfs_project_projectdetails_set_updated_at
-BEFORE UPDATE ON db_migration_tfs_project_projectdetails 
+CREATE TRIGGER db_ado_tfs_project_projectdetails_set_updated_at
+BEFORE UPDATE ON db_ado_tfs_project_projectdetails 
 FOR EACH ROW 
-EXECUTE FUNCTION db_migration_tfs_project_projectdetails_update_updated_at();
+EXECUTE FUNCTION db_ado_tfs_project_projectdetails_update_updated_at();
 
-CREATE TABLE db_migration_tfs_project_root(   
+CREATE TABLE db_ado_tfs_project_root(   
   project_root_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   
   root_folder VARCHAR(200) NOT NULL,   
   project_folder VARCHAR(200) NOT NULL,   
@@ -549,11 +555,11 @@ CREATE TABLE db_migration_tfs_project_root(
   file_size INTEGER,   
   file_path VARCHAR(200),   
   project_id BIGINT NOT NULL,  -- Add foreign key column 
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
 
-CREATE TABLE db_migration_tfs_project_branches (  
+CREATE TABLE db_ado_tfs_project_branches (  
   project_branch_id BIGINT PRIMARY KEY,  
   branch_name VARCHAR(200) NOT NULL,  
   root_folder VARCHAR(200) NOT NULL,  
@@ -562,28 +568,28 @@ CREATE TABLE db_migration_tfs_project_branches (
   file_size INTEGER,  
   file_path VARCHAR (200) Unique , 
   project_id BIGINT NOT NULL,  -- Add foreign key for project
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE
   ); 
 
-CREATE TABLE db_migration_tfs_project_workitems (  
+CREATE TABLE db_ado_tfs_project_workitems (  
   project_workitems_id BIGINT PRIMARY KEY,  
   workitem_name VARCHAR(200) ,
   workitem_type VARCHAR(200) ,  
   project_id BIGINT NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE
 ); 
 
 
-CREATE TABLE db_migration_tfs_project_boards (  
+CREATE TABLE db_ado_tfs_project_boards (  
   project_board_id BIGINT PRIMARY KEY,  
   workitem_id Integer ,  
   workitem_status VARCHAR(100),  
   project_id BIGINT ,
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE,
-  FOREIGN KEY (workitem_id) REFERENCES  db_migration_tfs_project_workitems(project_workitems_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE,
+  FOREIGN KEY (workitem_id) REFERENCES  db_ado_tfs_project_workitems(project_workitems_id) ON DELETE CASCADE
 );
 
-CREATE TABLE db_migration_tfs_project_pipelines (  
+CREATE TABLE db_ado_tfs_project_pipelines (  
   project_pipeline_id BIGINT PRIMARY KEY,  
   environments VARCHAR(100) ,  
   releases VARCHAR(100),
@@ -591,11 +597,11 @@ CREATE TABLE db_migration_tfs_project_pipelines (
   task_groups VARCHAR(100),
   deployment_groups VARCHAR(100),
   project_id BIGINT , -- Add foreign key project_id
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE db_migration_tfs_repo_sourcecode (  
+CREATE TABLE db_ado_tfs_repo_sourcecode (  
   source_code_id BIGINT PRIMARY KEY,  
   collection_name VARCHAR(200) NOT NULL,   
   repository_name VARCHAR(200),  
@@ -611,10 +617,10 @@ CREATE TABLE db_migration_tfs_repo_sourcecode (
   commit_id BIGINT,	 
   commit_count INTEGER, 
   project_id BIGINT NOT NULL,  -- Add foreign key column to projectsdetails table 
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE 
 ); 
 
-CREATE TABLE db_migration_tfs_repo_commits (  
+CREATE TABLE db_ado_tfs_repo_commits (  
   commits_id BIGINT PRIMARY KEY,     
   commit_name VARCHAR(200) NOT NULL,  
   collection_name VARCHAR(200),
@@ -623,22 +629,22 @@ CREATE TABLE db_migration_tfs_repo_commits (
   author VARCHAR(200), 
   commit_date TIMESTAMPTZ , 
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails  
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE,  
-  FOREIGN KEY (branch_id) REFERENCES  db_migration_tfs_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE,  
+  FOREIGN KEY (branch_id) REFERENCES  db_ado_tfs_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
 
-CREATE TABLE db_migration_tfs_project_label (  
+CREATE TABLE db_ado_tfs_project_label (  
   label_id BIGINT PRIMARY KEY,     
   label_name VARCHAR(200) NOT NULL,  
   branch_id  BIGINT NOT NULL,  -- Add foreign key column to db_git_project_branches  
   project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
-  FOREIGN KEY (project_id) REFERENCES  db_migration_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (branch_id) REFERENCES  db_migration_git_project_branches(project_branch_id) ON DELETE CASCADE 
+  FOREIGN KEY (project_id) REFERENCES  db_ado_git_project_projectdetails(project_id) ON DELETE CASCADE, 
+  FOREIGN KEY (branch_id) REFERENCES  db_ado_git_project_branches(project_branch_id) ON DELETE CASCADE 
  ); 
 
 
-CREATE TABLE db_migration_tfs_project_shelveset (  
+CREATE TABLE db_ado_tfs_project_shelveset (  
   shelveset_id BIGINT PRIMARY KEY,  
   collection_name VARCHAR(200) NOT NULL,  
   repository_name VARCHAR(200),  
@@ -648,13 +654,13 @@ CREATE TABLE db_migration_tfs_project_shelveset (
   sourcecode_path VARCHAR(300),  
   sourcecode_size INTEGER,  
   project_id BIGINT NOT NULL,  -- Add foreign key column to projectsdetails table 
-  FOREIGN KEY (project_id) REFERENCES  db_migration_tfs_project_projectdetails(project_id) ON DELETE CASCADE  
+  FOREIGN KEY (project_id) REFERENCES  db_ado_tfs_project_projectdetails(project_id) ON DELETE CASCADE  
 );
 
 
 
 
-CREATE TABLE db_discovery_overview_dashboard_details( 
+CREATE TABLE db_devops_discovery_overview_dashboard_details( 
   overview_dashboard_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
   collection_name VARCHAR(200) NOT NULL, 
   project_name VARCHAR(200) NOT NULL,
@@ -669,18 +675,43 @@ CREATE TABLE db_discovery_overview_dashboard_details(
   dashboard_scopr VARCHAR(50)
   ); 
 
-CREATE TABLE db_discovery_boards_workitem_details( 
+CREATE TABLE db_devops_discovery_boards_workitem_details( 
 	discovery_boards_workitem_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	project_name varchar(100),
 	collection_name varchar(100),
+  project_name varchar(100),
+  workitem_name varchar(50),
 	workitem_type   varchar(50),
-	backlog varchar(50),
-	tag varchar(50),
+  workitem_description varchar(200),
+  workitem_assignee varchar(100),
+  created_by varchar(50),
+  created_date TIMESTAMPTZ,
+  workitem_comment varchar(200),
+	workitem_state varchar(50),
+  workitem_links integer,
+	workitem_tags varchar(50),
+	total_count		Integer
+	);
+
+CREATE TABLE db_ado_discovery_boards_workitem_details( 
+	discovery_boards_workitem_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	collection_name varchar(100),
+  project_name varchar(100),
+  workitem_name varchar(50),
+	workitem_type   varchar(50),
+  workitem_description varchar(200),
+  workitem_assignee varchar(100),
+  created_by varchar(50),
+  created_date TIMESTAMPTZ,
+  workitem_comment varchar(200),
+	workitem_state varchar(50),
+  workitem_links integer,
+	workitem_tags varchar(50),
 	total_count		Integer
 	);
 
 
-CREATE TABLE db_discovery_release_details( 
+
+CREATE TABLE db_devops_discovery_release_details( 
 	discovery_release_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	project_name varchar(100),
 	collection_name varchar(100),
@@ -702,7 +733,7 @@ CREATE TABLE db_discovery_release_details(
 
 );
 
-CREATE TABLE db_discovery_pipelines_details( 
+CREATE TABLE db_devops_discovery_pipelines_details( 
     discovery_pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     project_name VARCHAR(100),
     collection_name VARCHAR(100),
@@ -726,14 +757,14 @@ CREATE TABLE db_discovery_pipelines_details(
 );
 
 
- CREATE TABLE db_discovery_wiki_reports (
+ CREATE TABLE db_devops_discovery_wiki_reports (
  	discovery_wiki_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	file_path varchar(100),
 	file_size Integer,
 	last_modified_date	TIMESTAMPTZ
  );
  
- CREATE TABLE db_discovery_pull_requests(
+ CREATE TABLE db_devops_discovery_pull_requests(
 	discovery_pull_requests_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	title	varchar(100),
 	pr_description varchar(100),
@@ -748,7 +779,7 @@ CREATE TABLE db_discovery_pipelines_details(
 	reviewers	varchar(100)
  );
 
-CREATE TABLE db_discovery_project_configuration_Iterations(
+CREATE TABLE db_devops_discovery_project_configuration_Iterations(
 	discovery_project_configuration_Iterations_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
 	collection_name varchar(200),
 	project_name varchar(200),
@@ -759,7 +790,7 @@ CREATE TABLE db_discovery_project_configuration_Iterations(
 	end_date TIMESTAMPTZ
 	);
 	
-CREATE TABLE db_discovery_project_configuration_Areas(
+CREATE TABLE db_devops_discovery_project_configuration_Areas(
 	discovery_project_configuration_Areas_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
 	collection_name varchar(200),
 	project_name varchar(200),
@@ -767,6 +798,16 @@ CREATE TABLE db_discovery_project_configuration_Areas(
 	areas varchar(200),
 	areas_id Integer,
 	areas_identifier varchar(200)
+	);
+
+CREATE TABLE db_devops_ado_migration_details(
+	devops_ado_migration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+	source_server_url varchar(200),
+	source_project_name varchar(200),
+	source_pat varchar(200),
+  target_organization_url varchar(200),
+	target_project_name varchar(200),
+	target_pat varchar(200)
 	);
 
 
