@@ -5,7 +5,7 @@ from src.dbDetails.db import Base
 
 
 class ReleasePipelineDetails(Base):
-    __tablename__ = 'db_discovery_pipelines_details'  # Match the SQL table name
+    __tablename__ = 'db_discovery_release_details'  # Match the SQL table name
     __table_args__ = {'schema': 'ado_to_ado'} 
 
     discovery_release_id = Column(Integer, primary_key=True, index=True)
@@ -23,7 +23,7 @@ class ReleasePipelineDetails(Base):
     agents	= Column(String(255),nullable=False, index=True)
     parallel_execution_type = Column(String(255),nullable=False, index=True)
     max_agents	= Column(String(255),nullable=False, index=True)
-    continueon_error = Column(bool,nullable=False, index=True) 
+    continueon_error = Column(String(255),nullable=False, index=True) 
     concurrency_count = Column(String(255),nullable=False, index=True)
     queuedepth_count = Column(String(255),nullable=False, index=True)
 

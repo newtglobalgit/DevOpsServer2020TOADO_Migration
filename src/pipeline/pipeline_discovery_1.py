@@ -16,6 +16,7 @@ from openpyxl.styles import Font
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.pipeline.build_pipeline_db import db_post_build_pipeline
+from src.pipeline.release_pipeline_db import db_post_release_pipeline
 
 
 # Setup logging
@@ -311,12 +312,31 @@ def get_releases( project ):
                         artifacts_count,
                         environment_details,
                         parallel_execution_type,
-                         maxNumberOfAgents,
+                        maxNumberOfAgents,
                         continueOnError,
                         concurrencyCount,
                         queueDepthCount
                     ]
                     ws.append(releases_info)
+                    data = {
+                        "project_name":project,
+                            "release_id"	: release['id'],
+                            "release_name": release['name'],
+                            "created_date" :release['createdOn'], 
+                            "updated_date": release['modifiedOn'],  
+                            "release_variable" :variables_count, 
+                            "variable_groups"	:variable_groups_count,
+                            "no_of_relaseses":release_count,
+                            "release_names":  release_names_string,
+                            "artifacts"	:artifacts_count,
+                            "agents" :environment_details,
+                            "parallel_execution_type" : parallel_execution_type,
+                            "max_agents"	:  str(maxNumberOfAgents),
+                            "continueon_error" : str(continueOnError),
+                            "concurrency_count" : str(concurrencyCount),
+                            "queuedepth_count" :str(queueDepthCount)
+                    }
+                    db_post_release_pipeline(data)
                     if count%10 ==0:
                         wb.save(excel_name)
                 wb.save(excel_name)

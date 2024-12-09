@@ -33,32 +33,32 @@ def db_post_release_pipeline(data):
         agents = data.get("agents","").strip()
         parallel_execution_type = data.get("parallel_execution_type","").strip()
         max_agents	= data.get("max_agents","").strip()
-        continueon_error = bool(data.get("continueon_error")) if data.get("continueon_error") else None 
+        continueon_error =data.get("continueon_error","").strip()
         concurrency_count = data.get("concurrency_count","").strip()
         queuedepth_count = data.get("queuedepth_count","").strip()
         
 
-        if not project_name or not collection_name:
+        if not project_name :
             raise ValueError("Project name and collection name are required fields.")
 
         # Log the data being inserted
         logging.info(
             f"Inserting record: project_name={project_name}, collection_name={collection_name}, "
-           f"project_name={project_name},
-            release_id	= {release_id},
-            release_name= {release_name},
-            created_date = {created_date},
-            updated_date = {updated_date},
-            release_variable = {release_variable}, 
-            variable_groups	= {variable_groups},
-            no_of_relaseses= {no_of_relaseses},
-            release_names = {release_names},
-            artifacts	= {artifacts},
-            agents = {agents},
-            parallel_execution_type = {parallel_execution_type},
-            max_agents	=  {max_agents},
-            continueon_error = {continueon_error},
-            concurrency_count = {concurrency_count},
+           f"project_name={project_name},\
+            release_id	= {release_id},\
+            release_name= {release_name},\
+            created_date = {created_date},\
+            updated_date = {updated_date},\
+            release_variable = {release_variable},\
+            variable_groups	= {variable_groups},\
+            no_of_relaseses= {no_of_relaseses},\
+            release_names = {release_names},\
+            artifacts	= {artifacts},\
+            agents = {agents},\
+            parallel_execution_type = {parallel_execution_type},\
+            max_agents	=  {max_agents},\
+            continueon_error = {continueon_error},\
+            concurrency_count = {concurrency_count},\
             queuedepth_count = {queuedepth_count}"
         )
 
@@ -98,6 +98,7 @@ def db_post_release_pipeline(data):
 
     except Exception as e:
         # Handle database or unexpected errors and log them
+        print(str(e))
         error_message = f"Unexpected error occurred: {str(e)}"
         logging.error(error_message)
 
@@ -135,5 +136,3 @@ def db_get_release_pipeline():
     finally:
         if db:
             db.close()  # Ensure the connection is closed
-
-
