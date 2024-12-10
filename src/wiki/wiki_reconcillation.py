@@ -20,7 +20,7 @@ def compare_discovery_reports(source_file, target_file, output_file):
         columns={
             "project_name": "project_name_Source",
             "file_path": "file_path_Source",
-            "size_(bytes)": "size_(bytes)_Source",
+            "size_bytes": "size_(bytes)_Source",
             "last_modified": "last_modified_Source",
         }
     )
@@ -28,7 +28,7 @@ def compare_discovery_reports(source_file, target_file, output_file):
         columns={
             "project_name": "project_name_Target",
             "file_path": "file_path_Target",
-            "size_(bytes)": "size_(bytes)_Target",
+            "size_bytes": "size_(bytes)_Target",
             "last_modified": "last_modified_Target",
         }
     )
