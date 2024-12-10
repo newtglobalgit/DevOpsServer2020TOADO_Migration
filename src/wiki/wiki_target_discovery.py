@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 import openpyxl
 import tempfile
 import shutil
@@ -7,9 +7,17 @@ from urllib.parse import quote
 import time
 import subprocess
 import pytz
+import sys
+
+# Add the 'src' directory to the system path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.wiki.wiki_target_db import db_post_wiki
+from src.wiki.wiki_target_db import db_get_wiki
+
 
 def encode_url_component(component):
     return quote(component, safe='')
+
 
 def get_last_modified_date_from_git(file_path, repo_dir):
     """
@@ -37,6 +45,7 @@ def get_last_modified_date_from_git(file_path, repo_dir):
         print(f"Error executing git log for {file_path}: {e}")
         return None
 
+
 def clone_wiki_repo(auth_clone_url):
     temp_dir = tempfile.mkdtemp()
     try:
@@ -55,6 +64,7 @@ def clone_wiki_repo(auth_clone_url):
         print(f"Error during git clone: {e}")
         return None
 
+
 def discover_wiki_pages(wiki_repo_path):
     markdown_files = []
     for root, _, files in os.walk(wiki_repo_path):
@@ -72,13 +82,6 @@ def discover_wiki_pages(wiki_repo_path):
     
     return markdown_files
 
-def write_report_to_excel(markdown_files, ws, project_name):
-    """
-    Append the wiki discovery data for a project to the existing Excel worksheet.
-    """
-    for file in markdown_files:
-        file_path, size, modified = file
-        ws.append([project_name, file_path, size, modified])
 
 def handle_remove_readonly(func, path, excinfo):
     try:
@@ -87,23 +90,13 @@ def handle_remove_readonly(func, path, excinfo):
     except Exception as e:
         print(f"Error removing {path}: {e}")
 
+
 def main():
     input_file = "wiki_target_discovery_input.xlsx"
-    report_filename = "Wiki_Target_Discovery_Report.xlsx"
     
     username = input("Enter your username: ").strip()  
     password = input("Enter your Password: ").strip()  
     encoded_password = encode_url_component(password)
-    
-    # Create or open the consolidated Excel file
-    if os.path.exists(report_filename):
-        wb = openpyxl.load_workbook(report_filename)
-        ws = wb.active
-    else:
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Wiki Target Discovery Report"
-        ws.append(["project_name", "file_path", "size_(bytes)", "last_modified"])
 
     # Load the input Excel file
     wb_input = openpyxl.load_workbook(input_file)
@@ -132,7 +125,25 @@ def main():
         if temp_dir:
             wiki_pages = discover_wiki_pages(temp_dir)
             if wiki_pages:
-                write_report_to_excel(wiki_pages, ws, project_name)
+                for file in wiki_pages:
+                    file_path, size, modified = file
+                    
+                    # Create a data dictionary for the db_post_wiki function
+                    data = {
+                        "project_name": project_name,
+                        "file_path": file_path,
+                        "size_bytes": size,
+                        "last_modified": modified,
+                    }
+                    
+                    # Call db_post_wiki to save the data in the database
+                    try:
+                        db_post_wiki(data)
+                        print("pppp",db_get_wiki())
+
+                        print(f"Data successfully written to the database: {data}")
+                    except Exception as e:
+                        print(f"Error writing to database for file {file_path}: {e}")
             else:
                 print(f"No wiki pages found for project: {project_name}.")
             
@@ -142,9 +153,8 @@ def main():
         else:
             print(f"Failed to clone the repository for project {project_name}. Skipping.")
     
-    # Save the consolidated Excel file
-    wb.save(report_filename)
-    print(f"Consolidated report saved as {report_filename}")
+    print("All data has been processed and written to the database.")
+
 
 if __name__ == "__main__":
     main()

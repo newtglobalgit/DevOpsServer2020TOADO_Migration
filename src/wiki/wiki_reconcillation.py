@@ -1,9 +1,11 @@
 import pandas as pd
+from wiki_target_db import db_get_wiki as target_db_get
+from wiki_db import db_get_wiki as source_db_get
 
 def compare_discovery_reports(source_file, target_file, output_file):
     # Load source and target Excel files into DataFrames
-    source_df = pd.read_excel(source_file)
-    target_df = pd.read_excel(target_file)
+    source_df = source_db_get()
+    target_df = target_db_get()
 
     # Standardize column names (if necessary)
     source_df.columns = source_df.columns.str.strip()

@@ -764,12 +764,21 @@ CREATE TABLE db_devops_discovery_pipelines_details(
 );
 
 
- CREATE TABLE db_devops_discovery_wiki_reports (
- 	discovery_wiki_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	file_path varchar(100),
-	file_size Integer,
-	last_modified_date	TIMESTAMPTZ
- );
+  CREATE TABLE devops_to_ados.db_devops_discovery_wiki_reports (
+    wiki_id SERIAL PRIMARY KEY,       -- Auto-incrementing primary key
+	  project_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,  -- File path column
+    size_bytes BIGINT NOT NULL,       -- File size column
+    last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
+);
+
+ CREATE TABLE devops_to_ados.db_ado_discovery_wiki_reports (
+    wiki_id SERIAL PRIMARY KEY,       -- Auto-incrementing primary key
+	  project_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,  -- File path column
+    size_bytes BIGINT NOT NULL,       -- File size column
+    last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
+);
  
  CREATE TABLE db_devops_discovery_pull_requests(
 	discovery_pull_requests_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
