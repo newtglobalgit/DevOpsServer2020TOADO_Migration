@@ -41,7 +41,36 @@ DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCAD
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
 
 -- mapping trable for migration
-DROP TABLE IF EXISTS db_devops_ado_migration_details	CASCADE; -- for migration
+DROP TABLE IF EXISTS db_devops_ado_project_migration_details CASCADE; -- for migration
+DROP TABLE IF EXISTS db_devops_ado_repo_migration_details CASCADE; -- for migration
+
+-- Table details for target --
+
+
+-- Drop tables for target for GIT
+DROP TABLE IF EXISTS db_ado_git_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_root CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_repo CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_branches CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_boards CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_tags CASCADE;
+
+-- Drop Tables for discovery for TFVC
+
+DROP TABLE IF EXISTS db_ado_tfs_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_root CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_branches CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_boards CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_label CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_shelveset  CASCADE;
 
 
 
@@ -336,33 +365,7 @@ CREATE TABLE db_devops_discovery_tfs_project_shelveset (
   FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE  
 );
 
--- Table details for target --
 
-
--- Drop tables for target for GIT
-DROP TABLE IF EXISTS db_ado_git_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_root CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_repo CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_branches CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_boards CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_ado_git_repo_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_ado_git_repo_commits CASCADE;
-DROP TABLE IF EXISTS db_ado_git_repo_tags CASCADE;
-
--- Drop Tables for discovery for TFVC
-
-DROP TABLE IF EXISTS db_ado_tfs_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_root CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_branches CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_boards CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_commits CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_label CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_shelveset  CASCADE;
 
 
 
@@ -800,7 +803,7 @@ CREATE TABLE db_devops_discovery_project_configuration_Areas(
 	areas_identifier varchar(200)
 	);
 
-CREATE TABLE db_devops_ado_migration_details(
+CREATE TABLE db_devops_ado_project_migration_details(
 	devops_ado_migration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
 	source_server_url varchar(200),
 	source_project_name varchar(200),
