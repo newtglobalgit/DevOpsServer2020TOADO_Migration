@@ -1,0 +1,140 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": {
+                "id": "5d58cc01-7c75-450c-be18-a388ddb129ec"
+            },
+            "inputs": {
+                "branchFilters": "[\"+refs/heads/*\"]",
+                "additionalFields": "{}"
+            }
+        },
+        {
+            "enabled": false,
+            "definition": {
+                "id": "a9db38f9-9fdc-478c-b0f9-464221e58316"
+            },
+            "inputs": {
+                "workItemType": "Issue",
+                "assignToRequestor": "true",
+                "additionalFields": "{}"
+            }
+        }
+    ],
+    "variables": {
+        "system.debug": {
+            "value": "false",
+            "allowOverride": true
+        }
+    },
+    "properties": {},
+    "tags": [],
+    "_links": {
+        "self": {
+            "href": "http://172.191.4.85/DefaultCollection/cf224bad-7104-4490-9d8d-881fd97a5709/_apis/build/Definitions/18?revision=2"
+        },
+        "web": {
+            "href": "https://devopspoc/DefaultCollection/cf224bad-7104-4490-9d8d-881fd97a5709/_build/definition?definitionId=18"
+        },
+        "editor": {
+            "href": "https://devopspoc/DefaultCollection/cf224bad-7104-4490-9d8d-881fd97a5709/_build/designer?id=18&_a=edit-build-definition"
+        },
+        "badge": {
+            "href": "http://172.191.4.85/DefaultCollection/cf224bad-7104-4490-9d8d-881fd97a5709/_apis/build/status/18"
+        }
+    },
+    "jobAuthorizationScope": "projectCollection",
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "name": "Agent job 1",
+                "refName": "Job_1",
+                "condition": "succeeded()",
+                "target": {
+                    "executionOptions": {
+                        "multipliers": [
+                            ""
+                        ],
+                        "maxConcurrency": 2,
+                        "continueOnError": false,
+                        "type": 1
+                    },
+                    "allowScriptsAuthAccessOption": false,
+                    "type": 1
+                },
+                "jobAuthorizationScope": "projectCollection"
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "567dd0b8-9666-4927-9546-b0813360b0fe",
+        "type": "TfsGit",
+        "name": "booking-application",
+        "url": "http://172.191.4.85/DefaultCollection/CatCore/_git/booking-application",
+        "defaultBranch": "refs/heads/convert-catcore-catcore-aspnet-ci-to-actions-20241118-095855",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": "definition",
+    "authoredBy": {
+        "displayName": "lexcon",
+        "url": "http://172.191.4.85/DefaultCollection/_apis/Identities/ac1c4760-d6aa-4cb5-85c1-cc80ed299a08",
+        "_links": {
+            "avatar": {
+                "href": "http://172.191.4.85/DefaultCollection/_apis/GraphProfile/MemberAvatars/win.Uy0xLTUtMjEtODUzMDc2Nzg5LTMxODkxMTQyMS0zMTQwMzg3NjUyLTUwMA"
+            }
+        },
+        "id": "ac1c4760-d6aa-4cb5-85c1-cc80ed299a08",
+        "uniqueName": "devopsPOC\\lexcon",
+        "imageUrl": "http://172.191.4.85/DefaultCollection/_apis/GraphProfile/MemberAvatars/win.Uy0xLTUtMjEtODUzMDc2Nzg5LTMxODkxMTQyMS0zMTQwMzg3NjUyLTUwMA",
+        "descriptor": "win.Uy0xLTUtMjEtODUzMDc2Nzg5LTMxODkxMTQyMS0zMTQwMzg3NjUyLTUwMA"
+    },
+    "drafts": [],
+    "queue": {
+        "_links": {
+            "self": {
+                "href": "http://172.191.4.85/DefaultCollection/_apis/build/Queues/9"
+            }
+        },
+        "id": 9,
+        "name": "Default",
+        "url": "http://172.191.4.85/DefaultCollection/_apis/build/Queues/9",
+        "pool": {
+            "id": 1,
+            "name": "Default"
+        }
+    },
+    "id": 18,
+    "name": "Sample_Classic1",
+    "url": "http://172.191.4.85/DefaultCollection/cf224bad-7104-4490-9d8d-881fd97a5709/_apis/build/Definitions/18?revision=2",
+    "uri": "vstfs:///Build/Definition/18",
+    "path": "\\",
+    "type": "build",
+    "queueStatus": "enabled",
+    "revision": 2,
+    "createdDate": "2024-12-07T07:38:12.553Z",
+    "project": {
+        "id": "cf224bad-7104-4490-9d8d-881fd97a5709",
+        "name": "CatCore",
+        "url": "http://172.191.4.85/DefaultCollection/_apis/projects/cf224bad-7104-4490-9d8d-881fd97a5709",
+        "state": "wellFormed",
+        "revision": 228,
+        "visibility": "private",
+        "lastUpdateTime": "2024-12-06T06:15:49.717Z"
+    }
+}

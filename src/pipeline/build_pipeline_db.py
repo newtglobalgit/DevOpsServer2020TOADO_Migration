@@ -143,39 +143,42 @@ def db_get_build_pipeline():
             db.close()  # Ensure the connection is closed
 
 
-# # Main method to simulate data entry
-# def main():
-#     # Sample data to be inserted (you can adjust it as needed)
-#     data = {
-#         "project_name":"qaserver",
-#             "pipeline_id":'1',
-#             "pipeline_name":"qaserver",
-#             "last_updated_date":"2024-12-07T06:31:38.31Z",
-#             "file_name":"azure-pipelines.yml",
-#             "variables":0,
-#             "variable_groups":0,
-#             "repository_type":"TfsGit",
-#             "repository_name":"qaserver",
-#             "repository_branch":"refs/heads/master",
-#             "classic_pipeline":"No (Build)",
-#             "agents":"Default",
-#             "phases":'',
-#             "execution_type":'',
-#             "max_concurrency":0,
-#             "continue_on_error": '',
-#             "builds":1,
-#             "artifacts":''
-#         }
-#     # data =["qaserver","1","qaserver","2024-12-07T06:31:38.31Z","azure-pipelines.yml",0,0,"TfsGit","qaserver","refs/heads/master",
-#     #            "No (Build)","Default",'','','','',1,'']
-#     # data =["qaserver","1","qaserver"]
+# Main method to simulate data entry
+def main():
+    # Sample data to be inserted (you can adjust it as needed)
+    # data = {
+    #     "project_name":"qaserver",
+    #         "pipeline_id":'1',
+    #         "pipeline_name":"qaserver",
+    #         "last_updated_date":"2024-12-07T06:31:38.31Z",
+    #         "file_name":"azure-pipelines.yml",
+    #         "variables":0,
+    #         "variable_groups":0,
+    #         "repository_type":"TfsGit",
+    #         "repository_name":"qaserver",
+    #         "repository_branch":"refs/heads/master",
+    #         "classic_pipeline":"No (Build)",
+    #         "agents":"Default",
+    #         "phases":'',
+    #         "execution_type":'',
+    #         "max_concurrency":0,
+    #         "continue_on_error": '',
+    #         "builds":1,
+    #         "artifacts":''
+    #     }
+    # # data =["qaserver","1","qaserver","2024-12-07T06:31:38.31Z","azure-pipelines.yml",0,0,"TfsGit","qaserver","refs/heads/master",
+    # #            "No (Build)","Default",'','','','',1,'']
+    # # data =["qaserver","1","qaserver"]
 
-#     # Call db_post_workitem function to insert data
-#     db_post_build_pipeline(data)
-#     db_get_build_pipeline()
+    # # Call db_post_workitem function to insert data
+    # db_post_build_pipeline(data)
+    results =db_get_build_pipeline()
+    for result in results:
+        print(result.pipeline_id)
+    print(results)
     
 
 
-# # Entry point of the script
-# if __name__ == "__main__":
-#     main()
+# Entry point of the script
+if __name__ == "__main__":
+    main()

@@ -15,7 +15,7 @@ from openpyxl.styles import Font
 
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from src.pipeline.build_pipeline_db import db_post_build_pipeline
+from src.pipeline.build_pipeline_db import db_post_build_pipeline , db_get_build_pipeline
 from src.pipeline.release_pipeline_db import db_post_release_pipeline
 
 
@@ -389,7 +389,31 @@ def format_excel(ws):
         # parallel_column_idx = df.columns.get_loc('Parallel Execution')
         # worksheet.set_column(artifact_column_idx, artifact_column_idx, 80, None, {'text_wrap': True})
         # worksheet.set_column(parallel_column_idx, parallel_column_idx, 50, None, {'text_wrap': True})
-
+def create_mapping_sheet():
+    results=db_get_build_pipeline()
+    folder = f"src\pipeline"
+    headers =["Source_Project","Source_Pipeline_Name","File_Name","Source_Repo_Name", "Source_Repo_Name","Target_Project", "Target_Pipeline_Name","Is_Classic", "Migration_Required","Status"]
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
+    excel_name =f"{folder}\mapping_migration_{id}.xlsx"
+    ws.append(headers)
+    for result in results:
+        data =[
+              result.project_name,
+              result.pipeline_name,
+              result.file_name,
+              result.repository_name,
+              result.repository_branch,
+              result.project_name,
+              result.pipeline_name,
+              result.classic_pipeline,
+              "yes",
+              "Discovery Completed"
+        ]
+        ws.append(data)
+    wb.save(excel_name)
+    
 if __name__ == "__main__":
     pipeline_data = []
     releases_data=[]
@@ -417,10 +441,11 @@ if __name__ == "__main__":
         get_pipeline_details(project_name)
         wb.close()
 
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
-        excel_name =f"{folder_path}\discovery_release_{project_name}_{id}.xlsx"
-        get_releases(project_name)
-        wb.close()
-   
+        # wb = openpyxl.Workbook()
+        # ws = wb.active
+        # id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
+        # excel_name =f"{folder_path}\discovery_release_{project_name}_{id}.xlsx"
+        # get_releases(project_name)
+        # wb.close()
+
+        create_mapping_sheet()
