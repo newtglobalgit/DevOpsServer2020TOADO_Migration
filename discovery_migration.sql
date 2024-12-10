@@ -33,6 +33,10 @@ DROP TABLE IF EXISTS db_devops_discovery_overview_dashboard_details CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_boards_workitem_details	CASCADE;  -- source table
 DROP TABLE IF EXISTS db_ados_discovery_boards_workitem_details	CASCADE;    -- target
 
+DROP TABLE IF EXISTS db_devops_discovery_user_details CASCADE;  --source table
+DROP TABLE IF EXISTS db_ados_discovery_user_details CASCADE;  --target table
+
+
 DROP TABLE IF EXISTS db_devops_discovery_release_details	CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_pipelines_details CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_wiki_reports CASCADE;
@@ -813,5 +817,26 @@ CREATE TABLE db_devops_ado_project_migration_details(
 	target_pat varchar(200)
 	);
 
+
+
+CREATE TABLE db_devops_discovery_user_details (
+    collection_name varchar(200) NOT NULL,
+    project_name varchar(200) NOT NULL,
+    group_name varchar(100) ,
+    group_type varchar(50) ,
+    user_name varchar(200),
+    user_email varchar(100),
+    user_type varchar(50)
+);
+ 
+CREATE TABLE db_ados_discovery_user_details (
+    collection_name varchar(200) NOT NULL,
+    project_name varchar(200) NOT NULL,
+    group_name varchar(100) ,
+    group_type varchar(50) ,
+    user_name varchar(200),
+    user_email varchar(100),
+    user_type varchar(50)
+);
 
  
