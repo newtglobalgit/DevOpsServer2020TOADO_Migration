@@ -1,0 +1,103 @@
+2024-12-10 12:08:16,919 - INFO - Logging configuration initialized in db.py.
+2024-12-10 12:08:33,636 - INFO - Inserting record:             project_name=CatCore             file_path=fer.md,            size_bytes=0,            last_modified=2024-11-28 15:52:20
+2024-12-10 12:08:37,738 - INFO - Record created successfully for the wiki.
+2024-12-10 12:08:37,738 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements.md,            size_bytes=0,            last_modified=2024-11-18 16:09:23
+2024-12-10 12:08:38,449 - INFO - Record created successfully for the wiki.
+2024-12-10 12:08:38,454 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements@migration-%2D-approach.md,            size_bytes=0,            last_modified=2024-11-18 16:24:03
+2024-12-10 12:08:39,166 - INFO - Record created successfully for the wiki.
+2024-12-10 12:08:39,166 - INFO - Inserting record:             project_name=CatCore             file_path=romy.md,            size_bytes=0,            last_modified=2024-11-19 13:32:11
+2024-12-10 12:08:39,867 - INFO - Record created successfully for the wiki.
+2024-12-10 12:08:39,867 - INFO - Inserting record:             project_name=CatCore             file_path=test.md,            size_bytes=0,            last_modified=2024-11-19 17:12:39
+2024-12-10 12:08:40,570 - INFO - Record created successfully for the wiki.
+2024-12-10 12:08:40,570 - INFO - Inserting record:             project_name=CatCore             file_path=Testing-with-revision-message.md,            size_bytes=0,            last_modified=2024-12-07 16:31:24
+2024-12-10 12:08:41,300 - INFO - Record created successfully for the wiki.
+2024-12-10 12:08:41,302 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements\Testing-for-the-new-wiki.md,            size_bytes=0,            last_modified=2024-12-07 16:29:38
+2024-12-10 12:08:42,000 - INFO - Record created successfully for the wiki.
+2024-12-10 12:08:46,285 - INFO - Inserting record:             project_name=TestProj             file_path=romyrom.md,            size_bytes=0,            last_modified=2024-12-05 15:25:17
+2024-12-10 12:08:47,047 - INFO - Record created successfully for the wiki.
+2024-12-10 12:10:34,382 - INFO - Logging configuration initialized in db.py.
+2024-12-10 12:10:47,517 - INFO - Inserting record:             project_name=CatCore             file_path=fer.md,            size_bytes=0,            last_modified=2024-11-28 15:52:20
+2024-12-10 12:10:51,561 - INFO - Record created successfully for the wiki.
+2024-12-10 12:10:51,563 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements.md,            size_bytes=0,            last_modified=2024-11-18 16:09:23
+2024-12-10 12:10:52,328 - INFO - Record created successfully for the wiki.
+2024-12-10 12:10:52,329 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements@migration-%2D-approach.md,            size_bytes=0,            last_modified=2024-11-18 16:24:03
+2024-12-10 12:10:53,025 - INFO - Record created successfully for the wiki.
+2024-12-10 12:10:53,026 - INFO - Inserting record:             project_name=CatCore             file_path=romy.md,            size_bytes=0,            last_modified=2024-11-19 13:32:11
+2024-12-10 12:10:53,728 - INFO - Record created successfully for the wiki.
+2024-12-10 12:10:53,729 - INFO - Inserting record:             project_name=CatCore             file_path=test.md,            size_bytes=0,            last_modified=2024-11-19 17:12:39
+2024-12-10 12:10:54,426 - INFO - Record created successfully for the wiki.
+2024-12-10 12:10:54,427 - INFO - Inserting record:             project_name=CatCore             file_path=Testing-with-revision-message.md,            size_bytes=0,            last_modified=2024-12-07 16:31:24
+2024-12-10 12:10:55,135 - INFO - Record created successfully for the wiki.
+2024-12-10 12:10:55,136 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements\Testing-for-the-new-wiki.md,            size_bytes=0,            last_modified=2024-12-07 16:29:38
+2024-12-10 12:10:55,854 - INFO - Record created successfully for the wiki.
+2024-12-10 12:11:00,126 - INFO - Inserting record:             project_name=TestProj             file_path=romyrom.md,            size_bytes=0,            last_modified=2024-12-05 15:25:17
+2024-12-10 12:11:00,831 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:29,171 - INFO - Logging configuration initialized in db.py.
+2024-12-10 12:12:42,887 - INFO - Inserting record:             project_name=CatCore             file_path=fer.md,            size_bytes=0,            last_modified=2024-11-28 15:52:20
+2024-12-10 12:12:46,894 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:46,894 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements.md,            size_bytes=0,            last_modified=2024-11-18 16:09:23
+2024-12-10 12:12:47,600 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:47,602 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements@migration-%2D-approach.md,            size_bytes=0,            last_modified=2024-11-18 16:24:03
+2024-12-10 12:12:48,323 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:48,323 - INFO - Inserting record:             project_name=CatCore             file_path=romy.md,            size_bytes=0,            last_modified=2024-11-19 13:32:11
+2024-12-10 12:12:49,019 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:49,019 - INFO - Inserting record:             project_name=CatCore             file_path=test.md,            size_bytes=0,            last_modified=2024-11-19 17:12:39
+2024-12-10 12:12:49,723 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:49,723 - INFO - Inserting record:             project_name=CatCore             file_path=Testing-with-revision-message.md,            size_bytes=0,            last_modified=2024-12-07 16:31:24
+2024-12-10 12:12:50,428 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:50,431 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements\Testing-for-the-new-wiki.md,            size_bytes=0,            last_modified=2024-12-07 16:29:38
+2024-12-10 12:12:51,148 - INFO - Record created successfully for the wiki.
+2024-12-10 12:12:55,328 - INFO - Inserting record:             project_name=TestProj             file_path=romyrom.md,            size_bytes=0,            last_modified=2024-12-05 15:25:17
+2024-12-10 12:12:56,028 - INFO - Record created successfully for the wiki.
+2024-12-10 12:14:41,812 - INFO - Logging configuration initialized in db.py.
+2024-12-10 12:15:04,722 - INFO - Inserting record:             project_name=CatCore             file_path=fer.md,            size_bytes=0,            last_modified=2024-11-28 15:52:20
+2024-12-10 12:15:09,017 - INFO - Record created successfully for the wiki.
+2024-12-10 12:15:09,017 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements.md,            size_bytes=4027,            last_modified=2024-11-18 16:09:23
+2024-12-10 12:15:09,780 - INFO - Record created successfully for the wiki.
+2024-12-10 12:15:09,781 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements@migration-%2D-approach.md,            size_bytes=73,            last_modified=2024-11-18 16:24:03
+2024-12-10 12:15:10,516 - INFO - Record created successfully for the wiki.
+2024-12-10 12:15:10,517 - INFO - Inserting record:             project_name=CatCore             file_path=romy.md,            size_bytes=0,            last_modified=2024-11-19 13:32:11
+2024-12-10 12:15:11,280 - INFO - Record created successfully for the wiki.
+2024-12-10 12:15:11,281 - INFO - Inserting record:             project_name=CatCore             file_path=test.md,            size_bytes=0,            last_modified=2024-11-19 17:12:39
+2024-12-10 12:15:12,016 - INFO - Record created successfully for the wiki.
+2024-12-10 12:15:12,017 - INFO - Inserting record:             project_name=CatCore             file_path=Testing-with-revision-message.md,            size_bytes=4027,            last_modified=2024-12-07 16:31:24
+2024-12-10 12:15:12,781 - INFO - Record created successfully for the wiki.
+2024-12-10 12:15:12,783 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements\Testing-for-the-new-wiki.md,            size_bytes=4027,            last_modified=2024-12-07 16:29:38
+2024-12-10 12:15:13,526 - INFO - Record created successfully for the wiki.
+2024-12-10 12:15:18,262 - INFO - Inserting record:             project_name=TestProj             file_path=romyrom.md,            size_bytes=0,            last_modified=2024-12-05 15:25:17
+2024-12-10 12:15:18,985 - INFO - Record created successfully for the wiki.
+2024-12-10 12:19:32,333 - INFO - Logging configuration initialized in db.py.
+2024-12-10 12:19:49,742 - INFO - Logging configuration initialized in db.py.
+2024-12-10 12:20:00,667 - INFO - Inserting record:             project_name=CatCore             file_path=fer.md,            size_bytes=0,            last_modified=2024-11-28 15:52:20
+2024-12-10 12:20:05,568 - INFO - Record created successfully for the wiki.
+2024-12-10 12:20:05,568 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements.md,            size_bytes=4027,            last_modified=2024-11-18 16:09:23
+2024-12-10 12:20:06,404 - INFO - Record created successfully for the wiki.
+2024-12-10 12:20:06,405 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements@migration-%2D-approach.md,            size_bytes=73,            last_modified=2024-11-18 16:24:03
+2024-12-10 12:20:07,293 - INFO - Record created successfully for the wiki.
+2024-12-10 12:20:07,293 - INFO - Inserting record:             project_name=CatCore             file_path=romy.md,            size_bytes=0,            last_modified=2024-11-19 13:32:11
+2024-12-10 12:20:08,121 - INFO - Record created successfully for the wiki.
+2024-12-10 12:20:08,121 - INFO - Inserting record:             project_name=CatCore             file_path=test.md,            size_bytes=0,            last_modified=2024-11-19 17:12:39
+2024-12-10 12:20:09,061 - INFO - Record created successfully for the wiki.
+2024-12-10 12:20:09,070 - INFO - Inserting record:             project_name=CatCore             file_path=Testing-with-revision-message.md,            size_bytes=4027,            last_modified=2024-12-07 16:31:24
+2024-12-10 12:20:09,896 - INFO - Record created successfully for the wiki.
+2024-12-10 12:20:09,896 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements\Testing-for-the-new-wiki.md,            size_bytes=4027,            last_modified=2024-12-07 16:29:38
+2024-12-10 12:20:10,781 - INFO - Record created successfully for the wiki.
+2024-12-10 12:20:16,181 - INFO - Inserting record:             project_name=TestProj             file_path=romyrom.md,            size_bytes=0,            last_modified=2024-12-05 15:25:17
+2024-12-10 12:20:17,067 - INFO - Record created successfully for the wiki.
+2024-12-10 12:22:42,599 - INFO - Logging configuration initialized in db.py.
+2024-12-10 12:22:54,478 - INFO - Inserting record:             project_name=CatCore             file_path=fer.md,            size_bytes=0,            last_modified=2024-11-28 15:52:20
+2024-12-10 12:22:59,673 - INFO - Record created successfully for the wiki.
+2024-12-10 12:22:59,674 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements.md,            size_bytes=4027,            last_modified=2024-11-18 16:09:23
+2024-12-10 12:23:00,472 - INFO - Record created successfully for the wiki.
+2024-12-10 12:23:00,473 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements@migration-%2D-approach.md,            size_bytes=73,            last_modified=2024-11-18 16:24:03
+2024-12-10 12:23:01,384 - INFO - Record created successfully for the wiki.
+2024-12-10 12:23:01,385 - INFO - Inserting record:             project_name=CatCore             file_path=romy.md,            size_bytes=0,            last_modified=2024-11-19 13:32:11
+2024-12-10 12:23:02,409 - INFO - Record created successfully for the wiki.
+2024-12-10 12:23:02,411 - INFO - Inserting record:             project_name=CatCore             file_path=test.md,            size_bytes=0,            last_modified=2024-11-19 17:12:39
+2024-12-10 12:23:03,369 - INFO - Record created successfully for the wiki.
+2024-12-10 12:23:03,375 - INFO - Inserting record:             project_name=CatCore             file_path=Testing-with-revision-message.md,            size_bytes=4027,            last_modified=2024-12-07 16:31:24
+2024-12-10 12:23:04,175 - INFO - Record created successfully for the wiki.
+2024-12-10 12:23:04,175 - INFO - Inserting record:             project_name=CatCore             file_path=Requirements\Testing-for-the-new-wiki.md,            size_bytes=4027,            last_modified=2024-12-07 16:29:38
+2024-12-10 12:23:04,975 - INFO - Record created successfully for the wiki.
+2024-12-10 12:23:09,644 - INFO - Inserting record:             project_name=TestProj             file_path=romyrom.md,            size_bytes=0,            last_modified=2024-12-05 15:25:17
+2024-12-10 12:23:10,392 - INFO - Record created successfully for the wiki.
