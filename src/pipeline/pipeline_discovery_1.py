@@ -21,7 +21,7 @@ from src.pipeline.release_pipeline_db import db_post_release_pipeline
 
 # Setup logging
 id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file = f'src\pipeline\logs_pipelines_{id}'
+log_file = f'src\pipeline\logs\logs_pipelines_{id}'
 
 # Clear the log file before starting a new run
 with open(log_file, 'w'):
@@ -394,7 +394,7 @@ if __name__ == "__main__":
     pipeline_data = []
     releases_data=[]
     
-    folder_path="output_folder"
+    folder_path=f"src\pipeline\output_folder"
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 

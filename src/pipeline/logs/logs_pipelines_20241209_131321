@@ -1,0 +1,35 @@
+2024-12-09 13:13:21,342 - INFO - --- Demo_catcore ---
+2024-12-09 13:13:21,946 - INFO - No pipeline found in this project - Demo_catcore
+2024-12-09 13:13:22,552 - INFO - No release found in the project - Demo_catcore
+2024-12-09 13:13:22,565 - INFO - --- qaserver ---
+2024-12-09 13:13:23,115 - INFO - Total Build Pipeline Count - 2
+2024-12-09 13:13:23,115 - INFO - Processing the pipeline Id 16
+2024-12-09 13:13:25,425 - INFO - Error downloading YAML file: 404 - {"$id":"1","innerException":null,"message":"TF401174: The item 'azure-pipelines.yml' could not be found in the repository 'qaserver' at the version specified by '<Branch:  >' (resolved to commit '547bf9e7dc5650bf16c2e779db09992d7139c067')","typeName":"Microsoft.TeamFoundation.Git.Server.GitItemNotFoundException, Microsoft.TeamFoundation.Git.Server","typeKey":"GitItemNotFoundException","errorCode":0,"eventId":3000}
+2024-12-09 13:13:26,033 - INFO - Processing the pipeline Id 17
+2024-12-09 13:13:29,633 - INFO - Processing the release Id 1
+2024-12-09 13:13:31,492 - INFO - --- CatCore ---
+2024-12-09 13:13:33,581 - INFO - Total Build Pipeline Count - 974
+2024-12-09 13:13:33,581 - INFO - Processing the pipeline Id 3
+2024-12-09 13:13:35,359 - INFO - Processing the pipeline Id 4
+2024-12-09 13:13:38,336 - INFO - Processing the pipeline Id 5
+2024-12-09 13:13:40,576 - INFO - Error downloading YAML file: 404 - {"$id":"1","innerException":null,"message":"TF401174: The item 'azure-pipelines-1.yml' could not be found in the repository 'tests' at the version specified by '<Branch:  >' (resolved to commit '5b7ae6d53299fd45a566a78f44b29b3b461a4b74')","typeName":"Microsoft.TeamFoundation.Git.Server.GitItemNotFoundException, Microsoft.TeamFoundation.Git.Server","typeKey":"GitItemNotFoundException","errorCode":0,"eventId":3000}
+2024-12-09 13:13:41,934 - INFO - Processing the pipeline Id 8
+2024-12-09 13:13:45,635 - INFO - Processing the pipeline Id 11
+2024-12-09 13:13:47,450 - INFO - Processing the pipeline Id 12
+2024-12-09 13:13:49,384 - INFO - Processing the pipeline Id 13
+2024-12-09 13:13:51,137 - INFO - Processing the pipeline Id 14
+2024-12-09 13:13:54,834 - INFO - Processing the pipeline Id 15
+2024-12-09 13:13:57,885 - INFO - Processing the pipeline Id 18
+2024-12-09 13:13:59,576 - INFO - Processing the pipeline Id 19
+2024-12-09 13:14:02,185 - INFO - Processing the pipeline Id 20
+2024-12-09 13:14:05,156 - INFO - Processing the pipeline Id 21
+2024-12-09 13:14:08,233 - INFO - Processing the pipeline Id 22
+2024-12-09 13:14:11,046 - INFO - Processing the pipeline Id 23
+2024-12-09 13:14:13,960 - INFO - Processing the pipeline Id 24
+2024-12-09 13:14:16,952 - INFO - Processing the pipeline Id 25
+2024-12-09 13:14:19,900 - INFO - Processing the pipeline Id 26
+2024-12-09 13:14:22,751 - INFO - Processing the pipeline Id 27
+2024-12-09 13:14:25,496 - INFO - Processing the pipeline Id 28
+2024-12-09 13:14:28,426 - INFO - Processing the pipeline Id 29
+2024-12-09 13:14:31,276 - INFO - Processing the pipeline Id 30
+2024-12-09 13:14:34,348 - INFO - Processing the pipeline Id 31
