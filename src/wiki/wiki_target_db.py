@@ -12,7 +12,7 @@ import pandas as pd
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.dbDetails.db import SessionLocal, logger
-from src.models.wiki_model import  WikiDetails
+from src.models.wiki_target_model import  WikiDetails
 
 
 def db_post_wiki(data):

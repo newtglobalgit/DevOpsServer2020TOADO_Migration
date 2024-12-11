@@ -3,7 +3,7 @@ from sqlalchemy.sql import func
 from src.dbDetails.db import Base
 
 class WikiDetails(Base):
-    __tablename__ = 'db_devops_discovery_wiki_reports'  # Match the SQL table name
+    __tablename__ = 'db_ado_discovery_wiki_reports'  # Match the SQL table name
     __table_args__ = {'schema': 'devops_to_ados'} 
     
     wiki_id = Column(Integer, primary_key=True, index=True)

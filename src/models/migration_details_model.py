@@ -19,7 +19,7 @@ class MigrationDetails(Base):
 
     def to_dict(self):
         return {
-           "devops_ado_migration_id": self.project_migration_id,
+           "project_migration_id": self.project_migration_id,
            "source_server_url" : self.source_server_url,
             "source_project_name" : self.source_project_name,
             "source_pat" :self.source_pat,
