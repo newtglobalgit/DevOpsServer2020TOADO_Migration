@@ -1,0 +1,1 @@
+http://172.191.4.85/DefaultCollection/_odata/v4.0-preview/Projects?$apply=aggregate($count as Count)

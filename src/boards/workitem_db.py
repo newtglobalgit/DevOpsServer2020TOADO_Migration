@@ -14,7 +14,7 @@ from src.dbDetails.db import SessionLocal, logger
 from src.models.boards_work_item_model import  BoardsWorkItemDetails
 
 
-def db_post_workitem(data):
+def db_post_workitem(data,clean_flag):
     db = None  
     try:
         # Validate input
@@ -33,6 +33,12 @@ def db_post_workitem(data):
             f"Inserting record: project_name={project_name}, collection_name={collection_name}, "
             f"workitem_type={workitem_type}, backlog={backlog}, tag={tag}, total_count={total_count}"
         )
+
+         # Clean the table if the flag is 'yes'
+        if clean_flag.lower() == 'yes':
+            print(f"Cleaning the table db_discovery_boards_workitem_details before insertion.")
+            db.execute(f"DELETE FROM db_discovery_boards_workitem_details ")
+            db.commit()
 
         # Create a new record
         new_record = BoardsWorkItemDetails(
