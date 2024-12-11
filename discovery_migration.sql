@@ -34,7 +34,8 @@ DROP TABLE IF EXISTS db_devops_discovery_boards_workitem_details	CASCADE;  -- so
 DROP TABLE IF EXISTS db_ados_discovery_boards_workitem_details	CASCADE;    -- target
 
 DROP TABLE IF EXISTS db_devops_discovery_release_details	CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_pipelines_details CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_pipelines_details CASCADE; -- source
+DROP TABLE IF EXISTS db_ados_discovery_pipelines_details CASCADE;  -- target
 DROP TABLE IF EXISTS db_devops_discovery_wiki_reports CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
@@ -751,7 +752,7 @@ CREATE TABLE db_devops_discovery_pipelines_details(
     phases TEXT,                     
     execution_type VARCHAR(50),      
     max_concurrency INTEGER,
-    continue_on_error BOOLEAN,       
+    continue_on_error TEXT,       
     builds INTEGER,                  
     artifacts TEXT                   
 );
@@ -811,4 +812,64 @@ CREATE TABLE db_devops_ado_migration_details(
 	);
 
 
- 
+ CREATE TABLE db_ados_discovery_pipelines_details( 
+    discovery_pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    project_name VARCHAR(100),
+    collection_name VARCHAR(100),
+    pipeline_id INTEGER,
+    pipeline_name VARCHAR(50),
+    last_updated_date TIMESTAMPTZ,
+    file_name VARCHAR(100),
+    variables INTEGER,
+    variable_groups VARCHAR(200), 
+    repository_type VARCHAR(100),
+    repository_name VARCHAR(100),
+    repository_branch VARCHAR(100),    
+    classic_pipeline TEXT,
+    agents VARCHAR(100),
+    phases TEXT,                     
+    execution_type VARCHAR(50),      
+    max_concurrency INTEGER,
+    continue_on_error TEXT,       
+    builds INTEGER,                  
+    artifacts TEXT                   
+);
+
+
+CREATE TABLE devops_to_ados.db_pipeline_mapping (
+    mapping_pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    source_project_name VARCHAR(255) NOT NULL,
+    source_pipeline_name VARCHAR(255) NOT NULL,
+	source_pipeline_id INTEGER NOT NULL,
+    source_file_name VARCHAR(255) NOT NULL,
+    source_repository_name VARCHAR(255) NOT NULL,
+    source_repository_branch VARCHAR(255) NOT NULL,
+    target_project_name VARCHAR(255) NOT NULL,
+    target_pipeline_name VARCHAR(255) NOT NULL,
+    is_classic VARCHAR(255) NOT NULL,
+    migration_required VARCHAR(255) NOT NULL,
+    status VARCHAR(255) NOT NULL
+);
+
+ CREATE TABLE devops_to_ados.db_ados_discovery_pipelines_details( 
+    discovery_pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    project_name VARCHAR(100),
+    collection_name VARCHAR(100),
+    pipeline_id INTEGER,
+    pipeline_name VARCHAR(50),
+    last_updated_date TIMESTAMPTZ,
+    file_name VARCHAR(100),
+    variables INTEGER,
+    variable_groups VARCHAR(200), 
+    repository_type VARCHAR(100),
+    repository_name VARCHAR(100),
+    repository_branch VARCHAR(100),    
+    classic_pipeline TEXT,
+    agents VARCHAR(100),
+    phases TEXT,                     
+    execution_type VARCHAR(50),      
+    max_concurrency INTEGER,
+    continue_on_error TEXT,       
+    builds INTEGER,                  
+    artifacts TEXT                   
+);

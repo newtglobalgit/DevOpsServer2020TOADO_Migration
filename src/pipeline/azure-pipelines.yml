@@ -1,0 +1,94 @@
+# Azure DevOps Pipeline YAML to build CatCore solution
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: default
+
+stages:
+  - stage: Build
+    displayName: "Build CatCore"
+    jobs:
+
+      # Job to build CatCore.Shared project
+      - job: catcore_shared
+        displayName: "CatCore.Shared"
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: '7.0.x'
+              installationPath: $(Agent.ToolsDirectory)/dotnet
+
+          - checkout: self  # Checkout the repository
+
+          - script: dotnet build CatCore.Shared --configuration Release
+            displayName: "Build CatCore.Shared"
+
+      # Job to build CatCore project, depends on catcore_shared
+      - job: catcore
+        displayName: "CatCore"
+        dependsOn: catcore_shared
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: '7.0.x'
+              installationPath: $(Agent.ToolsDirectory)/dotnet
+
+          - checkout: self
+
+          # Authenticate with GitHub Packages (add your GitHub credentials in Azure DevOps pipeline secrets)
+          - script: dotnet nuget update source "ErisApps GH Packages" --username $(Build.Repository.Owner) --password $(GitHub.Token) --store-password-in-clear-text
+            displayName: "Authenticate with GitHub Package Registry"
+
+          # Remove the ".example" suffix from Constants implementation
+          - script: find $(Build.SourcesDirectory) -type f -name Constants.user.cs.example -execdir mv Constants.user.cs.example Constants.user.cs \;
+            displayName: "Rename Constants.user.cs.example to Constants.user.cs"
+
+          # Replace placeholders in Constants.user.cs with environment variables
+          - script: |
+              find $(Build.SourcesDirectory) -type f -name Constants.user.cs -exec sed -i "s|{{ CATCORE_AUTH_SERVER_URI }}|$(CATCORE_AUTH_SERVER_URI)|" {} \;
+              find $(Build.SourcesDirectory) -type f -name Constants.user.cs -exec sed -i "s|{{ TWITCH_CLIENT_ID }}|$(TWITCH_CLIENT_ID)|" {} \;
+            displayName: "Replace Placeholders in Constants.user.cs"
+
+          - script: dotnet build CatCore --configuration Release
+            displayName: "Build CatCore"
+
+          # Echo output variables for artifact details
+          - script: |
+              echo "##vso[task.setvariable variable=BUILDTEXT]Filename=$(Build.BuildId)"
+              echo "##vso[task.setvariable variable=ASSEMBLYNAME]AssemblyName=CatCore"
+            displayName: "Set Build Output Variables"
+
+          # Upload artifact
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(Build.ArtifactStagingDirectory)'
+              artifactName: 'CatCoreBuild'
+              publishLocation: 'Container'
+
+      # Job to build CatCore.Azure, depends on catcore_shared
+      - job: catcore_azure
+        displayName: "CatCore.Azure"
+        dependsOn: catcore_shared
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: '7.0.x'
+              installationPath: $(Agent.ToolsDirectory)/dotnet
+
+          - checkout: self
+
+          - script: dotnet build CatCore.Azure --configuration Release
+            displayName: "Build CatCore.Azure"
