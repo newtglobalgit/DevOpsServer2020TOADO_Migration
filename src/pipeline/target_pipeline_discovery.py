@@ -15,7 +15,7 @@ from openpyxl.styles import Font
 
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from src.pipeline.build_pipeline_db import db_post_build_pipeline , db_get_build_pipeline
+from src.pipeline.build_pipeline_target_db import db_post_build_pipeline_target , db_get_build_pipeline_target
 from src.pipeline.release_pipeline_db import db_post_release_pipeline
 
 
@@ -133,7 +133,7 @@ def get_pipeline_details(project_):
                             if response.status_code == 200:
                                 artifacts_data = response.json()
                                 artifact_details = next((artifact['name'] for artifact in artifacts_data.get('value','')), None)        
-
+                    path = path.replace('/','')
                     pipeline_info = [project_,
                         pipeline['id'],
                         pipeline['name'],
@@ -174,7 +174,7 @@ def get_pipeline_details(project_):
                         "builds":build_count,
                         "artifacts":artifact_details
                     }
-                    db_post_build_pipeline(data)
+                    db_post_build_pipeline_target(data)
                     if count%10 == 0:
                         wb.save(excel_name)
                 # df = pd.DataFrame(pipeline_data)
@@ -387,41 +387,41 @@ def format_excel(ws):
         # parallel_column_idx = df.columns.get_loc('Parallel Execution')
         # worksheet.set_column(artifact_column_idx, artifact_column_idx, 80, None, {'text_wrap': True})
         # worksheet.set_column(parallel_column_idx, parallel_column_idx, 50, None, {'text_wrap': True})
-def create_mapping_sheet():
-    results=db_get_build_pipeline()
-    folder = f"src\pipeline"
-    headers =["Source_Project","Source_Pipeline_Name","File_Name","Source_Repo_Name", "Source_Repo_Name","Target_Project", "Target_Pipeline_Name","Is_Classic", "Migration_Required","Status"]
-    wb = openpyxl.Workbook()
-    ws = wb.active
-    # id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
-    excel_name =f"{folder}\mapping_migration.xlsx"
-    ws.append(headers)
-    for result in results:
-        data =[
-              result.project_name,
-              result.pipeline_name,
-              result.file_name,
-              result.repository_name,
-              result.repository_branch,
-              result.project_name,
-              result.pipeline_name,
-              result.classic_pipeline,
-              "yes",
-              "Discovery Completed"
-        ]
-        ws.append(data)
-    wb.save(excel_name)
+# def create_mapping_sheet():
+#     results=db_get_build_pipeline_target()
+#     folder = f"src\pipeline"
+#     headers =["Source_Project","Source_Pipeline_Name","File_Name","Source_Repo_Name", "Source_Repo_Name","Target_Project", "Target_Pipeline_Name","Is_Classic", "Migration_Required","Status"]
+#     wb = openpyxl.Workbook()
+#     ws = wb.active
+#     # id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
+#     excel_name =f"{folder}\mapping_migration.xlsx"
+#     ws.append(headers)
+#     for result in results:
+#         data =[
+#               result.project_name,
+#               result.pipeline_name,
+#               result.file_name,
+#               result.repository_name,
+#               result.repository_branch,
+#               result.project_name,
+#               result.pipeline_name,
+#               result.classic_pipeline,
+#               "yes",
+#               "Discovery Completed"
+#         ]
+#         ws.append(data)
+#     wb.save(excel_name)
 
 if __name__ == "__main__":
     pipeline_data = []
     releases_data=[]
     
-    folder_path=f"src\pipeline\output_folder"
+    folder_path = os.path.join("src", "pipeline", "output_folder")
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
     # Read the Excel file
-    config_df = pd.read_excel(f'src\pipeline\input_discovery.xlsx')
+    config_df = pd.read_excel(f'src\pipeline\input_discovery_target.xlsx')
     wb = openpyxl.Workbook()
     ws = wb.active
     headers =['Project','Pipeline ID', 'Name', 'Last Updated Date', 'FileName', 'Variables', 'Variable Groups', 'Repository Type','Repository Name' ,'Repository Branch', 'Classic Pipeline', 'Agents', 'Phases', 'Execution Type', 'Max Concurrency', 'ContinueOn Error', 'Builds', 'Artifacts']
@@ -434,18 +434,18 @@ if __name__ == "__main__":
         project_name = row['Project']
         username = row['Username']
         pat = row['Pat']
-        
+       
         log_print(f"--- {project_name} ---")
-        excel_name =f"{folder_path}\source_discovery_build.xlsx"
-        wb.save(excel_name)
+        id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
+        excel_name = os.path.join(folder_path, f"target_discovery_build.xlsx")
         get_pipeline_details(project_name)
     wb.close()
     # for index, row in config_df.iterrows():
-    #     wb = openpyxl.Workbook()
-    #     ws = wb.active
-    #     id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
-    #     excel_name =f"{folder_path}\discovery_release_{project_name}_{id}.xlsx"
-    #     get_releases(project_name)
-    #     wb.close()
+        # wb = openpyxl.Workbook()
+        # ws = wb.active
+        # id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
+        # excel_name =f"{folder_path}\target_discovery_release_{project_name}_{id}.xlsx"
+        # get_releases(project_name)
+        # wb.close()
 
-    create_mapping_sheet()
+    # create_mapping_sheet()

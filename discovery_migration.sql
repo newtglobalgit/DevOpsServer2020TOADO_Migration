@@ -33,48 +33,16 @@ DROP TABLE IF EXISTS db_devops_discovery_overview_dashboard_details CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_boards_workitem_details	CASCADE;  -- source table
 DROP TABLE IF EXISTS db_ados_discovery_boards_workitem_details	CASCADE;    -- target
 
-DROP TABLE IF EXISTS db_devops_discovery_user_details CASCADE;  --source table
-DROP TABLE IF EXISTS db_ados_discovery_user_details CASCADE;  --target table
-
-
 DROP TABLE IF EXISTS db_devops_discovery_release_details	CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_pipelines_details CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_pipelines_details CASCADE; -- source
+DROP TABLE IF EXISTS db_ados_discovery_pipelines_details CASCADE;  -- target
 DROP TABLE IF EXISTS db_devops_discovery_wiki_reports CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
 
 -- mapping trable for migration
-DROP TABLE IF EXISTS db_devops_ado_project_migration_details CASCADE; -- for migration
-DROP TABLE IF EXISTS db_devops_ado_repo_migration_details CASCADE; -- for migration
-
--- Table details for target --
-
-
--- Drop tables for target for GIT
-DROP TABLE IF EXISTS db_ado_git_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_root CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_repo CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_branches CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_boards CASCADE;
-DROP TABLE IF EXISTS db_ado_git_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_ado_git_repo_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_ado_git_repo_commits CASCADE;
-DROP TABLE IF EXISTS db_ado_git_repo_tags CASCADE;
-
--- Drop Tables for discovery for TFVC
-
-DROP TABLE IF EXISTS db_ado_tfs_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_root CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_branches CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_boards CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_commits CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_label CASCADE;
-DROP TABLE IF EXISTS db_ado_tfs_project_shelveset  CASCADE;
+DROP TABLE IF EXISTS db_devops_ado_migration_details	CASCADE; -- for migration
 
 
 
@@ -369,7 +337,33 @@ CREATE TABLE db_devops_discovery_tfs_project_shelveset (
   FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_tfs_project_projectdetails(project_id) ON DELETE CASCADE  
 );
 
+-- Table details for target --
 
+
+-- Drop tables for target for GIT
+DROP TABLE IF EXISTS db_ado_git_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_root CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_repo CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_branches CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_boards CASCADE;
+DROP TABLE IF EXISTS db_ado_git_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_git_repo_tags CASCADE;
+
+-- Drop Tables for discovery for TFVC
+
+DROP TABLE IF EXISTS db_ado_tfs_project_projectdetails CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_root CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_branches CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_workitems CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_boards CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_pipelines CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_label CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_project_shelveset  CASCADE;
 
 
 
@@ -758,27 +752,18 @@ CREATE TABLE db_devops_discovery_pipelines_details(
     phases TEXT,                     
     execution_type VARCHAR(50),      
     max_concurrency INTEGER,
-    continue_on_error BOOLEAN,       
+    continue_on_error TEXT,       
     builds INTEGER,                  
     artifacts TEXT                   
 );
 
 
-  CREATE TABLE devops_to_ados.db_devops_discovery_wiki_reports (
-    wiki_id SERIAL PRIMARY KEY,       -- Auto-incrementing primary key
-	  project_name VARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,  -- File path column
-    size_bytes BIGINT NOT NULL,       -- File size column
-    last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
-);
-
- CREATE TABLE devops_to_ados.db_ado_discovery_wiki_reports (
-    wiki_id SERIAL PRIMARY KEY,       -- Auto-incrementing primary key
-	  project_name VARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,  -- File path column
-    size_bytes BIGINT NOT NULL,       -- File size column
-    last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
-);
+ CREATE TABLE db_devops_discovery_wiki_reports (
+ 	discovery_wiki_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	file_path varchar(100),
+	file_size Integer,
+	last_modified_date	TIMESTAMPTZ
+ );
  
  CREATE TABLE db_devops_discovery_pull_requests(
 	discovery_pull_requests_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -816,7 +801,7 @@ CREATE TABLE db_devops_discovery_project_configuration_Areas(
 	areas_identifier varchar(200)
 	);
 
-CREATE TABLE db_devops_ado_project_migration_details(
+CREATE TABLE db_devops_ado_migration_details(
 	devops_ado_migration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
 	source_server_url varchar(200),
 	source_project_name varchar(200),
@@ -827,25 +812,64 @@ CREATE TABLE db_devops_ado_project_migration_details(
 	);
 
 
-
-CREATE TABLE db_devops_discovery_user_details (
-    collection_name varchar(200) NOT NULL,
-    project_name varchar(200) NOT NULL,
-    group_name varchar(100) ,
-    group_type varchar(50) ,
-    user_name varchar(200),
-    user_email varchar(100),
-    user_type varchar(50)
+ CREATE TABLE db_ados_discovery_pipelines_details( 
+    discovery_pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    project_name VARCHAR(100),
+    collection_name VARCHAR(100),
+    pipeline_id INTEGER,
+    pipeline_name VARCHAR(50),
+    last_updated_date TIMESTAMPTZ,
+    file_name VARCHAR(100),
+    variables INTEGER,
+    variable_groups VARCHAR(200), 
+    repository_type VARCHAR(100),
+    repository_name VARCHAR(100),
+    repository_branch VARCHAR(100),    
+    classic_pipeline TEXT,
+    agents VARCHAR(100),
+    phases TEXT,                     
+    execution_type VARCHAR(50),      
+    max_concurrency INTEGER,
+    continue_on_error TEXT,       
+    builds INTEGER,                  
+    artifacts TEXT                   
 );
- 
-CREATE TABLE db_ados_discovery_user_details (
-    collection_name varchar(200) NOT NULL,
-    project_name varchar(200) NOT NULL,
-    group_name varchar(100) ,
-    group_type varchar(50) ,
-    user_name varchar(200),
-    user_email varchar(100),
-    user_type varchar(50)
+
+
+CREATE TABLE devops_to_ados.db_pipeline_mapping (
+    mapping_pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    source_project_name VARCHAR(255) NOT NULL,
+    source_pipeline_name VARCHAR(255) NOT NULL,
+	source_pipeline_id INTEGER NOT NULL,
+    source_file_name VARCHAR(255) NOT NULL,
+    source_repository_name VARCHAR(255) NOT NULL,
+    source_repository_branch VARCHAR(255) NOT NULL,
+    target_project_name VARCHAR(255) NOT NULL,
+    target_pipeline_name VARCHAR(255) NOT NULL,
+    is_classic VARCHAR(255) NOT NULL,
+    migration_required VARCHAR(255) NOT NULL,
+    status VARCHAR(255) NOT NULL
 );
 
- 
+ CREATE TABLE devops_to_ados.db_ados_discovery_pipelines_details( 
+    discovery_pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    project_name VARCHAR(100),
+    collection_name VARCHAR(100),
+    pipeline_id INTEGER,
+    pipeline_name VARCHAR(50),
+    last_updated_date TIMESTAMPTZ,
+    file_name VARCHAR(100),
+    variables INTEGER,
+    variable_groups VARCHAR(200), 
+    repository_type VARCHAR(100),
+    repository_name VARCHAR(100),
+    repository_branch VARCHAR(100),    
+    classic_pipeline TEXT,
+    agents VARCHAR(100),
+    phases TEXT,                     
+    execution_type VARCHAR(50),      
+    max_concurrency INTEGER,
+    continue_on_error TEXT,       
+    builds INTEGER,                  
+    artifacts TEXT                   
+);

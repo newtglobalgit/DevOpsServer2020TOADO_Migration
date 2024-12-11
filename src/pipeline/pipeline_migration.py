@@ -7,77 +7,85 @@ import openpyxl
 import os
 import subprocess
 import pandas as pd
+import sys
 
+
+#  Add the 'src' directory to the system path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.pipeline.build_pipeline_mapping_db import  db_post_build_pipeline_mapping
 def fetch_discovered_pipelines():
     file_path =f'src\pipeline\mapping_migration.xlsx'
     df = pd.read_excel(file_path)
     for index, row in df.iterrows():
-        project_ = row['Project']
-        name = row['FileName']
-        is_classic = row['Classic Pipeline']
-        pipeline_id_discovery=row['Pipeline ID']
-        pipeline_name=row['Name']
-        yaml_file_name = row['FileName']
-        source_repo_name = row["Repository Name"]
-        os.chdir(root)
-        if name != 'NA' and (is_classic == 'No (Build)' or is_classic == 'No (Release)' ):
-            result =clone_and_push_yml_with_pat( pipeline_id_discovery, pipeline_name, yaml_file_name, project_, source_repo_name)
-            print("Current Directory:", os.getcwd())
-            if result == "Exist":
-                cloned =source_repo_name
-                repo_id = get_repo_id_from_target( source_repo_name,project_)
-            else: 
-                cloned=target_repo
-                repo_id = get_repo_id_from_target(target_repo,project_ )
-            if repo_id:
-                create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, row['Variables'], project_, pipeline_id_discovery)
-                os.chdir(root)
-        if is_classic == 'Yes':
-            url = f"{source_instance}/{project_}/_apis/build/definitions/{pipeline_id_discovery}?api-version=6.1-preview"
-            print(url)
-            auth = HTTPBasicAuth('', source_pat)
-            response = requests.get(url, auth=auth)
-            def_file_name = f"src\pipeline\pipeline_definition.json"
-            if response.status_code == 200:
-                with open(def_file_name, 'w') as f:
-                    json.dump(response.json(), f, indent=4)
-                print("Pipeline definition has been saved to 'pipeline_definition.json'")
-
-                # Load the original release definition JSON file
-                with open(def_file_name, 'r') as f:
-                    pipeline_data = json.load(f)
-
-                populate_template(pipeline_data, template, project_)
-                temp_file_name=f"src\pipeline\pipeline_template.json"
-                # Write the populated template to a new JSON file
-                with open(temp_file_name, 'w') as outfile:
-                    json.dump(template, outfile, indent=4)
-
-                print("The template has been populated and saved to 'pipeline_template.json'.")
-
-                # Load the release payload from template.json
-                with open(temp_file_name) as f:
-                    pipeline_payload = json.load(f)
-
-                url=f"{target_instance}/{project_}/_apis/build/definitions?api-version=7.2-preview.7"
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {target_pat}'
-                }
-                
-                response = requests.post(url, headers=headers, data=json.dumps(pipeline_payload))
-                
+        if row["Migration_Required"] == 'yes':
+            row["Status"] =  "Migration InProgress"
+            db_post_build_pipeline_mapping(row)
+            project_ = row['Source_Project']
+            name = row['File_Name']
+            is_classic = row['Is_Classic']
+            pipeline_id_discovery=row['Source_Pipeline_Id']
+            pipeline_name=row['Source_Pipeline_Name']
+            yaml_file_name = row['File_Name']
+            source_repo_name = row["Source_Repo_Name"]
+            os.chdir(root)
+            if name != 'NA' and (is_classic == 'No (Build)' or is_classic == 'No (Release)' ):
+                result =clone_and_push_yml_with_pat( pipeline_id_discovery, pipeline_name, yaml_file_name, project_, source_repo_name)
+                print("Current Directory:", os.getcwd())
+                if result == "Exist":
+                    cloned =source_repo_name
+                    repo_id = get_repo_id_from_target( source_repo_name,project_)
+                # else: 
+                #     cloned=target_repo
+                #     repo_id = get_repo_id_from_target(target_repo,project_ )
+                    if repo_id:
+                        create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, project_, pipeline_id_discovery)
+                        os.chdir(root)
+            if is_classic == 'Yes':
+                url = f"{source_instance}/{project_}/_apis/build/definitions/{pipeline_id_discovery}?api-version=6.1-preview"
+                print(url)
+                auth = HTTPBasicAuth('', source_pat)
+                response = requests.get(url, auth=auth)
+                def_file_name = f"src\pipeline\pipeline_definition.json"
                 if response.status_code == 200:
-                    release = response.json()
-                    print(f"Classic Pipeline created successfully! pipeline ID: {release['id']}")
-                    print(f"Classic Pipeline URL: {release['_links']['self']['href']}")
+                    with open(def_file_name, 'w') as f:
+                        json.dump(response.json(), f, indent=4)
+                    print("Pipeline definition has been saved to 'pipeline_definition.json'")
+
+                    # Load the original release definition JSON file
+                    with open(def_file_name, 'r') as f:
+                        pipeline_data = json.load(f)
+
+                    populate_template(pipeline_data, template, project_)
+                    temp_file_name=f"src\pipeline\pipeline_template.json"
+                    # Write the populated template to a new JSON file
+                    with open(temp_file_name, 'w') as outfile:
+                        json.dump(template, outfile, indent=4)
+
+                    print("The template has been populated and saved to 'pipeline_template.json'.")
+
+                    # Load the release payload from template.json
+                    with open(temp_file_name) as f:
+                        pipeline_payload = json.load(f)
+
+                    url=f"{target_instance}/{project_}/_apis/build/definitions?api-version=7.2-preview.7"
+                    headers = {
+                        'Content-Type': 'application/json',
+                        'Authorization': f'Bearer {target_pat}'
+                    }
+                    
+                    response = requests.post(url, headers=headers, data=json.dumps(pipeline_payload))
+                    
+                    if response.status_code == 200:
+                        release = response.json()
+                        print(f"Classic Pipeline created successfully! pipeline ID: {release['id']}")
+                        print(f"Classic Pipeline URL: {release['_links']['self']['href']}")
+                    else:
+                        print(f"Failed to create release. Status code: {response.status_code}")
+                        print(response.text)
+    
                 else:
-                    print(f"Failed to create release. Status code: {response.status_code}")
+                    print(f"Failed to fetch pipeline definition. Status code: {response.status_code}")
                     print(response.text)
-   
-            else:
-                print(f"Failed to fetch pipeline definition. Status code: {response.status_code}")
-                print(response.text)
 
 # Fetch Pipeline YAML from the source
 def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name, project ):
@@ -102,7 +110,9 @@ def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name, pr
     )
     if yaml_response.status_code != 200:
         print(f"Error downloading YAML file: {yaml_response.status_code} - {yaml_response.text}")
-        return
+        print(f"Pipeline Cannot be migrated(Manual)")
+        return False,file_path,pipline_name , yaml_file_name
+
     # Save the YAML content to a file
     yaml_file_name = f"{root}\src\pipeline\{yaml_file_name}"
     with open(yaml_file_name, "w") as yaml_file:
@@ -137,7 +147,7 @@ def get_repo_id_from_target(repo_,organization_project):
     return None
 
 
-def create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name, variables, organization_project,pipeline_id):
+def create_pipeline_in_target( yaml_file_name, repo_id,pipeline_name,  organization_project,pipeline_id):
     # Endpoint to create a pipeline
     url = f"{target_instance}/{organization_project}/_apis/pipelines?api-version=7.0"
     # Extract file name from the YAML file path
@@ -299,8 +309,8 @@ def clone_and_push_yml_with_pat( pipeline_id , pipeline_name ,yaml_file_name, or
     else:
         os.chdir("..")
         print(f"YAML file '{yaml_file_name}' not found in the specified path.")
-        source_repo_name = target_repo
-        repo_dir = target_repo
+        source_repo_name = "temp"
+        repo_dir = "temp"
         repo_url = f"{target_instance}/{organization_project}/_apis/git/repositories/{source_repo_name}?api-version=6.0"
         headers = {
             "Authorization": f"Bearer {target_pat}",
@@ -315,16 +325,18 @@ def clone_and_push_yml_with_pat( pipeline_id , pipeline_name ,yaml_file_name, or
                 os.chdir(f"{current}\src\pipeline")
             os.system(f"git clone {repo_clone_url}")
         yaml_content, file_path,pipeline_name, yaml_file_name =fetch_pipeline_yaml(pipeline_id , pipeline_name , yaml_file_name, organization_project)
-        # Copy the .yml file to the repository directory
-        shutil.copy(yaml_file_name, repo_dir)
-        print(f"Successfully copied '{yaml_file_name}' to '{repo_dir}'.")
-        # Change to the repository directory
-        os.chdir(repo_dir)
-        # Add, commit, and push the .yml file to the repository
-        subprocess.run(["git", "add", "."], check=True)
-        subprocess.run(["git", "commit", "-m", "Add pipeline YAML file"], check=True)
-        subprocess.run(["git", "push"], check=True)
-        print(f"Added '{yaml_file_name}' to the repository and pushed changes.")
+        if yaml_content == False:
+            pass
+        # # Copy the .yml file to the repository directory
+        # shutil.copy(yaml_file_name, repo_dir)
+        # print(f"Successfully copied '{yaml_file_name}' to '{repo_dir}'.")
+        # # Change to the repository directory
+        # os.chdir(repo_dir)
+        # # Add, commit, and push the .yml file to the repository
+        # subprocess.run(["git", "add", "."], check=True)
+        # subprocess.run(["git", "commit", "-m", "Add pipeline YAML file"], check=True)
+        # subprocess.run(["git", "push"], check=True)
+        # print(f"Added '{yaml_file_name}' to the repository and pushed changes.")
         return "Not Exist"
     
 
