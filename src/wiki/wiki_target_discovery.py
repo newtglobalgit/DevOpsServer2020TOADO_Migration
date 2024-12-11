@@ -11,7 +11,8 @@ import sys
 
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from src.wiki.wiki_db import db_post_wiki
+from src.wiki.wiki_target_db import db_post_wiki
+from src.wiki.wiki_target_db import db_get_wiki
 
 
 def encode_url_component(component):
@@ -91,7 +92,7 @@ def handle_remove_readonly(func, path, excinfo):
 
 
 def main():
-    input_file = "wiki_discovery_input.xlsx"
+    input_file = "wiki_target_discovery_input.xlsx"
     
     username = input("Enter your username: ").strip()  
     password = input("Enter your Password: ").strip()  
@@ -112,8 +113,12 @@ def main():
             continue
         
         # Construct the URL for cloning
-        clone_url = f"{server_url}/{project_name}/_git/{wiki_path}"
-        auth_clone_url = clone_url.replace("://", f"://{username}:{encoded_password}@")
+        break_down = server_url.split('/')
+        clone_url = f"https://{break_down[-1]}@{break_down[-2]}/{break_down[-1]}/{project_name}/_git/{wiki_path}"
+        print(clone_url)
+        aut_url = f"{server_url}/{project_name}/_git/{wiki_path}"
+        auth_clone_url = aut_url.replace("://", f"://{username}:{encoded_password}@")
+        print("this is the auth",auth_clone_url)
         
         # Cloning and processing the wiki
         temp_dir = clone_wiki_repo(auth_clone_url)
@@ -134,6 +139,8 @@ def main():
                     # Call db_post_wiki to save the data in the database
                     try:
                         db_post_wiki(data)
+                        print("pppp",db_get_wiki())
+
                         print(f"Data successfully written to the database: {data}")
                     except Exception as e:
                         print(f"Error writing to database for file {file_path}: {e}")
