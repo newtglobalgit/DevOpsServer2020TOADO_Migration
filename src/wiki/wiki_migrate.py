@@ -4,9 +4,13 @@ import shutil
 import tempfile  # Import tempfile for creating temporary directories
 import pandas as pd  # Import pandas to read the Excel file
 import re  # Regular expression to match comments in markdown files
+from urllib.parse import quote
 
 # Define file path for the Excel file
 EXCEL_FILE = "wiki_migrate_input.xlsx"
+
+def encode_url_component(component):
+    return quote(component, safe='')
 
 # Function to read the Excel file and extract data
 def read_excel_data(file_path):
@@ -16,8 +20,8 @@ def read_excel_data(file_path):
         df = pd.read_excel(file_path)
 
         # Drop rows where any of the essential fields are null
-        df.dropna(subset=['Source URL', 'Target URL', 'Source Project Name', 'Target Project Name',
-                          'Source Username', 'Source Password', 'Target Username', 'Target Password'], inplace=True)
+        df.dropna(subset=['source_server_url', 'target_organization_url', 'source_project_name', 'target_project_name'
+                                          ], inplace=True)
         return df
     except Exception as e:
         print(f"Error reading Excel file: {e}")
@@ -37,6 +41,7 @@ def clone_on_prem_repo(on_prem_repo, source_username, source_password, clone_dir
     """Clone the on-prem repository using provided credentials."""
     print(f"Cloning on-premise wiki repository from {on_prem_repo}...")
     # Construct the repository URL with credentials for authentication
+    source_password
     auth_on_prem_repo = f"http://{source_username}:{source_password}@{on_prem_repo[7:]}/{wiki_source_project_name}/_git/{wiki_source_project_name}.wiki"
     print("testing", auth_on_prem_repo)
 
@@ -48,6 +53,7 @@ def set_cloud_repo(cloud_repo, target_username, target_password, clone_dir, wiki
     print(f"Setting cloud repository {cloud_repo} as the new origin...")
     # Construct the repository URL with credentials for authentication
     auth_cloud_repo = f"https://{target_username}:{target_password}@{cloud_repo[8:]}/{wiki_target_project_name}/_git/{wiki_target_project_name}.wiki"
+    print("this",auth_cloud_repo)
     run_command(["git", "remote", "set-url", "origin", auth_cloud_repo], cwd=clone_dir)
     print("Cloud repository URL set as origin.")
 
@@ -90,33 +96,42 @@ def main():
     try:
         # Read inputs from the Excel file
         df = read_excel_data(EXCEL_FILE)
+        source_username = input("Source Username: ").strip()
+        source_password = input("Source Password: ").strip()
+        target_username = input("Target Username: ").strip()
+        target_password = input("Target Password: ").strip()
 
         for index, row in df.iterrows():
             print(f"Processing migration for row {index + 1}...")
 
-            on_prem_repo = row['Source URL']
-            cloud_repo = row['Target URL']
-            wiki_source_project_name = row['Source Project Name']
-            wiki_target_project_name = row['Target Project Name']
-            source_username = row['Source Username']
-            source_password = row['Source Password']
-            target_username = row['Target Username']
-            target_password = row['Target Password']
+            try:
+                # Extract data for the current row
+                on_prem_repo = row['source_server_url']
+                cloud_repo = row['target_organization_url']
+                wiki_source_project_name = row['source_project_name']
+                wiki_target_project_name = row['target_project_name']
 
-            # Create a temporary directory
-            with tempfile.TemporaryDirectory() as clone_dir:
-                print(f"Using temporary directory: {clone_dir}")
+                # Encode the source password
+                encoded_source_password = encode_url_component(source_password)
 
-                # Perform migration steps
-                clone_on_prem_repo(on_prem_repo, source_username, source_password, clone_dir, wiki_source_project_name)
-                migrate_comments(clone_dir)  # Migrate comments from markdown files
-                set_cloud_repo(cloud_repo, target_username, target_password, clone_dir, wiki_target_project_name)
-                push_to_cloud_repo(clone_dir)
+                # Create a temporary directory for cloning
+                with tempfile.TemporaryDirectory() as clone_dir:
+                    print(f"Using temporary directory: {clone_dir}")
 
-            print(f"Migration for row {index + 1} completed successfully.\n")
+                    # Perform migration steps
+                    clone_on_prem_repo(on_prem_repo, source_username, encoded_source_password, clone_dir, wiki_source_project_name)
+                    migrate_comments(clone_dir)  # Migrate comments from markdown files
+                    set_cloud_repo(cloud_repo, target_username, target_password, clone_dir, wiki_target_project_name)
+                    push_to_cloud_repo(clone_dir)
+
+                print(f"Migration for row {index + 1} completed successfully.\n")
+
+            except Exception as row_error:
+                print(f"Error processing row {index + 1}: {row_error}")
+                print("Skipping to the next row...\n")
 
     except Exception as e:
-        print(f"Migration failed: {e}")
+        print(f"Migration process failed: {e}")
 
 if __name__ == "__main__":
     main()
