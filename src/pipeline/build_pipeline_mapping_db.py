@@ -17,7 +17,6 @@ from src.models.build_pipeline_mapping_model import  BuildPipelineMappingDetails
 def db_post_build_pipeline_mapping(data):
     db = None  
     try:
-        mapping_pipelines_id = data.get("mapping_pipelines_id",0)
         source_project_name = data.get("Source_Project","")
         source_pipeline_name = data.get("Source_Pipeline_Name","")
         source_pipeline_id = data.get("Source_Pipeline_Id",0)

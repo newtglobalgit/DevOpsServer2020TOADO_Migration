@@ -8,7 +8,7 @@ class BuildPipelineTargetDetails(Base):
     __tablename__ = 'db_ados_discovery_pipelines_details'  # Match the SQL table name
     __table_args__ = {'schema': 'devops_to_ados'} 
     
-    discovery_pipelines_id = Column(Integer, primary_key=True, index=True)
+    pipelines_id = Column(Integer, primary_key=True, index=True)
     project_name = Column(String(255),nullable=False, index=True)
     collection_name =Column(String(255),nullable=False, index=True)
     pipeline_id = Column(Integer,nullable=False, index=True)
@@ -33,7 +33,7 @@ class BuildPipelineTargetDetails(Base):
 
     def to_dict(self):
         return {
-           "discovery_build_pipeline_id": self.discovery_pipelines_id,
+           "discovery_build_pipeline_id": self.pipelines_id,
            "project_name" : self.project_name,
             "collection_name" : self.collection_name,
             "pipeline_id" :self.pipeline_id,

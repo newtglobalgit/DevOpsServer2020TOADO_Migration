@@ -15,6 +15,7 @@ from openpyxl.styles import Font
 
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.dbDetails.migration_details_db import db_get_migration_details
 from src.pipeline.build_pipeline_target_db import db_post_build_pipeline_target , db_get_build_pipeline_target
 from src.pipeline.release_pipeline_db import db_post_release_pipeline
 
@@ -427,13 +428,14 @@ if __name__ == "__main__":
     headers =['Project','Pipeline ID', 'Name', 'Last Updated Date', 'FileName', 'Variables', 'Variable Groups', 'Repository Type','Repository Name' ,'Repository Branch', 'Classic Pipeline', 'Agents', 'Phases', 'Execution Type', 'Max Concurrency', 'ContinueOn Error', 'Builds', 'Artifacts']
             # format_excel(ws)
     ws.append(headers)
+    results =db_get_migration_details()
     # Iterate over each row in the DataFrame
-    for index, row in config_df.iterrows():
+    for result in results:
         # Extract values from the current row
-        instance = row['Server_URL']
-        project_name = row['Project']
-        username = row['Username']
-        pat = row['Pat']
+        instance = result.target_organization_url
+        project_name = result.target_project_name
+        username = ""
+        pat = result.target_pat
        
         log_print(f"--- {project_name} ---")
         id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
