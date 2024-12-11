@@ -91,7 +91,7 @@ def handle_remove_readonly(func, path, excinfo):
 
 
 def main():
-    input_file = "wiki_discovery_input.xlsx"
+    input_file = "wiki_migrate_input.xlsx"
     
     username = input("Enter your username: ").strip()  
     password = input("Enter your Password: ").strip()  
@@ -103,8 +103,8 @@ def main():
     
     for row in range(2, ws_input.max_row + 1):
         # Read data from the Excel file
-        server_url = ws_input.cell(row=row, column=1).value.strip() if ws_input.cell(row=row, column=1).value else ''
-        project_name = ws_input.cell(row=row, column=2).value.strip() if ws_input.cell(row=row, column=2).value else ''
+        server_url = ws_input.cell(row=row, column=2).value.strip() if ws_input.cell(row=row, column=2).value else ''
+        project_name = ws_input.cell(row=row, column=3).value.strip() if ws_input.cell(row=row, column=3).value else ''
         wiki_path = f"{project_name}.wiki"
         
         if not server_url or not project_name or not wiki_path:
