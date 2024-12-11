@@ -5,10 +5,10 @@ from src.dbDetails.db import Base
 
 
 class MigrationDetails(Base):
-    __tablename__ = 'db_devops_ado_migration_details'  # Match the SQL table name
+    __tablename__ = 'db_devops_ado_project_migration_details'  # Match the SQL table name
     __table_args__ = {'schema': 'devops_to_ados'} 
     
-    devops_ado_migration_id = Column(Integer, primary_key=True, index=True)
+    project_migration_id = Column(Integer, primary_key=True, index=True)
     source_server_url = Column(String(255),nullable=False, index=True)
     source_project_name =Column(String(255),nullable=False, index=True)
     source_pat = Column(Integer,nullable=False, index=True)
@@ -19,7 +19,7 @@ class MigrationDetails(Base):
 
     def to_dict(self):
         return {
-           "devops_ado_migration_id": self.devops_ado_migration_id,
+           "project_migration_id": self.project_migration_id,
            "source_server_url" : self.source_server_url,
             "source_project_name" : self.source_project_name,
             "source_pat" :self.source_pat,
