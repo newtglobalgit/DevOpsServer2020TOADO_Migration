@@ -691,34 +691,34 @@ CREATE TABLE db_devops_discovery_boards_workitem_details(
 	discovery_boards_workitem_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	collection_name varchar(100),
   project_name varchar(100),
+  workitem_id integer,
   workitem_name varchar(50),
 	workitem_type   varchar(50),
   workitem_description varchar(200),
   workitem_assignee varchar(100),
   created_by varchar(50),
-  created_date TIMESTAMPTZ,
+  created_date varchar(50),
   workitem_comment varchar(200),
 	workitem_state varchar(50),
   workitem_links integer,
-	workitem_tags varchar(50),
-	total_count		Integer
+	workitem_tags varchar(50)
 	);
 
 CREATE TABLE db_ado_discovery_boards_workitem_details( 
 	discovery_boards_workitem_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	collection_name varchar(100),
   project_name varchar(100),
+  workitem_id integer,
   workitem_name varchar(50),
 	workitem_type   varchar(50),
   workitem_description varchar(200),
   workitem_assignee varchar(100),
   created_by varchar(50),
-  created_date TIMESTAMPTZ,
+  created_date varchar(50),
   workitem_comment varchar(200),
 	workitem_state varchar(50),
   workitem_links integer,
-	workitem_tags varchar(50),
-	total_count		Integer
+	workitem_tags varchar(50)
 	);
 
 
