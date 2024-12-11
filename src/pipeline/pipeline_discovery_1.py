@@ -17,6 +17,7 @@ from openpyxl.styles import Font
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.pipeline.build_pipeline_db import db_post_build_pipeline , db_get_build_pipeline
 from src.pipeline.release_pipeline_db import db_post_release_pipeline
+from src.dbDetails.migration_details_db import db_get_migration_details
 
 
 # Setup logging
@@ -133,7 +134,7 @@ def get_pipeline_details(project_):
                             if response.status_code == 200:
                                 artifacts_data = response.json()
                                 artifact_details = next((artifact['name'] for artifact in artifacts_data.get('value','')), None)        
-
+                    path = path.replace("/","")
                     pipeline_info = [project_,
                         pipeline['id'],
                         pipeline['name'],
@@ -420,21 +421,23 @@ if __name__ == "__main__":
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    # Read the Excel file
-    config_df = pd.read_excel(f'src\pipeline\input_discovery.xlsx')
+    # # Read the Excel file
+    # config_df = pd.read_excel(f'src\pipeline\input_discovery.xlsx')
     wb = openpyxl.Workbook()
     ws = wb.active
     headers =['Project','Pipeline ID', 'Name', 'Last Updated Date', 'FileName', 'Variables', 'Variable Groups', 'Repository Type','Repository Name' ,'Repository Branch', 'Classic Pipeline', 'Agents', 'Phases', 'Execution Type', 'Max Concurrency', 'ContinueOn Error', 'Builds', 'Artifacts']
             # format_excel(ws)
     ws.append(headers)
+
+    results =db_get_migration_details()
     # Iterate over each row in the DataFrame
-    for index, row in config_df.iterrows():
+    for result in results:
         # Extract values from the current row
-        instance = row['Server_URL']
-        project_name = row['Project']
-        username = row['Username']
-        pat = row['Pat']
-        
+        instance = result.source_server_url
+        project_name = result.source_project_name
+        username = ""
+        pat = result.source_pat
+
         log_print(f"--- {project_name} ---")
         excel_name =f"{folder_path}\source_discovery_build.xlsx"
         wb.save(excel_name)
