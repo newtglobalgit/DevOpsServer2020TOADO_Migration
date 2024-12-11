@@ -103,7 +103,7 @@ def get_pipeline_details(project_):
                                     if phase and execution_option!= "":
                                         execution_type = phase['target']['executionOptions'].get('type','')
                                         if execution_type != '' :
-                                            maxConcurrency =phase['target']['executionOptions'].get('maxConcurrency', '')
+                                            maxConcurrency =phase['target']['executionOptions'].get('maxConcurrency', 0)
                                             continueOnError =phase['target']['executionOptions'].get('continueOnError', '')
                                         
                                         phases_.append(phase['name'])
@@ -175,6 +175,8 @@ def get_pipeline_details(project_):
                         "builds":build_count,
                         "artifacts":artifact_details
                     }
+                    if pipeline_id == 13:
+                        db_post_build_pipeline(data)
                     db_post_build_pipeline(data)
                     if count%10 == 0:
                         wb.save(excel_name)
