@@ -44,6 +44,9 @@ DROP TABLE IF EXISTS db_devops_discovery_release_details	CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_wiki_reports CASCADE;  -- source table for wiki
 DROP TABLE IF EXISTS db_ado_discovery_wiki_reports CASCADE; -- target table for wiki
 
+DROP TABLE IF EXISTS db_devops_discovery_team_configuration CASCADE;  -- source table for team-configuration
+DROP TABLE IF EXISTS db_ado_discovery_team_configuration CASCADE; -- source table for team-configuration
+
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
@@ -846,8 +849,8 @@ CREATE TABLE db_ados_discovery_user_details (
 
 CREATE TABLE db_ados_discovery_pipelines_details( 
     pipelines_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    project_name VARCHAR(100),
-    collection_name VARCHAR(100),
+    project_name VARCHAR(200),
+    collection_name VARCHAR(200),
     pipeline_id INTEGER,
     pipeline_name VARCHAR(50),
     last_updated_date TIMESTAMPTZ,
@@ -869,7 +872,7 @@ CREATE TABLE db_ados_discovery_pipelines_details(
 
 CREATE TABLE db_pipeline_mapping (
     pipeline_mapping_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    source_project_name VARCHAR(255) NOT NULL,
+    source_project_name VARCHAR(200) NOT NULL,
     source_pipeline_name VARCHAR(255) NOT NULL,
 	  source_pipeline_id INTEGER NOT NULL,
     source_file_name VARCHAR(255) NOT NULL,
@@ -882,18 +885,55 @@ CREATE TABLE db_pipeline_mapping (
     status VARCHAR(255) NOT NULL
 );
 
+
 CREATE TABLE db_ado_discovery_wiki_reports (
-    wiki_reports_id SERIAL PRIMARY KEY,       -- Auto-incrementing primary key
-	  project_name VARCHAR(255) NOT NULL,
+    wiki_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,       -- Auto-incrementing primary key
+	  project_name VARCHAR(200) NOT NULL,
     file_path VARCHAR(255) NOT NULL,  -- File path column
     size_bytes BIGINT NOT NULL,       -- File size column
     last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
 );
 
 CREATE TABLE db_devops_discovery_wiki_reports (
-    wiki_reports_id SERIAL PRIMARY KEY,       -- Auto-incrementing primary key
-	  project_name VARCHAR(255) NOT NULL,
+    wiki_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,       -- Auto-incrementing primary key
+	  project_name VARCHAR(200) NOT NULL,
     file_path VARCHAR(255) NOT NULL,  -- File path column
     size_bytes BIGINT NOT NULL,       -- File size column
     last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
+);
+
+CREATE TABLE IF NOT EXISTS db_ado_discovery_team_configuration
+(
+    team_configuration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name varchar(200), 
+    project_name  varchar(200),
+    team_name varchar(200),
+    iteration_name varchar(200),
+    current_iteration varchar(100),
+    default_iteration varchar(100),
+    iteration_path varchar(200),
+    start_date TIMESTAMPTZ,
+    end_date TIMESTAMPTZ,
+    area_name varchar(200),
+    default_area varchar(200),
+    area_path varchar(200) 
+);
+
+
+
+CREATE TABLE IF NOT EXISTS db_devops_discovery_team_configuration
+(
+    team_configuration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name varchar(200),
+    project_name  varchar(200),
+    team_name varchar(200),
+    iteration_name varchar(200),
+    current_iteration varchar(100),
+    default_iteration varchar(100),
+    iteration_path varchar(200),
+    start_date TIMESTAMPTZ,
+    end_date TIMESTAMPTZ,
+    area_name varchar(200),
+    default_area varchar(200),
+    area_path varchar(200) 
 );
