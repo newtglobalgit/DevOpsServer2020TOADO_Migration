@@ -5,10 +5,10 @@ from src.dbDetails.db import Base
 
 
 class BuildPipelineMappingDetails(Base):
-    __tablename__ = 'db_devops_build_pipeline_mapping'  # Match the SQL table name
+    __tablename__ = 'db_pipeline_mapping'  # Match the SQL table name
     __table_args__ = {'schema': 'devops_to_ados'} 
     
-    mapping_pipelines_id = Column(Integer, primary_key=True, index=True)
+    pipeline_mapping_id = Column(Integer, primary_key=True, index=True)
     source_project_name = Column(String(255),nullable=False, index=True)
     source_pipeline_name = Column(String(255),nullable=False, index=True)
     source_pipeline_id = Column(String(255),nullable = False, index=True)

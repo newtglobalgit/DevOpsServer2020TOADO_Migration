@@ -13,6 +13,8 @@ import sys
 #  Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.pipeline.build_pipeline_mapping_db import  db_post_build_pipeline_mapping
+from src.dbDetails.migration_details_db import db_get_migration_details
+
 def fetch_discovered_pipelines():
     file_path =f'src\pipeline\mapping_migration.xlsx'
     df = pd.read_excel(file_path)
@@ -25,10 +27,11 @@ def fetch_discovered_pipelines():
             is_classic = row['Is_Classic']
             pipeline_id_discovery=row['Source_Pipeline_Id']
             pipeline_name=row['Source_Pipeline_Name']
-            yaml_file_name = row['File_Name']
+            yaml_file_name = str(row['File_Name'])
             source_repo_name = row["Source_Repo_Name"]
             os.chdir(root)
             if name != 'NA' and (is_classic == 'No (Build)' or is_classic == 'No (Release)' ):
+                yaml_file_name =yaml_file_name.replace("/","")
                 result =clone_and_push_yml_with_pat( pipeline_id_discovery, pipeline_name, yaml_file_name, project_, source_repo_name)
                 print("Current Directory:", os.getcwd())
                 if result == "Exist":
@@ -97,7 +100,7 @@ def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name, pr
     )
     if pipeline_response.status_code != 200:
         print(f"Error fetching pipeline details: {pipeline_response.status_code} - {pipeline_response.text}")
-        return
+        return True , "","",""
     pipeline_data = pipeline_response.json()
     print(pipeline_data)
     repo_id = pipeline_data["configuration"]["repository"]["id"]
@@ -277,6 +280,7 @@ def clone_and_push_yml_with_pat( pipeline_id , pipeline_name ,yaml_file_name, or
             current_ = os.getcwd()
         # Clone the repository locally
         os.system(f"git clone {repo_clone_url}")
+        print(repo_clone_url)
         os.chdir(f"{current_}\{source_repo_name}")
     elif response.status_code == 404:
         print(f"Repository '{target_repo}' does not exist. Creating a new one.")
@@ -606,7 +610,7 @@ def get_proj_details(proj_name):
     
 # Main execution function
 if __name__ == "__main__":
-    source_excel_path = "credentials.xlsx"  # Path to the source Excel file
+    # source_excel_path = "credentials.xlsx"  # Path to the source Excel file
     root = os.getcwd()
     template = {
         "options": [],
@@ -643,17 +647,16 @@ if __name__ == "__main__":
         "createdDate": "",
         "project": {}
     }
-    # Read the Excel file
-    credentials = pd.read_excel(f'src\pipeline\credentials.xlsx')
+
+    results =db_get_migration_details()
     # Iterate over each row in the DataFrame
-    for index, row in credentials.iterrows():
-        source_instance = row["Source_URL"]	
-        source_username = row["Source_Username"]
-        source_pat = row["Source_Pat"]
-        target_instance =row["Target_URL"]
-        target_username =row["Target_Username"]
-        target_pat=row["Target_Pat"]
-        target_repo = row["repo"]  
+    for result in results:
+        source_instance = result.source_server_url	
+        source_username = ""
+        source_pat = result.source_pat
+        target_instance =result.target_organization_url
+        target_username =""
+        target_pat=result.target_pat
     fetch_discovered_pipelines()
     
    
