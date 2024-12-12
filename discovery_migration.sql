@@ -45,11 +45,16 @@ DROP TABLE IF EXISTS db_devops_discovery_wiki_reports CASCADE;  -- source table 
 DROP TABLE IF EXISTS db_ado_discovery_wiki_reports CASCADE; -- target table for wiki
 
 DROP TABLE IF EXISTS db_devops_discovery_team_configuration CASCADE;  -- source table for team-configuration
-DROP TABLE IF EXISTS db_ado_discovery_team_configuration CASCADE; -- source table for team-configuration
+DROP TABLE IF EXISTS db_ado_discovery_team_configuration CASCADE; -- target table for team-configuration
+
+DROP TABLE IF EXISTS db_devops_discovery_group_permissions CASCADE; -- source table for group-permission
+DROP TABLE IF EXISTS db_ado_discovery_group_permissions CASCADE; --target table for group-permission
 
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
+
+
 
 -- mapping trable for migration
 DROP TABLE IF EXISTS db_project_mapping CASCADE; -- for migration
@@ -84,6 +89,18 @@ DROP TABLE IF EXISTS db_ado_tfs_project_commits CASCADE;
 DROP TABLE IF EXISTS db_ado_tfs_project_label CASCADE;
 DROP TABLE IF EXISTS db_ado_tfs_project_shelveset  CASCADE;
 
+
+DROP TABLE IF EXISTS db_devops_discovery_git_project_boards CASCADE;
+DROP TABLE IF EXISTS devops_test_configuration_details CASCADE;
+DROP TABLE IF EXISTS devops_variable_configuration_details CASCADE;
+DROP TABLE IF EXISTS ado_test_configuration_details CASCADE;
+DROP TABLE IF EXISTS ado_variable_configuration_details CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_repo_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_tfs_repo_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_repo_sourcecode CASCADE;
+DROP TABLE IF EXISTS db_ado_tfs_repo_commits CASCADE;
+DROP TABLE IF EXISTS db_ado_discovery_boards_workitem_details CASCADE;
+DROP TABLE IF EXISTS db_devops_ado_project_migration_details CASCADE;
 
 
 CREATE TABLE db_devops_discovery_git_project_projectdetails( 
@@ -919,8 +936,6 @@ CREATE TABLE IF NOT EXISTS db_ado_discovery_team_configuration
     area_path varchar(200) 
 );
 
-
-
 CREATE TABLE IF NOT EXISTS db_devops_discovery_team_configuration
 (
     team_configuration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -936,4 +951,22 @@ CREATE TABLE IF NOT EXISTS db_devops_discovery_team_configuration
     area_name varchar(200),
     default_area varchar(200),
     area_path varchar(200) 
+);
+
+CREATE TABLE db_devops_discovery_group_permissions (
+    collection_name varchar(200) NOT NULL,
+    project_name varchar(200) NOT NULL,
+    group_name varchar(100) ,
+    group_type varchar(50) ,
+    permission_tag varchar(200),
+    permission_value varchar(100)
+);
+ 
+CREATE TABLE db_ado_discovery_group_permissions (
+    collection_name varchar(200) NOT NULL,
+    project_name varchar(200) NOT NULL,
+    group_name varchar(100) ,
+    group_type varchar(50) ,
+    permission_tag varchar(200),
+    permission_value varchar(100)
 );
