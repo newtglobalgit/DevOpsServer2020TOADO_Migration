@@ -635,7 +635,7 @@ def process(server_url, pat, project, repository_name, branch_name, username, pa
                                 destination_path = os.path.join(cwd, 'clone', repo['name'], branch)
                                 if not os.path.exists(destination_path):
                                     os.makedirs(destination_path)
-                                clean_local_clone_path(os.path.join(cwd, 'clone'))
+                                clean_local_clone_path(os.path.join(cwd, 'clone', repo['name']))
                                 clone_repo_branch(repo_url, destination_path, pat, branch, username, password)
                                 commit_id, comment, author, last_modified = get_latest_commit_info(server_url, project,
                                                                                                 repo_id, branch, pat,
