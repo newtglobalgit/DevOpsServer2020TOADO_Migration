@@ -55,9 +55,30 @@ def check_db():
     except Exception as e:
         print(f"Database check failed: {e}")
         return False
+    
+def clean_table(schemaname :str, tablename: str, clean_flag: str):
+    
+    db = SessionLocal()
+    try:
+
+        # Clean the table if the flag is 'yes'
+        if clean_flag.lower() == 'y':
+            print(f"Cleaning the table {schemaname}.{tablename} before insertion.")
+            # Execute the delete query safely
+            db.execute(text(f"DELETE FROM {schemaname}.{tablename};"))
+            db.commit()
+    except Exception as e:
+        db.rollback()  # Roll back in case of an error
+        print(f"An error occurred while cleaning the table {tablename}: {e}")
+        raise
+    
+    finally:
+        db.close()
+
 
 if __name__ == "__main__":
     if check_db():
         print("Database connection successful!")
+        clean_table("devops_to_ados","db_devops_discovery_wiki_reports","y")
     else:
         print("Failed to connect to the database.")
