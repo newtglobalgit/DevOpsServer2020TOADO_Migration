@@ -60,6 +60,8 @@ DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
 DROP TABLE IF EXISTS db_project_mapping CASCADE; -- for migration
 DROP TABLE IF EXISTS db_repo_mapping CASCADE; -- for migration
 DROP TABLE IF EXISTS db_pipeline_mapping ;
+DROP TABLE IF EXISTS db_user_mapping CASCADE;
+DROP TABLE IF EXISTS db_collection_project_mapping CASCADE;
 
 -- Table details for target --
 
@@ -954,6 +956,7 @@ CREATE TABLE IF NOT EXISTS db_devops_discovery_team_configuration
 );
 
 CREATE TABLE db_devops_discovery_group_permissions (
+    group_permissions_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     collection_name varchar(200) NOT NULL,
     project_name varchar(200) NOT NULL,
     group_name varchar(100) ,
@@ -963,6 +966,7 @@ CREATE TABLE db_devops_discovery_group_permissions (
 );
  
 CREATE TABLE db_ado_discovery_group_permissions (
+    group_permissions_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     collection_name varchar(200) NOT NULL,
     project_name varchar(200) NOT NULL,
     group_name varchar(100) ,
@@ -970,3 +974,30 @@ CREATE TABLE db_ado_discovery_group_permissions (
     permission_tag varchar(200),
     permission_value varchar(100)
 );
+
+create table db_user_mapping(
+  user_Id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  collection_name varchar(200),
+  project_name varchar(200),
+  user_name varchar(100),
+  user_email varchar(200),
+  user_descriptor varchar(200)
+);
+
+create table db_project_mapping(
+  mapping_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  ---
+  devops_collection_name varchar(200),
+  devops_project_name varchar(200),
+  ado_collection_name varchar(200),
+  ado_project_name varchar(200),
+  ado_project_id varchar(200),
+  ado_project_descriptor varchar(200),
+  wiki  varchar(100),
+  workitem varchar(100),
+  dashboard varchar(100),
+  devops_pat_token varchar(300),
+  ado_pat_token varchar(300),
+  test_plan varchar(100)
+);
+
+
