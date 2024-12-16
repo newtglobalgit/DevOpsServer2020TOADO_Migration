@@ -51,6 +51,9 @@ DROP TABLE IF EXISTS db_ado_discovery_team_configuration CASCADE; -- target tabl
 DROP TABLE IF EXISTS db_devops_discovery_group_permissions CASCADE; -- source table for group-permission
 DROP TABLE IF EXISTS db_ado_discovery_group_permissions CASCADE; --target table for group-permission
 
+DROP TABLE IF EXISTS db_devops_discovery_delivery_plan CASCADE; -- source table for delivery_plan
+DROP TABLE IF EXISTS db_ado_discovery_delivery_plan CASCADE; -- target table for delivery_plan
+
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
@@ -979,7 +982,7 @@ create table db_user_mapping(
 );
 
 create table db_project_mapping(
-  mapping_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  ---
+  mapping_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
   devops_collection_name varchar(200),
   devops_project_name varchar(200),
   ado_collection_name varchar(200),
@@ -994,4 +997,32 @@ create table db_project_mapping(
   test_plan varchar(100)
 );
 
+CREATE TABLE db_devops_discovery_delivery_plan (
+    delivery_plan_sr_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    delivery_plan_id VARCHAR(200) ,
+    delivery_plan_revision VARCHAR ,
+    delivery_plan_name VARCHAR(200),
+    delivery_plan_type VARCHAR(200) ,
+    delivery_plan_created_date TIMESTAMPTZ,
+    delivery_plan_created_by VARCHAR(200),
+    delivery_plan_modified_date TIMESTAMPTZ,
+    delivery_plan_modified_by VARCHAR(200) ,
+    discovery_run_duration VARCHAR(200)
+);
 
+CREATE TABLE db_ado_discovery_delivery_plan (
+    delivery_plan_sr_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    delivery_plan_id VARCHAR(200) ,
+    delivery_plan_revision VARCHAR ,
+    delivery_plan_name VARCHAR(200),
+    delivery_plan_type VARCHAR(200) ,
+    delivery_plan_created_date TIMESTAMPTZ,
+    delivery_plan_created_by VARCHAR(200),
+    delivery_plan_modified_date TIMESTAMPTZ,
+    delivery_plan_modified_by VARCHAR(200) ,
+    discovery_run_duration VARCHAR(200)
+);
