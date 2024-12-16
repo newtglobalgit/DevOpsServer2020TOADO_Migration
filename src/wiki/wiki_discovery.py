@@ -11,6 +11,8 @@ import pytz
 import sys
 import requests
 from wiki_comments_discover import get_wiki_comments, get_page_id
+from wiki_migrate_get_db import db_get_wiki
+db_get_wiki()
 
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
