@@ -4,15 +4,16 @@ CREATE SCHEMA IF NOT EXISTS "devops_to_ados" AUTHORIZATION postgres;
 SET search_path TO "devops_to_ados";
 
 -- Drop tables for discovery for GIT
-DROP TABLE IF EXISTS db_devops_discovery_git_project_projectdetails CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_project_root CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_project_repo CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_project_branches CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_project_workitems CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_project_pipelines CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_repo_sourcecode CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_repo_commits CASCADE;
-DROP TABLE IF EXISTS db_devops_discovery_git_repo_tags CASCADE;
+DROP TABLE IF EXISTS db_devops_discovery_git_project_projectdetails CASCADE; ------ Not needed
+DROP TABLE IF EXISTS db_devops_discovery_git_project_root CASCADE; -- not needed. check with Ujjawal
+DROP TABLE IF EXISTS db_devops_discovery_git_project_repo CASCADE; -- not needed check with ujjawal
+DROP TABLE IF EXISTS db_devops_discovery_git_project_branches CASCADE;  -- not needed check with ujjawal
+DROP TABLE IF EXISTS db_devops_discovery_git_project_workitems CASCADE; -- not needed check with ujjawal
+DROP TABLE IF EXISTS db_devops_discovery_git_project_pipelines CASCADE; -- not needed check with ujjawal
+
+DROP TABLE IF EXISTS db_devops_discovery_git_repo_sourcecode CASCADE; --- source table for repo_sourcecode 
+DROP TABLE IF EXISTS db_devops_discovery_git_repo_commits CASCADE; -- source table for repo_commits
+DROP TABLE IF EXISTS db_devops_discovery_git_repo_tags CASCADE; -- source table for repo_tags
 
 -- Drop Tables for discovery for TFVC
 
@@ -204,51 +205,44 @@ CREATE TABLE db_devops_discovery_git_project_pipelines (
 );
 
 CREATE TABLE db_devops_discovery_git_repo_sourcecode (  
-  source_code_id BIGINT PRIMARY KEY,  
-  file_name VARCHAR(200), 
-  file_type VARCHAR(200),  
-  folder_level VARCHAR(200), 
-  sourcecode_path VARCHAR(300),  
-  sourcecode_size INTEGER,  
-  last_modified_time TIMESTAMPTZ, 
-  author VARCHAR(100), 
-  sourcecode_comments VARCHAR(300), 
-  commit_id BIGINT,	 
-  commit_count INTEGER, 
-  project_id BIGINT NOT NULL,  -- Add foreign key column to projectsdetails table 
-  repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
-  branch_id BIGINT NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE ,
-  FOREIGN KEY (repo_id) REFERENCES  db_devops_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE,
-  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE
+  git_repo_source_code_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  branch_name varchar(200),
+  item_name varchar(200),
+  item_type varchar(200),
+  item_level integer,
+  item_path varchar(300),
+  item_size integer
 ); 
 
 CREATE TABLE db_devops_discovery_git_repo_commits (  
-  commits_id BIGINT PRIMARY KEY,     
-  commit_name VARCHAR(200) NOT NULL,  
-  collection_name VARCHAR(200),
-  branch_id BIGINT NOT NULL,  -- Add foreign key column to db_git_project_branches   
-  commit_message VARCHAR(200),  
-  author VARCHAR(200), 
-  commit_date TIMESTAMPTZ , 
-  project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
-  repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
-  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (repo_id) REFERENCES  db_devops_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE ,
-  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
+  git_repo_commits BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  branch_name varchar(200),
+  commit_id varchar(200),
+  commit_message varchar(200),
+  author varchar(200),
+  commit_date TIMESTAMPTZ  
  ); 
 
  
 CREATE TABLE db_devops_discovery_git_repo_tags (  
-  tags_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
-  tags_name VARCHAR(200) NOT NULL,  
-  branch_id  BIGINT NOT NULL,  -- Add foreign key column to db_git_project_branches  
-  project_id BIGINT NOT NULL,  -- Add foreign key column to db_project_projectdetails
-  repo_id BIGINT NOT NULL,  -- Add foreign key column to repo table
-  FOREIGN KEY (project_id) REFERENCES  db_devops_discovery_git_project_projectdetails(project_id) ON DELETE CASCADE, 
-  FOREIGN KEY (repo_id) REFERENCES  db_devops_discovery_git_project_repo(project_repo_id) ON DELETE CASCADE ,
-  FOREIGN KEY (branch_id) REFERENCES  db_devops_discovery_git_project_branches(project_branch_id) ON DELETE CASCADE 
- ); 
+  git_repo_tags BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  tags_name VARCHAR(200) ,  
+  tags_message VARCHAR(200) ,
+  commit_id VARCHAR(200),
+  author VARCHAR(200),
+  tag_commit_date TIMESTAMPTZ
+  );
+  
+  
 
 
 ------------------  For TFVC -----------------------------------
