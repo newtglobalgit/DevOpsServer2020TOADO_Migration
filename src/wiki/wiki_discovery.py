@@ -6,8 +6,11 @@ import shutil
 from urllib.parse import quote
 import time
 import subprocess
+from requests.auth import HTTPBasicAuth
 import pytz
 import sys
+import requests
+from wiki_comments_discover import get_wiki_comments, get_page_id
 
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -90,8 +93,31 @@ def handle_remove_readonly(func, path, excinfo):
         print(f"Error removing {path}: {e}")
 
 
+def get_project_and_wiki_id(server_url, project_name, username, password):
+    # Construct the full API URL
+    api_url = f"{server_url}/{project_name}/_apis/wiki/wikis/{project_name}.wiki?api-version=6.0"
+    
+    # Send a GET request to the API with basic authentication
+    response = requests.get(api_url, auth=HTTPBasicAuth(username, password))
+    
+    if response.status_code == 200:
+        data = response.json()
+        project_id = data.get('projectId')
+        wiki_id = data.get('id')
+        
+        return project_id, wiki_id
+    else:
+        print(f"Error: Unable to fetch data (Status code: {response.status_code})")
+        return None, None
+
+
 def main():
-    input_file = "wiki_discovery_input.xlsx"
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    input_file = os.path.join(current_dir, "wiki_migrate_input.xlsx")
+
+    if not os.path.exists(input_file):
+        raise FileNotFoundError(f"Input file not found at: {input_file}")
     
     username = input("Enter your username: ").strip()  
     password = input("Enter your Password: ").strip()  
@@ -101,11 +127,21 @@ def main():
     wb_input = openpyxl.load_workbook(input_file)
     ws_input = wb_input.active
     
+    # Create a new workbook for the output report
+    wb_report = openpyxl.Workbook()
+    ws_report = wb_report.active
+    ws_report.append(["Project Name", "File Path", "File Size (bytes)", "Last Modified", "Page ID", "Project ID", "Wiki ID"])
+
+    # Create a separate sheet for comments
+    ws_comments = wb_report.create_sheet("Comments")
+    ws_comments.append(["Project Name", "File Path", "Comment ID", "Comment Text", "Created By", "Created Date"])
+
     for row in range(2, ws_input.max_row + 1):
         # Read data from the Excel file
-        server_url = ws_input.cell(row=row, column=1).value.strip() if ws_input.cell(row=row, column=1).value else ''
-        project_name = ws_input.cell(row=row, column=2).value.strip() if ws_input.cell(row=row, column=2).value else ''
+        server_url = ws_input.cell(row=row, column=2).value.strip() if ws_input.cell(row=row, column=2).value else ''
+        project_name = ws_input.cell(row=row, column=3).value.strip() if ws_input.cell(row=row, column=3).value else ''
         wiki_path = f"{project_name}.wiki"
+        pat = ws_input.cell(row=row, column=4).value.strip() if ws_input.cell(row=row, column=2).value else ''
         
         if not server_url or not project_name or not wiki_path:
             print(f"Skipping row {row}: missing necessary data.")
@@ -126,17 +162,37 @@ def main():
                     # Create a data dictionary for the db_post_wiki function
                     data = {
                         "project_name": project_name,
-                        "file_path": file_path,
+                        "file_path": file_path[:-3],
                         "size_bytes": size,
                         "last_modified": modified,
                     }
+                    project_id, wiki_id = get_project_and_wiki_id(server_url, project_name, username, pat)
                     
-                    # Call db_post_wiki to save the data in the database
+                    page_id = get_page_id(server_url, project_id, wiki_id, username, pat, f"/{file_path[:-3].replace('-', '%20')}")
+                    comments = get_wiki_comments(server_url, project_id, wiki_id, page_id, username, pat)
+
+                    # Store comment data in the Comments sheet
+                    if comments:
+                        for comment in comments:
+                            comment_id = comment.get('comment_id', 'N/A')
+                            comment_text = comment.get('comment_text', 'No Text')
+                            created_by = comment.get('created_by', 'Unknown')
+                            created_date = comment.get('created_date', 'Unknown Date')
+
+                            # Append the comment data to the comments sheet
+                            ws_comments.append([project_name, file_path[:-3], comment_id, comment_text, created_by, created_date])
+                    else:
+                        print(f"No comments found for Page ID: {page_id}")
+                    
+                    # Write data to the database
                     try:
                         db_post_wiki(data)
                         print(f"Data successfully written to the database: {data}")
                     except Exception as e:
                         print(f"Error writing to database for file {file_path}: {e}")
+                    
+                    # Append data to the main Excel report sheet
+                    ws_report.append([project_name, file_path[:-3], size, modified, page_id, project_id, wiki_id])
             else:
                 print(f"No wiki pages found for project: {project_name}.")
             
@@ -145,6 +201,10 @@ def main():
             print(f"Temporary directory {temp_dir} cleaned up.")
         else:
             print(f"Failed to clone the repository for project {project_name}. Skipping.")
+    
+    # Save the Excel report
+    wb_report.save("wiki_source_discovery_reports.xlsx")
+    print("Excel report generated: wiki_source_discovery_reports.xlsx")
     
     print("All data has been processed and written to the database.")
 

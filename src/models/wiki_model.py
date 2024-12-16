@@ -6,7 +6,7 @@ class WikiDetails(Base):
     __tablename__ = 'db_devops_discovery_wiki_reports'  # Match the SQL table name
     __table_args__ = {'schema': 'devops_to_ados'} 
     
-    wiki_id = Column(Integer, primary_key=True, index=True)
+    wiki_reports_id = Column(Integer, primary_key=True, index=True)
     project_name = Column(String(255), nullable=False, index=True)
     file_path = Column(String(255), nullable=False, index=True)
     size_bytes = Column(Integer, nullable=False, index=True)
@@ -14,7 +14,7 @@ class WikiDetails(Base):
 
     def to_dict(self):
         return {
-            "wiki_id": self.wiki_id,
+            "wiki_reports_id": self.wiki_reports_id,
             "project_name": self.project_name,
             "file_path": self.file_path,
             "size_bytes": self.size_bytes,
