@@ -117,13 +117,13 @@ def get_project_and_wiki_id(server_url, project_name, username, password):
         print(f"Error: Unable to fetch data (Status code: {response.status_code})")
         return None, None
 
-def main():
+def main(username,password):
     input_file = "wiki_migrate_input.xlsx"
     output_file = "wiki_target_discovery.xlsx"
     all_data = []
     
-    username = input("Enter your username: ").strip()  
-    password = input("Enter your Password: ").strip()  
+    # username = input("Enter your username: ").strip()  
+    # password = input("Enter your Password: ").strip()  
     encoded_password = encode_url_component(password)
 
     wb_input = openpyxl.load_workbook(input_file)

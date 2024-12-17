@@ -6,6 +6,8 @@ import pandas as pd  # Import pandas to read the Excel file
 import re  # Regular expression to match comments in markdown files
 from urllib.parse import quote
 from wiki_migrate_get_db import db_get_wiki
+from wiki_target_discovery import main as target_discovery
+from wiki_mapper_page import main as wiki_comments_migrate
 db_get_wiki()
 # Define file path for the Excel file
 EXCEL_FILE = "wiki_migrate_input.xlsx"
@@ -134,6 +136,7 @@ def main():
 
     except Exception as e:
         print(f"Migration process failed: {e}")
-
+    target_discovery(target_username,target_password)
+    wiki_comments_migrate()
 if __name__ == "__main__":
     main()
