@@ -54,6 +54,9 @@ DROP TABLE IF EXISTS db_ado_discovery_group_permissions CASCADE; --target table 
 DROP TABLE IF EXISTS db_devops_discovery_delivery_plan CASCADE; -- source table for delivery_plan
 DROP TABLE IF EXISTS db_ado_discovery_delivery_plan CASCADE; -- target table for delivery_plan
 
+DROP TABLE IF EXISTS  db_devops_discovery_wiki_comments_reports CASCADE; -- source table for wiki_comments_reports
+DROP TABLE IF EXISTS  db_ado_discovery_wiki_comments_reports CASCADE; -- target table for wiki_comments_reports
+
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
@@ -905,10 +908,14 @@ CREATE TABLE db_pipeline_mapping (
 
 CREATE TABLE db_ado_discovery_wiki_reports (
     wiki_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,       -- Auto-incrementing primary key
-	  project_name VARCHAR(200) NOT NULL,
+	  collection_name varchar(200) NOT NULL, 
+    project_id VARCHAR(200),
+    project_name VARCHAR(200) NOT NULL,
+    wiki_id VARCHAR(200),
     file_path VARCHAR(255) NOT NULL,  -- File path column
     size_bytes BIGINT NOT NULL,       -- File size column
-    last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
+    last_modified TIMESTAMP NOT NULL,  -- Last modified timestamp column
+    page_id INTEGER
 );
 
 CREATE TABLE db_devops_discovery_wiki_reports (
@@ -1027,3 +1034,25 @@ CREATE TABLE db_ado_discovery_delivery_plan (
     delivery_plan_modified_by VARCHAR(200) ,
     discovery_run_duration VARCHAR(200)
 );
+
+create TABLE db_devops_discovery_wiki_comments_reports(
+    wiki_comments_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    file_path varchar(200),
+    comment_id INTEGER,
+    comment_text varchar(200), 
+    created_by  varchar(200),
+    created_date TIMESTAMPTZ
+    );
+
+create TABLE db_ado_discovery_wiki_comments_reports(
+    wiki_comments_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    file_path varchar(200),
+    comment_id INTEGER ,
+    comment_text varchar(200), 
+    created_by  varchar(200),
+    created_date TIMESTAMPTZ
+    );
