@@ -5,7 +5,10 @@ import tempfile  # Import tempfile for creating temporary directories
 import pandas as pd  # Import pandas to read the Excel file
 import re  # Regular expression to match comments in markdown files
 from urllib.parse import quote
-
+from wiki_migrate_get_db import db_get_wiki
+from wiki_target_discovery import main as target_discovery
+from wiki_mapper_page import main as wiki_comments_migrate
+db_get_wiki()
 # Define file path for the Excel file
 EXCEL_FILE = "wiki_migrate_input.xlsx"
 
@@ -52,7 +55,7 @@ def set_cloud_repo(cloud_repo, target_username, target_password, clone_dir, wiki
     """Set the cloud repository as the new origin using provided credentials."""
     print(f"Setting cloud repository {cloud_repo} as the new origin...")
     # Construct the repository URL with credentials for authentication
-    auth_cloud_repo = f"https://{target_username}:{target_password}@{cloud_repo[8:]}/{wiki_target_project_name}/_git/{wiki_target_project_name}.wiki"
+    auth_cloud_repo = f"https://{target_username}:{target_password}@{cloud_repo[8:]}/{wiki_target_project_name}/_git/{wiki_target_project_name}_wiki"
     print("this",auth_cloud_repo)
     run_command(["git", "remote", "set-url", "origin", auth_cloud_repo], cwd=clone_dir)
     print("Cloud repository URL set as origin.")
@@ -91,6 +94,7 @@ def migrate_comments(clone_dir):
                 # After processing, save the unchanged content (including comments) back
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.write(content)
+
 
 def main():
     try:
@@ -132,6 +136,7 @@ def main():
 
     except Exception as e:
         print(f"Migration process failed: {e}")
-
+    target_discovery(target_username,target_password)
+    wiki_comments_migrate()
 if __name__ == "__main__":
     main()

@@ -241,13 +241,14 @@ CREATE TABLE db_devops_discovery_git_repo_tags (
   collection_name varchar(200) NOT NULL,
   project_name varchar(200) NOT NULL,
   repository_name varchar(200),
-  tags_name VARCHAR(200) ,  
-  tags_message VARCHAR(200) ,
+  tag_name VARCHAR(200) ,
+  tag_id VARCHAR(200)
+  tag_message VARCHAR(200) ,
   commit_id VARCHAR(200),
+  commit_message VARCHAR(200),	
   author VARCHAR(200),
-  tag_commit_date TIMESTAMPTZ
+  tagged_date TIMESTAMPTZ
   );
-  
   
 
 
