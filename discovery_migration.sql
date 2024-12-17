@@ -242,6 +242,7 @@ CREATE TABLE db_devops_discovery_git_repo_tags (
   tag_id VARCHAR(200)
   tag_message VARCHAR(200) ,
   commit_id VARCHAR(200),
+  commit_message VARCHAR(200),	
   author VARCHAR(200),
   tagged_date TIMESTAMPTZ
   );
