@@ -18,6 +18,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from src.pipeline.build_pipeline_db import db_post_build_pipeline , db_get_build_pipeline
 from src.pipeline.release_pipeline_db import db_post_release_pipeline
 from src.dbDetails.migration_details_db import db_get_migration_details
+from src.dbDetails.db import clean_table
 
 
 # Setup logging
@@ -175,8 +176,6 @@ def get_pipeline_details(project_):
                         "builds":build_count,
                         "artifacts":artifact_details
                     }
-                    if pipeline_id == 13:
-                        db_post_build_pipeline(data)
                     db_post_build_pipeline(data)
                     if count%10 == 0:
                         wb.save(excel_name)
@@ -393,7 +392,7 @@ def format_excel(ws):
 def create_mapping_sheet():
     results=db_get_build_pipeline()
     folder = f"src\pipeline"
-    headers =["Source_Project","Source_Pipeline_Name","File_Name","Source_Repo_Name", "Source_Repo_Name","Target_Project", "Target_Pipeline_Name","Is_Classic", "Migration_Required","Status"]
+    headers =["Source_Project","Source_Pipeline_Id","Source_Pipeline_Name","File_Name","Source_Repo_Name", "Source_Repo_Name","Target_Project", "Target_Pipeline_Name","Is_Classic", "Migration_Required","Status"]
     wb = openpyxl.Workbook()
     ws = wb.active
     # id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
@@ -402,6 +401,7 @@ def create_mapping_sheet():
     for result in results:
         data =[
               result.project_name,
+              result.pipeline_id,
               result.pipeline_name,
               result.file_name,
               result.repository_name,
@@ -418,7 +418,8 @@ def create_mapping_sheet():
 if __name__ == "__main__":
     pipeline_data = []
     releases_data=[]
-    
+    clean_table("devops_to_ados" ,"db_devops_discovery_pipelines_details","y" )
+    clean_table("devops_to_ados","db_ados_discovery_pipelines_details","y")
     folder_path=f"src\pipeline\output_folder"
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -433,6 +434,7 @@ if __name__ == "__main__":
 
     results =db_get_migration_details()
     # Iterate over each row in the DataFrame
+    # count =0
     for result in results:
         # Extract values from the current row
         instance = result.source_server_url
@@ -444,13 +446,14 @@ if __name__ == "__main__":
         excel_name =f"{folder_path}\source_discovery_build.xlsx"
         wb.save(excel_name)
         get_pipeline_details(project_name)
-    wb.close()
+        wb.close()
+ 
     # for index, row in config_df.iterrows():
-    #     wb = openpyxl.Workbook()
-    #     ws = wb.active
-    #     id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # Format as "HH-MM-SS"
-    #     excel_name =f"{folder_path}\discovery_release_{project_name}_{id}.xlsx"
-    #     get_releases(project_name)
-    #     wb.close()
-
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        excel_name =f"{folder_path}\source_discovery_release.xlsx"
+        wb.save(excel_name)
+        get_releases(project_name)
+        wb.close()
     create_mapping_sheet()
+
