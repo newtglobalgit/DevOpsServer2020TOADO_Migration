@@ -12,6 +12,7 @@ db_get_wiki()
 # Define file path for the Excel file
 EXCEL_FILE = "wiki_migrate_input.xlsx"
 
+
 def encode_url_component(component):
     return quote(component, safe='')
 

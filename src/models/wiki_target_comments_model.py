@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP
 from sqlalchemy.sql import func
 from src.dbDetails.db import Base
 
-class WikiCommentDetails(Base):
-    __tablename__ = 'db_devops_discovery_wiki_comments_reports'  # Match the SQL table name
+class WikiTargetCommentDetails(Base):
+    __tablename__ = 'db_ado_discovery_wiki_comments_reports'  # Match the SQL table name
     __table_args__ = {'schema': 'devops_to_ados'} 
     
     wiki_comments_reports_id = Column(Integer, primary_key=True, index=True)

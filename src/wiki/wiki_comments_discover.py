@@ -34,63 +34,81 @@ def get_page_id(server_url,project_id,wiki_id,username,pat,path):
         return None
 
 # Function to get Wiki Comments for the Page
-def get_wiki_comments(server_url,project_id,wiki_id,page_id,username,pat):
+def get_wiki_comments(server_url, project_id, wiki_id, page_id, username, pat):
     result = []
-
+    
     if not page_id:
         print("Invalid page ID. Cannot fetch comments.")
         return result
     
-    # API endpoint to fetch comments for the given page
-    comments_api_url = f"{server_url}/{project_id}/_apis/wiki/wikis/{wiki_id}/pages/{page_id}/comments?%24top=10&excludeDeleted=true&%24expand=9"
+    # Initialize variables for pagination
+    continuation_token = None
+    comments_api_url = f"{server_url}/{project_id}/_apis/wiki/wikis/{wiki_id}/pages/{page_id}/comments"
     
-    # Make the GET request to fetch comments
-    response = requests.get(comments_api_url, auth=HTTPBasicAuth(username, pat))
+    # Create an Excel workbook and worksheet
+    workbook = xlsxwriter.Workbook('wiki_comments.xlsx')
+    worksheet = workbook.add_worksheet()
     
-    if response.status_code == 200:
-        # Parse the JSON response
-        comments_data = response.json()
-        comments = comments_data.get('comments', [])
+    # Define headers for the Excel file
+    worksheet.write(0, 0, 'Comment ID')
+    worksheet.write(0, 1, 'Comment Text')
+    worksheet.write(0, 2, 'Created By')
+    worksheet.write(0, 3, 'Created Date')
+    
+    row = 1  # Start writing data from row 1
+    
+    while True:
+        # Add query parameters for pagination
+        params = {
+            'excludeDeleted': 'true',
+            '$expand': '9',
+            'continuationToken': continuation_token
+        }
         
-        # Check if there are comments
-        if comments:
-            print(f"Found {len(comments)} comments.")
+        # Make the GET request to fetch comments
+        response = requests.get(comments_api_url, params=params, auth=HTTPBasicAuth(username, pat))
+        
+        if response.status_code == 200:
+            # Parse the JSON response
+            comments_data = response.json()
+            comments = comments_data.get('comments', [])
             
-            # Create an Excel workbook and worksheet
-            workbook = xlsxwriter.Workbook('wiki_comments.xlsx')
-            worksheet = workbook.add_worksheet()
-            
-            # Define headers for the Excel file
-            worksheet.write(0, 0, 'Comment ID')
-            worksheet.write(0, 1, 'Comment Text')
-            worksheet.write(0, 2, 'Created By')
-            worksheet.write(0, 3, 'Created Date')
-            
-            # Iterate through the comments and write them to the Excel file
-            for i, comment in enumerate(comments, start=1):
+            # Append the fetched comments to the result list
+            for comment in comments:
                 comment_id = comment.get('id', 'N/A')
                 comment_text = comment.get('text', 'No Text')
                 created_by = comment.get('createdBy', {}).get('displayName', 'Unknown')
                 created_date = comment.get('createdDate', 'Unknown Date')
 
-                result.append({"comment_id": comment_id, "comment_text": comment_text, "created_by": created_by, "created_date": created_date })
-                
+                result.append({
+                    "comment_id": comment_id,
+                    "comment_text": comment_text,
+                    "created_by": created_by,
+                    "created_date": created_date
+                })
                 
                 # Write comment details to the Excel file
-                worksheet.write(i, 0, comment_id)
-                worksheet.write(i, 1, comment_text)
-                worksheet.write(i, 2, created_by)
-                worksheet.write(i, 3, created_date)
-                
-            # Close the workbook after writing the data
-            workbook.close()
-            print("Comments exported to 'wiki_comments.xlsx'.")
+                worksheet.write(row, 0, comment_id)
+                worksheet.write(row, 1, comment_text)
+                worksheet.write(row, 2, created_by)
+                worksheet.write(row, 3, created_date)
+                row += 1
+            
+            # Check if there is a continuation token for the next page
+            continuation_token = comments_data.get('continuationToken', None)
+            
+            if not continuation_token:
+                # No more pages to fetch
+                break
         else:
-            print("No comments found.")
+            print(f"Failed to fetch comments. Status Code: {response.status_code}")
+            print(f"Response: {response.text}")
+            break
     
-    else:
-        print(f"Failed to fetch comments. Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
+    # Close the workbook after writing the data
+    workbook.close()
+    print("Comments exported to 'wiki_comments.xlsx'.")
+    
     return result
 
 # Main execution flow
