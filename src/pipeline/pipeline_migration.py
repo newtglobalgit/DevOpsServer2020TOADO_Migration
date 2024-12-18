@@ -14,6 +14,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.pipeline.build_pipeline_mapping_db import  db_post_build_pipeline_mapping
 from src.dbDetails.migration_details_db import db_get_migration_details
+from src.dbDetails.db import clean_table
 
 def fetch_discovered_pipelines():
     file_path =f'src\pipeline\mapping_migration.xlsx'
@@ -21,11 +22,11 @@ def fetch_discovered_pipelines():
     for index, row in df.iterrows():
         if row["Migration_Required"] == 'yes':
             row["Status"] =  "Migration InProgress"
-            db_post_build_pipeline_mapping(row)
+            # db_post_build_pipeline_mapping(row)
             project_ = row['Source_Project']
             name = row['File_Name']
             is_classic = row['Is_Classic']
-            pipeline_id_discovery=row['Source_Pipeline_Id']
+            pipeline_id_discovery=str(row['Source_Pipeline_Id'])
             pipeline_name=row['Source_Pipeline_Name']
             yaml_file_name = str(row['File_Name'])
             source_repo_name = row["Source_Repo_Name"]
@@ -117,15 +118,16 @@ def fetch_pipeline_yaml(pipeline_id_discovery , pipline_name ,yaml_file_name, pr
         return False,file_path,pipline_name , yaml_file_name
 
     # Save the YAML content to a file
-    yaml_file_name = f"{root}\src\pipeline\{yaml_file_name}"
-    with open(yaml_file_name, "w") as yaml_file:
-        yaml_file.write(yaml_response.text)
-    print(f"Pipeline YAML saved to {os.path.abspath(yaml_file_name)}")
-    return yaml_response.text, file_path,pipline_name, yaml_file_name
+    # yaml_file_name = f"{root}\src\pipeline\{yaml_file_name}"
+    # with open(yaml_file_name, "w") as yaml_file:
+    #     yaml_file.write(yaml_response.text)
+    # print(f"Pipeline YAML saved to {os.path.abspath(yaml_file_name)}")
+    # return yaml_response.text, file_path,pipline_name, yaml_file_name
+    return False , "",pipline_name,""
 
 def get_repo_id_from_target(repo_,organization_project):
     if repo_ == '':
-        repo_= target_repo
+        repo_= "temp"
     # Endpoint to fetch repositories
     url = f"{target_instance}/{organization_project}/_apis/git/repositories?api-version=4.1"
     headers = {
@@ -330,6 +332,7 @@ def clone_and_push_yml_with_pat( pipeline_id , pipeline_name ,yaml_file_name, or
             os.system(f"git clone {repo_clone_url}")
         yaml_content, file_path,pipeline_name, yaml_file_name =fetch_pipeline_yaml(pipeline_id , pipeline_name , yaml_file_name, organization_project)
         if yaml_content == False:
+            print(f"Yaml not found found in the linked repo {pipeline_name} ")
             pass
         # # Copy the .yml file to the repository directory
         # shutil.copy(yaml_file_name, repo_dir)
@@ -610,7 +613,7 @@ def get_proj_details(proj_name):
     
 # Main execution function
 if __name__ == "__main__":
-    # source_excel_path = "credentials.xlsx"  # Path to the source Excel file
+    source_excel_path = f"src\pipeline\credentials.xlsx"  # Path to the source Excel file
     root = os.getcwd()
     template = {
         "options": [],
@@ -650,13 +653,23 @@ if __name__ == "__main__":
 
     results =db_get_migration_details()
     # Iterate over each row in the DataFrame
-    for result in results:
-        source_instance = result.source_server_url	
-        source_username = ""
-        source_pat = result.source_pat
-        target_instance =result.target_organization_url
+    # for result in results:
+    #     source_instance = result.source_server_url	
+    #     source_username = ""
+    #     source_pat = result.source_pat
+    #     target_instance =result.target_organization_url
+    #     target_username =""
+    #     target_pat=result.target_pat
+    df = pd.read_excel(source_excel_path)
+    for index , row in df.iterrows():
+        source_instance = row["Source_URL"]
+        source_username = row["Source_Username"]
+        source_pat = row["Source_Pat"]
+        target_instance =row["Target_URL"]
         target_username =""
-        target_pat=result.target_pat
+        target_pat=row["Target_Pat"]
+
+    clean_table("devops_to_ados", "db_pipeline_mapping","y")
     fetch_discovered_pipelines()
     
    

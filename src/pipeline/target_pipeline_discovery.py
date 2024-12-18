@@ -18,11 +18,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from src.dbDetails.migration_details_db import db_get_migration_details
 from src.pipeline.build_pipeline_target_db import db_post_build_pipeline_target , db_get_build_pipeline_target
 from src.pipeline.release_pipeline_db import db_post_release_pipeline
+from src.dbDetails.db import clean_table
 
 
 # Setup logging
 id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file = f'src\pipeline\logs\logs_pipelines_{id}'
+log_file = f'src\pipeline\logs\logs_pipelines'
 
 # Clear the log file before starting a new run
 with open(log_file, 'w'):
@@ -66,10 +67,13 @@ def get_pipeline_details(project_):
                         variable_groups = data['configuration']['designerJson'].get('variableGroups',"")
                         variable_groups_count= len(variable_groups)
                     else:
-                        variables = data['configuration'].get('variables', "")
-                        variables_count= len(variables)
-                        variable_groups = data['configuration'].get('variableGroups',"")
-                        variable_groups_count= len(variable_groups)
+                        url = f"{instance}/{project_}/_apis/build/definitions/{pipeline_id}?api-version=7.1"
+                        response = requests.get(url , auth=HTTPBasicAuth(username, pat))
+                        if response.status_code == 200:
+                            data_v = response.json()
+                            variables = data_v.get("variables","")
+                            variables_count= len(variables)
+                        variable_groups_count =0
                         
 
                     path = data['configuration'].get('path', 'NA')
@@ -416,7 +420,7 @@ def format_excel(ws):
 if __name__ == "__main__":
     pipeline_data = []
     releases_data=[]
-    
+    clean_table("devops_to_ados","db_ados_discovery_pipelines_details","y")
     folder_path = os.path.join("src", "pipeline", "output_folder")
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
