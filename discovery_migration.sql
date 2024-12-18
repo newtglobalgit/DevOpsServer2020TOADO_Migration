@@ -12,8 +12,13 @@ DROP TABLE IF EXISTS db_devops_discovery_git_project_workitems CASCADE; -- not n
 DROP TABLE IF EXISTS db_devops_discovery_git_project_pipelines CASCADE; -- not needed check with ujjawal
 
 DROP TABLE IF EXISTS db_devops_discovery_git_repo_sourcecode CASCADE; --- source table for repo_sourcecode 
+DROP TABLE IF EXISTS db_ado_discovery_git_repo_sourcecode CASCADE; --- target table for repo_sourcecode
+
 DROP TABLE IF EXISTS db_devops_discovery_git_repo_commits CASCADE; -- source table for repo_commits
+DROP TABLE IF EXISTS db_ado_discovery_git_repo_commits CASCADE; -- target table for repo_commits
+
 DROP TABLE IF EXISTS db_devops_discovery_git_repo_tags CASCADE; -- source table for repo_tags
+DROP TABLE IF EXISTS db_ado_discovery_git_repo_tags CASCADE; -- target table for repo_tags
 
 -- Drop Tables for discovery for TFVC
 
@@ -223,7 +228,33 @@ CREATE TABLE db_devops_discovery_git_repo_sourcecode (
   item_size integer
 ); 
 
+
+CREATE TABLE db_ado_discovery_git_repo_sourcecode (  
+  git_repo_source_code_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  branch_name varchar(200),
+  item_name varchar(200),
+  item_type varchar(200),
+  item_level integer,
+  item_path varchar(300),
+  item_size integer
+); 
+
 CREATE TABLE db_devops_discovery_git_repo_commits (  
+  git_repo_commits BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  branch_name varchar(200),
+  commit_id varchar(200),
+  commit_message varchar(200),
+  author varchar(200),
+  commit_date TIMESTAMPTZ  
+ ); 
+
+CREATE TABLE db_ado_discovery_git_repo_commits (  
   git_repo_commits BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
   collection_name varchar(200) NOT NULL,
   project_name varchar(200) NOT NULL,
@@ -242,7 +273,7 @@ CREATE TABLE db_devops_discovery_git_repo_tags (
   project_name varchar(200) NOT NULL,
   repository_name varchar(200),
   tag_name VARCHAR(200) ,
-  tag_id VARCHAR(200)
+  tag_id VARCHAR(200),
   tag_message VARCHAR(200) ,
   commit_id VARCHAR(200),
   commit_message VARCHAR(200),	
@@ -250,6 +281,19 @@ CREATE TABLE db_devops_discovery_git_repo_tags (
   tagged_date TIMESTAMPTZ
   );
   
+CREATE TABLE db_ado_discovery_git_repo_tags (  
+  git_repo_tags BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  tag_name VARCHAR(200) ,
+  tag_id VARCHAR(200),
+  tag_message VARCHAR(200) ,
+  commit_id VARCHAR(200),
+  commit_message VARCHAR(200),	
+  author VARCHAR(200),
+  tagged_date TIMESTAMPTZ
+  );
 
 
 ------------------  For TFVC -----------------------------------
