@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP
 from sqlalchemy.sql import func
 from src.dbDetails.db import Base
 
-class WikiCommentDetails(Base):
+class WikiTargetCommentDetails(Base):
     __tablename__ = 'db_ado_discovery_wiki_comments_reports'  # Match the SQL table name
     __table_args__ = {'schema': 'devops_to_ados'} 
     

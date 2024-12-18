@@ -13,7 +13,7 @@ import pandas as pd
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.dbDetails.db import SessionLocal, logger
 from src.models.wiki_target_model import  WikiDetails
-from src.models.wiki_target_comments_model import WikiCommentDetails
+from src.models.wiki_target_comments_model import WikiTargetCommentDetails
 
 
 def db_post_wiki(data):
@@ -45,7 +45,7 @@ def db_post_wiki(data):
 
 
         # Create a new record
-        new_record = WikiCommentDetails(
+        new_record = WikiTargetCommentDetails(
             collection_name=collection_name,
             project_name=project_name,
             file_path=file_path,
@@ -84,7 +84,7 @@ def db_get_wiki():
     db = None
     try:
         with SessionLocal() as db:
-            records = db.query(WikiDetails).all()
+            records = db.query(WikiTargetCommentDetails).all()
             
             if records:
                 logging.info("Records retrieved successfully:")
