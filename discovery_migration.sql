@@ -1100,3 +1100,19 @@ create TABLE db_ado_discovery_wiki_comments_reports(
     created_by  varchar(200),
     created_date TIMESTAMPTZ
     );
+
+create TABLE db_repo_mapping(
+    repo_mapping_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    source_server_url varchar(200),
+    source_project_name varchar(200),
+    source_PAT varchar(200),
+	  source_repo_name varchar(200),
+    source_branch_name varchar(200),
+    target_server_url varchar(200),
+    target_project_name varchar(200),
+	  target_PAT varchar(200),
+    target_repo_name varchar(200),
+    target_branch_name varchar(200),
+    migration_required varchar(50),
+    status varchar(200)
+);
