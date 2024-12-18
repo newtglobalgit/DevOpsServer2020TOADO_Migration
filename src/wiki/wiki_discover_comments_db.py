@@ -12,21 +12,20 @@ import pandas as pd
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.dbDetails.db import SessionLocal, logger
-from src.models.wiki_target_model import  WikiDetails
+from src.models.wiki_model import  WikiDetails
+from src.models.wiki_comments_model import WikiCommentDetails
 
 
 def db_post_wiki(data):
     db = None  
     try:
-        collection_name= data.get("collection_name","")
-        project_id=data.get("project_id","")
-        wiki_id=data.get("wiki_id","")
+        collection_name = data.get("collection_name","")
         project_name = data.get("project_name", "")
         file_path = data.get("file_path", "")
-        size_bytes = data.get("size_bytes", "")
-        logging.debug(f"Size bytes received: {size_bytes}")
-        last_modified = data.get("last_modified", None)
-        page_id=data.get("page_id","")
+        comment_id = data.get("comment_id", "")
+        comment_text = data.get("comment_text", "")
+        created_by = data.get("created_by", "")
+        created_date = data.get("created_date", "")
 
 
         if not file_path:
@@ -35,27 +34,25 @@ def db_post_wiki(data):
         # Log the data being inserted
         logging.info(
             f"Inserting record: \
-            collection_name={collection_name} \
-            project_id={project_id} \
+            collection_name={collection_name}, \
             project_name={project_name} \
-            wiki_id={wiki_id} \
             file_path={file_path},\
-            size_bytes={size_bytes},\
-            page_id={page_id},\
-            last_modified={last_modified}"
+            comment_id={comment_id},\
+            comment_text={comment_text},\
+            created_by={created_by},\
+            created_date={created_date}"
         )
 
 
         # Create a new record
-        new_record = WikiDetails(
+        new_record = WikiCommentDetails(
             collection_name=collection_name,
-            project_id=project_id,
-            wiki_id=wiki_id,
             project_name=project_name,
             file_path=file_path,
-            size_bytes=size_bytes,
-            last_modified=last_modified,
-            page_id=page_id
+            comment_id=comment_id,
+            comment_text=comment_text,
+            created_by=created_by,
+            created_date=created_date
         )
 
          # Insert into the database

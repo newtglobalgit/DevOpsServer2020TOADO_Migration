@@ -12,8 +12,13 @@ DROP TABLE IF EXISTS db_devops_discovery_git_project_workitems CASCADE; -- not n
 DROP TABLE IF EXISTS db_devops_discovery_git_project_pipelines CASCADE; -- not needed check with ujjawal
 
 DROP TABLE IF EXISTS db_devops_discovery_git_repo_sourcecode CASCADE; --- source table for repo_sourcecode 
+DROP TABLE IF EXISTS db_ado_discovery_git_repo_sourcecode CASCADE; --- target table for repo_sourcecode
+
 DROP TABLE IF EXISTS db_devops_discovery_git_repo_commits CASCADE; -- source table for repo_commits
+DROP TABLE IF EXISTS db_ado_discovery_git_repo_commits CASCADE; -- target table for repo_commits
+
 DROP TABLE IF EXISTS db_devops_discovery_git_repo_tags CASCADE; -- source table for repo_tags
+DROP TABLE IF EXISTS db_ado_discovery_git_repo_tags CASCADE; -- target table for repo_tags
 
 -- Drop Tables for discovery for TFVC
 
@@ -53,6 +58,9 @@ DROP TABLE IF EXISTS db_ado_discovery_group_permissions CASCADE; --target table 
 
 DROP TABLE IF EXISTS db_devops_discovery_delivery_plan CASCADE; -- source table for delivery_plan
 DROP TABLE IF EXISTS db_ado_discovery_delivery_plan CASCADE; -- target table for delivery_plan
+
+DROP TABLE IF EXISTS  db_devops_discovery_wiki_comments_reports CASCADE; -- source table for wiki_comments_reports
+DROP TABLE IF EXISTS  db_ado_discovery_wiki_comments_reports CASCADE; -- target table for wiki_comments_reports
 
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
@@ -220,7 +228,33 @@ CREATE TABLE db_devops_discovery_git_repo_sourcecode (
   item_size integer
 ); 
 
+
+CREATE TABLE db_ado_discovery_git_repo_sourcecode (  
+  git_repo_source_code_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  branch_name varchar(200),
+  item_name varchar(200),
+  item_type varchar(200),
+  item_level integer,
+  item_path varchar(300),
+  item_size integer
+); 
+
 CREATE TABLE db_devops_discovery_git_repo_commits (  
+  git_repo_commits BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  branch_name varchar(200),
+  commit_id varchar(200),
+  commit_message varchar(200),
+  author varchar(200),
+  commit_date TIMESTAMPTZ  
+ ); 
+
+CREATE TABLE db_ado_discovery_git_repo_commits (  
   git_repo_commits BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,     
   collection_name varchar(200) NOT NULL,
   project_name varchar(200) NOT NULL,
@@ -238,14 +272,28 @@ CREATE TABLE db_devops_discovery_git_repo_tags (
   collection_name varchar(200) NOT NULL,
   project_name varchar(200) NOT NULL,
   repository_name varchar(200),
-  tags_name VARCHAR(200) ,  
-  tags_message VARCHAR(200) ,
+  tag_name VARCHAR(200) ,
+  tag_id VARCHAR(200),
+  tag_message VARCHAR(200) ,
   commit_id VARCHAR(200),
+  commit_message VARCHAR(200),	
   author VARCHAR(200),
-  tag_commit_date TIMESTAMPTZ
+  tagged_date TIMESTAMPTZ
   );
   
-  
+CREATE TABLE db_ado_discovery_git_repo_tags (  
+  git_repo_tags BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  
+  collection_name varchar(200) NOT NULL,
+  project_name varchar(200) NOT NULL,
+  repository_name varchar(200),
+  tag_name VARCHAR(200) ,
+  tag_id VARCHAR(200),
+  tag_message VARCHAR(200) ,
+  commit_id VARCHAR(200),
+  commit_message VARCHAR(200),	
+  author VARCHAR(200),
+  tagged_date TIMESTAMPTZ
+  );
 
 
 ------------------  For TFVC -----------------------------------
@@ -904,10 +952,14 @@ CREATE TABLE db_pipeline_mapping (
 
 CREATE TABLE db_ado_discovery_wiki_reports (
     wiki_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,       -- Auto-incrementing primary key
-	  project_name VARCHAR(200) NOT NULL,
+	  collection_name varchar(200) NOT NULL, 
+    project_id VARCHAR(200),
+    project_name VARCHAR(200) NOT NULL,
+    wiki_id VARCHAR(200),
     file_path VARCHAR(255) NOT NULL,  -- File path column
     size_bytes BIGINT NOT NULL,       -- File size column
-    last_modified TIMESTAMP NOT NULL  -- Last modified timestamp column
+    last_modified TIMESTAMP NOT NULL,  -- Last modified timestamp column
+    page_id INTEGER
 );
 
 CREATE TABLE db_devops_discovery_wiki_reports (
@@ -1026,3 +1078,25 @@ CREATE TABLE db_ado_discovery_delivery_plan (
     delivery_plan_modified_by VARCHAR(200) ,
     discovery_run_duration VARCHAR(200)
 );
+
+create TABLE db_devops_discovery_wiki_comments_reports(
+    wiki_comments_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    file_path varchar(200),
+    comment_id INTEGER,
+    comment_text varchar(200), 
+    created_by  varchar(200),
+    created_date TIMESTAMPTZ
+    );
+
+create TABLE db_ado_discovery_wiki_comments_reports(
+    wiki_comments_reports_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    file_path varchar(200),
+    comment_id INTEGER ,
+    comment_text varchar(200), 
+    created_by  varchar(200),
+    created_date TIMESTAMPTZ
+    );

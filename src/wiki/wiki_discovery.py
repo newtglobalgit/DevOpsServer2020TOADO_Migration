@@ -17,6 +17,7 @@ db_get_wiki()
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.wiki.wiki_db import db_post_wiki
+from src.wiki.wiki_discover_comments_db import db_post_wiki as db_post_comments_wiki
 
 
 def encode_url_component(component):
@@ -160,17 +161,21 @@ def main():
             if wiki_pages:
                 for file in wiki_pages:
                     file_path, size, modified = file
-                    
-                    # Create a data dictionary for the db_post_wiki function
-                    data = {
-                        "project_name": project_name,
-                        "file_path": file_path[:-3],
-                        "size_bytes": size,
-                        "last_modified": modified,
-                    }
                     project_id, wiki_id = get_project_and_wiki_id(server_url, project_name, username, pat)
                     
                     page_id = get_page_id(server_url, project_id, wiki_id, username, pat, f"/{file_path[:-3].replace('-', '%20')}")
+                    # Create a data dictionary for the db_post_wiki function
+                    data = {
+                        "collection_name":server_url.split('/')[-1],
+                        "project_id" : project_id,
+                        "project_name": project_name,
+                        "wiki_id": wiki_id,
+                        "file_path": file_path[:-3],
+                         "page_id": page_id,
+                        "size_bytes": size,
+                        "last_modified": modified
+                    }
+                    
                     comments = get_wiki_comments(server_url, project_id, wiki_id, page_id, username, pat)
 
                     # Store comment data in the Comments sheet
@@ -183,12 +188,29 @@ def main():
 
                             # Append the comment data to the comments sheet
                             ws_comments.append([project_name, file_path[:-3], comment_id, comment_text, created_by, created_date])
+
+                            # Create a data dictionary for the db_post_wiki_comments function
+                            data_comments = {
+                                "collection_name": server_url.split('/')[-1],
+                                "project_name": project_name,
+                                "file_path": file_path[:-3],
+                                "comment_id": comment_id,
+                                "comment_text": comment_text,
+                                "created_by": created_by,
+                                "created_date": created_date
+                            }
+                            
+                            db_post_comments_wiki(data_comments)
+                          
+                            
+
                     else:
                         print(f"No comments found for Page ID: {page_id}")
                     
                     # Write data to the database
                     try:
                         db_post_wiki(data)
+                       
                         print(f"Data successfully written to the database: {data}")
                     except Exception as e:
                         print(f"Error writing to database for file {file_path}: {e}")
