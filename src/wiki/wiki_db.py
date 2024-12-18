@@ -18,11 +18,15 @@ from src.models.wiki_model import  WikiDetails
 def db_post_wiki(data):
     db = None  
     try:
+        collection_name= data.get("collection_name","")
+        project_id=data.get("project_id","")
+        wiki_id=data.get("wiki_id","")
         project_name = data.get("project_name", "")
         file_path = data.get("file_path", "")
         size_bytes = data.get("size_bytes", "")
         logging.debug(f"Size bytes received: {size_bytes}")
         last_modified = data.get("last_modified", None)
+        page_id=data.get("page_id","")
 
 
         if not file_path:
@@ -31,19 +35,27 @@ def db_post_wiki(data):
         # Log the data being inserted
         logging.info(
             f"Inserting record: \
+            collection_name={collection_name} \
+            project_id={project_id} \
             project_name={project_name} \
+            wiki_id={wiki_id} \
             file_path={file_path},\
             size_bytes={size_bytes},\
+            page_id={page_id},\
             last_modified={last_modified}"
         )
 
 
         # Create a new record
         new_record = WikiDetails(
+            collection_name=collection_name,
+            project_id=project_id,
+            wiki_id=wiki_id,
             project_name=project_name,
             file_path=file_path,
             size_bytes=size_bytes,
-            last_modified=last_modified
+            last_modified=last_modified,
+            page_id=page_id
         )
 
          # Insert into the database
