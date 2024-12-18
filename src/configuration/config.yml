@@ -1,0 +1,20 @@
+# Configuration for Azure DevOps On-Premises
+devopsOnPrem:
+  organization_url: 'http://172.191.4.85/DefaultCollection'
+
+devopsOnPrem_api_endpoints:
+  projects: '/_apis/projects?api-version=6.0'
+  identities: '/_apis/identities?searchFilter=General&api-version=6.0&filterValue='
+  graph_users: '/_apis/graph/users?api-version=6.0-preview.1'
+
+# Configuration for Azure DevOps Cloud
+ADOOnCloud:
+  organization_url: 'https://vsaex.dev.azure.com'
+
+ado_api_endpoints:
+  # URL to add users (use consistent YAML syntax with colons instead of '=')
+  add_users: '/{organization}/_apis/UserEntitlements?api-version=7.1-preview.3'
+
+# Configuration for Linux File Saving
+linux:
+  output_directory: '/home/username/output_folder/'
