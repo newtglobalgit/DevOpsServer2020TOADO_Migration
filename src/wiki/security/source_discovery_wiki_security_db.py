@@ -11,16 +11,14 @@ from sqlalchemy.exc import SQLAlchemyError
 # Add the 'src' directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.dbDetails.db import SessionLocal, logger
-from src.models.tfvc_security_source_discovery_model import TFVCSecuritySourceDetails
+from src.models.source_discovery_wiki_security_model import WikiSecuritySourceDetails
 
 
-def db_post_tfvc_security(data):
+def db_post_wiki_security(data):
     db = None  
     try:
         collection_name = data.get("collection_name",""), 
-        project_name =data.get("project_name",""), 
-        tfvc_name = data.get("tfvc_name","") , 
-        tfvc_branch_name = data.get("tfvc_branch_name",""), 
+        project_name =data.get("project_name",""),  
         permission_type = data.get("permission_type",""), 
         permission_name = data.get("permission_name",""), 
         access_type =data.get("access_type","") , 
@@ -35,21 +33,16 @@ def db_post_tfvc_security(data):
             f"Inserting record: \
             collection_name = {collection_name},\
             project_name ={project_name},\
-            tfvc_name = {tfvc_name} ,\
-            tfvc_branch_name ={tfvc_branch_name},\
             permission_type = {permission_type},\
             permission_name = {permission_name},\
             access_type = {access_type} ,\
             access_level = {access_level} "
             )
 
-
         # Create a new record
-        new_record = TFVCSecuritySourceDetails(
+        new_record = WikiSecuritySourceDetails(
            collection_name = collection_name,
             project_name =project_name,
-            tfvc_name = tfvc_name ,
-            tfvc_branch_name =tfvc_branch_name,
             permission_type = permission_type,
             permission_name = permission_name,
             access_type = access_type ,
@@ -63,7 +56,7 @@ def db_post_tfvc_security(data):
             db.commit()
       
         # Log success response
-        success_message = "Record created successfully for the tfvc security."
+        success_message = "Record created successfully for the build pipeline."
         logging.info(success_message)
 
     except ValueError as ve:
@@ -81,12 +74,12 @@ def db_post_tfvc_security(data):
         if db:
             db.close()  # Ensure the connection is closed
 
-def db_get_tfvc_security():
+def db_get_wiki_security():
     db = None
     try:
         with SessionLocal() as db:
             
-            records = db.query(TFVCSecuritySourceDetails).all()
+            records = db.query(WikiSecuritySourceDetails).all()
             
             if records:
                 logging.info("Records retrieved successfully:")
