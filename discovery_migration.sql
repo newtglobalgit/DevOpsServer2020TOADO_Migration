@@ -62,6 +62,9 @@ DROP TABLE IF EXISTS db_ado_discovery_delivery_plan CASCADE; -- target table for
 DROP TABLE IF EXISTS  db_devops_discovery_wiki_comments_reports CASCADE; -- source table for wiki_comments_reports
 DROP TABLE IF EXISTS  db_ado_discovery_wiki_comments_reports CASCADE; -- target table for wiki_comments_reports
 
+DROP TABLE IF EXISTS db_devops_test_configuration_details CASCADE; -- source table for test configuration
+DROP TABLE IF EXISTS db_ado_test_configuration_details CASCADE; -- target table for test configuration
+
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Areas CASCADE;
@@ -1115,4 +1118,29 @@ create TABLE db_repo_mapping(
     target_branch_name varchar(200),
     migration_required varchar(50),
     status varchar(200)
+);
+
+
+CREATE TABLE IF NOT EXISTS db_devops_test_configuration_details
+(
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    configuration_id INTEGER NOT NULL,
+    configname VARCHAR(200),
+    isdefault BOOLEAN,
+    configuration_description VARCHAR(250),
+    configuration_state VARCHAR(100),
+    configuration_values VARCHAR(200)
+);
+
+CREATE TABLE IF NOT EXISTS db_ado_test_configuration_details
+(
+    collection_name VARCHAR(200) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    configuration_id INTEGER NOT NULL,
+    configuration_name VARCHAR(200),
+    isdefault BOOLEAN,
+    configuration_description VARCHAR(250),
+    configuration_state VARCHAR(100),
+    configuration_values VARCHAR(200)
 );
