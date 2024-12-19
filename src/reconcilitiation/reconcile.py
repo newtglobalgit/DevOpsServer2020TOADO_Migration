@@ -49,16 +49,6 @@ class Reconcile:
 
 
 
-
-    '''
-        Generate data for the given reconciliation item.
-    '''
-    def generate_data(self, reconciliation_item: str):
-        
-        print(f"Generating data for: {reconciliation_item}")
-
-
-
 # Creating an instance of the class
 recon = Reconcile()
 
