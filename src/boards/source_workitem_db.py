@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from src.dbDetails.db import SessionLocal, logger
 from src.models.source_work_item_model import BoardsWorkItemDetails
 
-def db_post_workitem(data):
+def db_post_workitem(data,):
     try:
         collection_name = data.get("collection_name", "").strip()
         project_name = data.get("project_name", "").strip()

@@ -62,8 +62,11 @@ DROP TABLE IF EXISTS db_ado_discovery_delivery_plan CASCADE; -- target table for
 DROP TABLE IF EXISTS  db_devops_discovery_wiki_comments_reports CASCADE; -- source table for wiki_comments_reports
 DROP TABLE IF EXISTS  db_ado_discovery_wiki_comments_reports CASCADE; -- target table for wiki_comments_reports
 
-DROP TABLE IF EXISTS db_devops_test_configuration_details CASCADE; -- source table for test configuration
-DROP TABLE IF EXISTS db_ado_test_configuration_details CASCADE; -- target table for test configuration
+DROP TABLE IF EXISTS db_devops_test_configuration CASCADE; -- source table for test configuration
+DROP TABLE IF EXISTS db_ado_test_configuration CASCADE; -- target table for test configuration
+
+DROP TABLE IF EXISTS  db_devops_discovery_tfvc_security CASCADE; -- source table for tfvc security
+DROP TABLE IF EXISTS  db_ado_discovery_tfvc_security CASCADE; -- target table for tfvc security
 
 DROP TABLE IF EXISTS db_devops_discovery_pull_requests CASCADE;
 DROP TABLE IF EXISTS db_devops_discovery_project_configuration_Iterations CASCADE;
@@ -1121,8 +1124,9 @@ create TABLE db_repo_mapping(
 );
 
 
-CREATE TABLE IF NOT EXISTS db_devops_test_configuration_details
+CREATE TABLE IF NOT EXISTS db_devops_test_configuration
 (
+    test_configuration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     collection_name VARCHAR(200) NOT NULL,
     project_name VARCHAR(200) NOT NULL,
     configuration_id INTEGER NOT NULL,
@@ -1133,8 +1137,9 @@ CREATE TABLE IF NOT EXISTS db_devops_test_configuration_details
     configuration_values VARCHAR(200)
 );
 
-CREATE TABLE IF NOT EXISTS db_ado_test_configuration_details
+CREATE TABLE IF NOT EXISTS db_ado_test_configuration
 (
+    test_configuration_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     collection_name VARCHAR(200) NOT NULL,
     project_name VARCHAR(200) NOT NULL,
     configuration_id INTEGER NOT NULL,
@@ -1144,3 +1149,28 @@ CREATE TABLE IF NOT EXISTS db_ado_test_configuration_details
     configuration_state VARCHAR(100),
     configuration_values VARCHAR(200)
 );
+
+
+CREATE TABLE db_devops_discovery_tfvc_security( 
+  tfvc_security_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+  collection_name VARCHAR(200), 
+  project_name VARCHAR(200), 
+  tfvc_name VARCHAR(200), 
+  tfvc_branch_name VARCHAR(200), 
+  permission_type VARCHAR(200), 
+  permission_name VARCHAR(200), 
+  access_type VARCHAR(50), 
+  access_level VARCHAR(50) 
+); 
+
+CREATE TABLE db_ado_discovery_tfvc_security( 
+  tfvc_security_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+  collection_name VARCHAR(200), 
+  project_name VARCHAR(200), 
+  tfvc_name VARCHAR(200), 
+  tfvc_branch_name VARCHAR(200), 
+  permission_type VARCHAR(200), 
+  permission_name VARCHAR(200), 
+  access_type VARCHAR(50), 
+  access_level VARCHAR(50) 
+); 

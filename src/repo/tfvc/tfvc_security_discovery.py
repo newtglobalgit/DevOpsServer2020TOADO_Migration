@@ -10,7 +10,7 @@ import os
 
 folder_path = os.path.join("src","repo","tfvc")
 file_name = f"tfvc_input.xlsx"
-input_file = f"{folder_path}\{file_name}"
+input_file = f"{folder_path}\\{file_name}"
 input_data = pd.read_excel(input_file)
 
 # Create Excel workbook for output
@@ -167,7 +167,7 @@ def get_explicit_identities(ado_server_url, project_name, pat, worksheet):
                             "access_type" : permission_displayName ,
                             "access_level" : permissionString
                         }
-                        # db_post_tfvc_security(data)
+                        db_post_tfvc_security(data)
                 col_counter += 1
 
             # Set column widths
