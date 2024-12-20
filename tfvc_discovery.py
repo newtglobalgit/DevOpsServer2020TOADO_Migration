@@ -9,6 +9,8 @@ import time
 from urllib.parse import quote
 from utils.common import get_project_names, add_if_not_exists
 import logging
+from tfvc_root_db import db_get_tfvc_root,db_post_tfvc_root
+from tfvc_all_changeset_db import db_get_tfvc_allchangeset,db_post_tfvc_allchangeset
 
 
 log_dir = "TFVC_logs"
@@ -299,8 +301,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time, batc
         organization_name = extract_organization_name(server_url)
 
         encoded_project=encode_url_component(project_name)
-        tfvc_changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?api-version=6.0"
-        print(f"TFVC Changesets URL: {tfvc_changesets_url}")
+
 
         params = {
             'api-version': '6.0',
@@ -332,33 +333,75 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time, batc
                     count = 1
                     for tfvc_branch in tfvc_branches:
                         branch_path = tfvc_branch.get('path', 'Unnamed Branch')
-                        branch_name = branch_path.split('/')[-1]
+                        branch_name = sanitize_sheet_name(branch_path.split('/')[-1])
+                        tfvc_changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?path={branch_path}api-version=6.0"
+                        changesets =  get_changesets_in_batches(tfvc_changesets_url, pat, batch_size)
+                        for changeset in changesets:
+                            all_changesets_data.append({
+                                'Collection Name': collection_name,
+                                'Project Name': project_name,
+                                'Branch Name': branch_name,
+                                'Changeset ID': changeset['changesetId'],
+                                'Author': changeset['author']['displayName'],
+                                'Time Date': changeset['createdDate'],
+                                'Comment': changeset.get('comment', 'No comment')
+                            })
+                            print("this is the ",branch_name)
+                            all_data={
+                                'collectionname': collection_name,
+                                'projectname': project_name,
+                                'branchname': branch_name,
+                                'changesetid': changeset['changesetId'],
+                                'author': changeset['author']['displayName'],
+                                'timedate': changeset['createdDate'],
+                                'comment': changeset.get('comment', 'No comment')
+
+                            }
+                            db_post_tfvc_allchangeset(all_data)
                         branch_file_count, branch_file_details = get_tfvc_branch_file_count(server_url, project_name, branch_path, pat)
                         branch_data.append({
                             'Collection Name': collection_name,
                             'Project Name': project_name,
                             'Repository Name': 'TFVC',
-                            'Branch Name': sanitize_sheet_name(branch_name),
+                            'Branch Name': branch_name,
                             'File count': branch_file_count,
                             'Sheet Name': f'branch_{count}'
                         })
                         all_branch_file_details[sanitize_sheet_name(f'branch_{count}')] = branch_file_details
                         all_files_data.extend(branch_file_details)
                         count = count+1
+                else:
+                    tfvc_changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?api-version=6.0"
+                    changesets =  get_changesets_in_batches(tfvc_changesets_url, pat, batch_size)
+                    for changeset in changesets:
+                        all_changesets_data.append({
+                            'Collection Name': collection_name,
+                            'Project Name': project_name,
+                            'Branch Name': f'{project_name}_root',
+                            'Changeset ID': changeset['changesetId'],
+                            'Author': changeset['author']['displayName'],
+                            'Time Date': changeset['createdDate'],
+                            'Comment': changeset.get('comment', 'No comment')
+                        })
+                        print("this is the ",f'{project_name}_root')
+                        all_data={
+                            'collectionname': collection_name,
+                            'projectname': project_name,
+                            'branchname': f'{project_name}_root',
+                            'changesetid': changeset['changesetId'],
+                            'author': changeset['author']['displayName'],
+                            'timedate': changeset['createdDate'],
+                            'comment': changeset.get('comment', 'No comment')
+
+                        }
+                        db_post_tfvc_allchangeset(all_data)
             except (ValueError, KeyError) as e:
                 logger.error(f"  Error parsing JSON response for TFVC in project '{project_name}':", e)
         else:
             logger.error(f"  Failed to retrieve TFVC branches for project '{project_name}'. Status code: {tfvc_response.status_code}")
-        changesets =  get_changesets_in_batches(tfvc_changesets_url, pat, batch_size)
-        for changeset in changesets:
-            all_changesets_data.append({
-                'Collection Name': collection_name,
-                'Project Name': project_name,
-                'Changeset ID': changeset['changesetId'],
-                'Author': changeset['author']['displayName'],
-                'Time Date': changeset['createdDate'],
-                'Comment': changeset.get('comment', 'No comment')
-            })
+        tfvc_changesets_url = f"{server_url}/{encoded_project}/_apis/tfvc/changesets?api-version=6.0"
+
+
 
         # Fetch all shelvesets
         shelvesets = get_shelvesets_details(server_url, pat)
@@ -449,19 +492,23 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time, batc
                         # changeset_id, comment, last_modified, author = get_latest_changeset_for_item(
                         #     server_url, project_name, item['path'], pat)
                         item_data = {
-                            'Root Folder': project_name,
-                            'Project Folder': '/'.join(item['path'].split('/')[2:-1]),
-                            'File Name': item['path'].rsplit('/', 1)[-1],
-                            'File Type': determine_file_type(item),
-                            'File Size (bytes)': item.get('size', 0),
-                            'File Path': item['path']
+                            'collection_name': collection_name,
+                            'project_name': project_name,
+                            'branch_name': branch_name,
+                            'root_folder': project_name,
+                            'project_folder': '/'.join(item['path'].split('/')[2:-1]),
+                            'file_name': item['path'].rsplit('/', 1)[-1],
+                            'file_type': determine_file_type(item),
+                            'file_size': item.get('size', 0),
+                            'file_path': item['path']
                         }
                         branch_file_data.append(item_data)
+                        db_post_tfvc_root(item_data)
                         # all_files_data_df.append(item_data)
 
-                branch_df = pd.DataFrame(branch_file_data)
-                branch_df = branch_df[['Root Folder', 'Project Folder', 'File Name', 'File Type', 'File Size (bytes)',
-                                    'File Path']]
+                branch_df = pd.DataFrame(branch_file_data) # use this data and store in db.
+                branch_df = branch_df[['collection_name', 'project_name', 'branch_name', 'root_folder', 'project_folder', 'file_name', 'file_type', 'file_size',
+                                    'file_path']]
                 branch_df.to_excel(writer, sheet_name=sanitize_sheet_name(branch_name), index=False)
 
                 # Apply the header format to each branch sheet
@@ -531,7 +578,7 @@ def generate_excel_report(output_dir, server_url, pat, project, start_time, batc
             #             all_files_worksheet.write(row_num, col_num, value, regular_format)
 
             all_changesets_df = pd.DataFrame(all_changesets_data)
-            all_changesets_df = all_changesets_df[['Collection Name', 'Project Name', 'Changeset ID', 'Author',
+            all_changesets_df = all_changesets_df[['Collection Name', 'Project Name', 'Branch Name', 'Changeset ID', 'Author',
                                                 'Time Date', 'Comment']]
             all_changesets_df['Comment'] = all_changesets_df['Comment'].apply(lambda x: x[:35] if isinstance(x, str) else x)
             all_changesets_df.to_excel(writer, sheet_name='all_changesets', index=False)
