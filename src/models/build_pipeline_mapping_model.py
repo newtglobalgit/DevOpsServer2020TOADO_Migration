@@ -26,7 +26,7 @@ class BuildPipelineMappingDetails(Base):
 
     def to_dict(self):
         return {
-           "mapping_pipelines_id": self.mapping_pipelines_id,
+           "pipeline_mapping_id": self.pipeline_mapping_id,
            "source_project_name" : self.source_project_name,
             "source_pipeline_name" : self.source_pipeline_name,
             "source_pipeline_id": self.source_pipeline_id,

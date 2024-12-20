@@ -1,3 +1,4 @@
+import inspect
 import sys
 import os
 import logging
@@ -94,7 +95,7 @@ def db_get_build_pipeline():
     try:
         with SessionLocal() as db:
             
-            records = db.query(BuildPipelineDetails).all()
+            records = db.query(BuildPipelineMappingDetails).all()
             
             if records:
                 logging.info("Records retrieved successfully:")
@@ -120,6 +121,37 @@ def db_get_build_pipeline():
         if db:
             db.close()  # Ensure the connection is closed
 
+def update_feature_in_db(feature_code,updates):
+    try:
+        db = SessionLocal();
+        
+        # Fetch the feature by ID
+        feature = db.query(BuildPipelineMappingDetails).filter(BuildPipelineMappingDetails.target_project_name == feature_code).first()
+        
+        if feature is None : 
+            return {feature_code,"Feature not found"}
+        
+        # Get valid columns of the model to prevent invalid column updates
+        # valid_columns = {column.name for column in inspect(BuildPipelineMappingDetails).c} 
+        
+        # Update the feature dynamically
+        for key, value in updates.items():
+            # if key in valid_columns:
+            setattr(feature, key, value)
+            # else:
+            #     return False, f"Invalid column: {key}" 
+            
+        db.commit();
+             
+        return True, f"Feature {feature.feature_name} updated successfully."
+        
+    except Exception as e:
+        db.rollback()
+        print(f"Error updating featue attribute {updates}")
+        return False, str(e)
+    
+    finally:
+        db.close()
 
 # Main method to simulate data entry
 def main():
@@ -152,10 +184,10 @@ def main():
     # db_post_build_pipeline(data)
     results =db_get_build_pipeline()
     for result in results:
-        print(result.pipeline_id)
+        print(result.source_pipeline_id)
     print(results)
     
-
+    update_feature_in_db("CatCore", {"status":"Migrated_Successfully"})
 
 # Entry point of the script
 if __name__ == "__main__":
